@@ -12,16 +12,21 @@ results (keep good, surface failures, never discard all on one failure), and enf
 ## Mechanism
 - `fanOutSync`/`fanOutAsync`(items, worker): per-item resilience — a throwing/rejecting worker is
   recorded as a failure, others survive; results in input order.
-- `reviewSync`/`reviewAsync`(claims, reviewers): verdict agreed/disputed/rejected; a throwing
-  reviewer counts as a dissent; notes carried for the main agent to resolve.
+- `reviewSync`/`reviewAsync`(claims, reviewers, opts?): each vote is agree / disagree / **unavailable**
+  (throwing or no boolean `agree`). Verdicts: agreed / disputed / rejected / unavailable /
+  insufficient_review, computed over VALID votes only with a configurable `minReviews` quorum — a
+  reviewer exception is unavailable, never a dissent; zero valid votes → `unavailable` (never
+  `rejected`); below quorum → `insufficient_review`. Result exposes agreeVotes / disagreeVotes /
+  unavailableVotes / validVotes / quorumMet; reviewer failures are kept as diagnostics.
 - `consolidate`: okCount/failedCount, kept results, explicit failures (evidence, not dropped).
 - Async variants are the bridge to REAL subagents (Session 36); exposed on the public API and on
   the SKILL.md agent contract.
 
 ## Evidence
 - `evals/orchestrate-test.js`: order preservation, rejection-not-abort, disagreement→disputed,
-  unanimous-disagreement→rejected, throwing reviewer → dissent, consolidation; async variants
-  covered.
+  unanimous-disagreement→rejected, reviewer exception→unavailable (NOT dissent), all-unavailable→
+  unavailable, quorum-not-met→insufficient_review, no-boolean-agree→unavailable, consolidation;
+  async variants covered.
 - Live demo (Session 36): 3 real verification sub-agents returned CONFIRMED with line evidence →
   consolidate 3/3 → a live reviewAsync produced a genuine DISPUTED verdict → captain resolved it by
   reading the source (ground truth).

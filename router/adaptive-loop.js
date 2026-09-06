@@ -50,6 +50,7 @@ function adaptiveLoop(opts = {}) {
   const state = {
     attempts: 0,
     failures: 0,
+    roundsSinceNewInfo: 0, // accumulated CONSECUTIVE no-new-info rounds (drives deep stagnation stop)
     strategy: null,
     model_action: null,
     done: false,
@@ -64,6 +65,15 @@ function adaptiveLoop(opts = {}) {
     if (haveResult) {
       state.attempts += 1;
       if (!execResult.ok) state.failures += 1;
+      // Accumulate CONSECUTIVE no-new-info rounds (the deep stagnation budget) instead of deriving a
+      // non-cumulative 0/1 from the current round only. `newInfo === false` is an explicit "no new
+      // information"; any other value (true, or omitted) resets the counter. Without accumulation the
+      // "no new info -> no new info -> stagnation stop" condition in stopping.js was unreachable.
+      if (execResult.newInfo === false) {
+        state.roundsSinceNewInfo += 1;
+      } else {
+        state.roundsSinceNewInfo = 0;
+      }
     }
 
     const p = buildProfile(task, profile, state.failures);
@@ -85,7 +95,7 @@ function adaptiveLoop(opts = {}) {
       assumptionsExplicit: true,
       evidenceSufficient: !!execResult.ok,
       attempts: state.attempts,
-      roundsSinceNewInfo: execResult.newInfo === false ? 1 : 0,
+      roundsSinceNewInfo: state.roundsSinceNewInfo,
     });
 
     if (execResult.ok) {

@@ -1,5 +1,37 @@
 # Changelog
 
+## Release Blocker Fix (B1–B6 + F16/F17) — freeze-readiness, no new methods
+
+- **B1 adaptive stagnation (real bug):** `adaptive-loop.js` derived `roundsSinceNewInfo` as a
+  non-cumulative 0/1 per round, so the deep "no-info → no-info → stagnation stop" could only ever be
+  reached via the attempt cap. Now the loop accumulates consecutive `newInfo === false` rounds and
+  resets on any new info; `--newInfo` stays reachable. Integration regression (deep task → 2×
+  no-info → stop at attempts=2 with a stagnation reason, plus a reset check) added.
+- **B2 reviewer exception semantics (real bug):** a throwing reviewer was counted as `disagree`, so
+  "2 agree + 1 crash" became disputed and "all crash" became rejected. Now votes are
+  agree/disagree/unavailable; agreement is computed over VALID votes only; verdicts add
+  `unavailable` / `insufficient_review`; a configurable `minReviews` quorum is exposed together with
+  agreeVotes/disagreeVotes/unavailableVotes/validVotes/quorumMet; failures stay as diagnostics.
+  Tests cover Case A (2 agree + 1 exception → agreed), Case B (all exception → unavailable),
+  Case C (real disagreement → disputed), quorum, and no-boolean-agree→unavailable.
+- **B3 vacuous assertion:** `evals/deliverables.js` had `['keep','upgrade','delegate'].every((m)=>true)`
+  (always true). Replaced with three real input→output assertions proving keep/upgrade/delegate are
+  each reachable.
+- **B4 naming:** `evals/validation.js` (and current-state docs) re-labeled from "held-out test set"
+  to **validation corpus / regression** — it entered the dev feedback loop (F4/F5), so it proves
+  regression/specification consistency, NOT out-of-distribution generalization.
+- **B5 claim downgrades:** "+68.4" qualified as routing/strategy-label benchmark (not task success);
+  "32/32 = 100%" qualified as regression consistency; "not author-fitted" softened to "cross-review
+  detected no author-specific DIFFERENTIAL bias; author/benchmark-ecosystem overfitting not excluded";
+  `tier strong` qualified as probe capability ≠ long-horizon behavioral capability.
+- **B6 consistency sweep:** fixed stale current-state numbers (failure-log range F1–F15→F1–F17,
+  risk "22"→"32", converged file count, multi-agent card's old dissent wording).
+- **F16 (action-loop degeneration) + F17 (meta-policy self-exemption)** recorded in the failure
+  corpus as real external failure evidence, explicitly **unresolved**.
+- `npm test` exit 0 (26 scripts); audit/consume re-run PASS. No router threshold/strategy changes;
+  `experimental` status retained; no publish; external behavioral evaluation still NOT done.
+
+
 ## Session 57 — CONVERGENCE PASS + current-state sweep after Sessions 53–56
 
 - Ran the objective-mandated convergence pass (last formal one: Session 49). Inventory: 6 top-level

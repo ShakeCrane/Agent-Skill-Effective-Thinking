@@ -44,7 +44,7 @@ understanding (via `router/llm-profile.js fillProfile`) to route better than the
 
 ## Re-measurement: boundary-item fills vs independent judges (Session 56, n=6)
 
-Asked a FRESH fill agent to fill 14-field profiles for 6 held-out items (4 where two independent
+Asked a FRESH fill agent to fill 14-field profiles for 6 validation-corpus items (4 where two independent
 judges coalesced against the author/router in Session 54, plus 2 control items where the judges
 agreed with the author). Fills were routed through the real `fillProfileSync`→`route` path.
 

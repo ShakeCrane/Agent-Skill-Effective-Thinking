@@ -81,6 +81,52 @@ const check = (name, cond, detail) => {
   check('step-wise success completes loop', s1.done === true && s1.success === true);
 }
 
+// ---- Case 6 (regression): a DEEP task with consecutive no-new-info rounds must stop via
+//      STAGNATION (roundsSinceNewInfo accumulating to the budget), NOT via the attempt cap. The
+//      pre-fix loop derived roundsSinceNewInfo as 0/1 per round, so "no info -> no info -> stop"
+//      was unreachable and only the attempt cap could end it. ----
+{
+  const profile = {
+    clarity: 0.5, hidden_constraint: 0.7, constraint_count: 2, constraint_conflict: 0.4,
+    reasoning_complexity: 0.5, novelty: 0.5, error_cost: 0.5, reversibility: 0.4,
+    verification_difficulty: 0.8, tool_dependency: false, context_size: 'small',
+    parallelism: false, failures_so_far: 0,
+  };
+  let calls = 0;
+  const final = run({
+    profile,
+    current_model_tier: 'auto',
+    maxSteps: 20, // attempt cap far above the stagnation budget (2), so a stop here can only be stagnation
+    execute: () => { calls += 1; return { ok: false, newInfo: false }; },
+  });
+  check('stagnation stops deep loop before attempt cap',
+    final.done === true && final.success === false && final.attempts === 2,
+    `attempts=${final.attempts} calls=${calls}`);
+  const last = final.history[final.history.length - 1];
+  check('stop reason is stagnation (not attempt cap)',
+    /without new information/.test(last.stopReason || ''), last.stopReason || '(none)');
+  check('stagnation counter accumulated across rounds',
+    final.roundsSinceNewInfo === 2, `roundsSinceNewInfo=${final.roundsSinceNewInfo}`);
+}
+
+// ---- Case 7 (regression complement): new information resets the stagnation counter, so an
+//      alternating no-info/new-info deep loop is NOT stopped by stagnation. ----
+{
+  const profile = {
+    clarity: 0.5, hidden_constraint: 0.7, constraint_count: 2, constraint_conflict: 0.4,
+    reasoning_complexity: 0.5, novelty: 0.5, error_cost: 0.5, reversibility: 0.4,
+    verification_difficulty: 0.8, tool_dependency: false, context_size: 'small',
+    parallelism: false, failures_so_far: 0,
+  };
+  let calls = 0;
+  const loop = adaptiveLoop({ profile });
+  loop.step();
+  const a = loop.step({ ok: false, newInfo: false });
+  const b = loop.step({ ok: false, newInfo: true }); // new info resets the streak
+  check('new info resets the stagnation counter', b.roundsSinceNewInfo === 0,
+    `roundsSinceNewInfo=${b.roundsSinceNewInfo} after ${JSON.stringify({ a: a.roundsSinceNewInfo })}`);
+}
+
 // ---- Case 5: async run (runAsync) — the adapter for real subagent executors. Same bounded,
 //      failure-feeding policy, but the execute step may return a Promise (await a real agent).
 ;(async () => {

@@ -1,11 +1,18 @@
-// Held-out VALIDATION set.
-// These tasks were authored INDEPENDENTLY of the router thresholds (they are not the 13
-// training tasks, and their expected routes are reasoned from task nature, not from
-// consulting DEFAULTS). This gives an honest generalization signal for the co-fit problem
-// documented in failures/failure-log.md (F2).
+// VALIDATION / REGRESSION CORPUS (32 items).
 //
-// Validation items include cases where the expected route is unambiguous AND several where
-// a rule router could plausibly disagree (genuine pressure tests).
+// Naming note (Release Blocker 4): this file was historically called a "held-out validation
+// set". That label is no longer accurate. The corpus GREW through the development feedback
+// loop: its misses at 12→21 items drove router v4 changes (failure-log F5), the extractor
+// fixes (F4), and later sessions expanded (22→32) and cross-checked it (cross-author labels).
+// A set that participates in the feedback loop cannot strictly be called a true held-out test set.
+//
+// What it IS: a regression / specification-consistency corpus. Its labels were reasoned from
+// task nature (not from consulting DEFAULTS), and it checks that the router keeps honoring a
+// fixed, independently-authored specification while the router evolves.
+//
+// What it is NOT: standalone proof of out-of-distribution generalization. The "32/32" result is
+// regression consistency against THIS corpus, not evidence of generalization to unseen
+// distributions. A separate external held-out set is future work.
 //
 // Run: node evals/validation.js
 

@@ -1,4 +1,10 @@
-# Cross-Author Label Agreement Study (held-out validation set)
+# Cross-Author Label Agreement Study (validation corpus / regression)
+
+> Naming note (Release Blocker 4): `evals/validation.js` was historically called a "held-out
+> test set". It is NOT a true held-out set — it participated in the development feedback loop
+> (its misses drove router v4 changes, F4/F5). This study measures agreement between the author's
+> labels, the router, and independent judges over that CORPUS; it is evidence about label
+> quality and judgment consensus, not out-of-distribution generalization.
 
 Status: `experimental` (measured on the 22-item set in Session 30, re-measured on the expanded
 32-item set in Session 54; stable across both — see below). Purpose: quantify how much the
@@ -45,8 +51,11 @@ Updated: Session 54 (cross-author re-measurement on the 32-item set).
 
 **The Session-30 findings reproduce on the expanded set, nearly identically:**
 - Router↔A and Router↔B equal Author↔A and Author↔B on BOTH dimensions (68.8%/71.9% full,
-  78.1%/81.3% strategy) — the router is again NO more fitted to the author than the author is to
-  independent judges.
+  78.1%/81.3% strategy). Reading this strictly: the router agrees with independent judges at the
+  same rate the author does — so the cross-review did NOT detect an obvious author-specific
+  DIFFERENTIAL bias. This does NOT prove the router is free of author or benchmark-ecosystem
+  overfitting (the router still reproduces the author's labels 100%), and it is not
+  out-of-distribution evidence.
 - Inter-labeler strategy agreement stays very high (96.9% over 32, vs 100% over 22); the two fresh
   judges agree 100% on all 10 NEW items.
 - On the 10 new boundary items the judges coalesced WITH the router/author on 6
@@ -108,11 +117,14 @@ caller-adjustable hint), so it carries less evidential weight than the strategy 
    (strategy-only: 82%). So the defensible claim is "...matches the author 100% AND independent
    labelers 82% (strategy) / 68–77% (full)."
 
-2. **The router is NOT disproportionately fitted to the author.** Router↔A and Router↔B equal
-   Author↔A and Author↔B exactly on BOTH the full and strategy-only dimensions. An author-fitted
-   router would agree with the author MORE than with labelers; instead it matches independent
-   judgment at the same rate the author does. The residual therefore reflects genuine judgment
-   variance in the task, not a router defect.
+2. **The router is not DISPROPORTIONATELY fitted to the author — but author/benchmark-ecosystem
+   overfitting is not excluded.** Router↔A and Router↔B equal Author↔A and Author↔B on BOTH the full
+   and strategy-only dimensions, i.e. the router does not agree with the author MORE than with
+   independent judges. Because router↔author is 100%, however, this cross-review can only rule out a
+   specific author-excess bias; it cannot exclude that the author, the benchmark items, and the
+   router's thresholds all belong to one shared (possibly flawed) judgment ecosystem. The residual
+   therefore reflects genuine label variance in the boundary tasks, not a demonstrated absence of
+   overfitting.
 
 3. **Strategy consensus is strong:** two fully-independent labelers agree 100% on strategy, and the
    router sits at 82% against both — the same ceiling as the author. Fast↔structured boundaries

@@ -29,3 +29,7 @@ escalation fires only on a real current-model-vs-requirement mismatch (objective
 - One model family, coarse battery, ~15.6k-token context (still not multi-100k). Multi-model
   comparison and extreme-length context are deferred. Calibration remains `experimental`, not
   `validated`.
+- **`tier strong` is a narrow probe result, not long-horizon behavioral capability:** passing the
+  10-probe battery (and 10/10 context probes) does not establish that tool-calling, stopping,
+  self-control, or long multi-step agent runs are equally reliable. Those remain externally
+  unmeasured.

@@ -270,3 +270,59 @@ per-single-task construct. Applying it across rows corrupts decisions without th
 injection unchanged. Regression added to `evals/cli-batch-test.js`.
 **Prevention rule (general):** *option combinations must be validated per-mode; a single-task option
 must be explicitly inert (and warn) in batch/aggregate modes, not silently broadcast.*
+
+---
+
+## F16 — Action-loop degeneration (real external failure evidence; NOT resolved by the current skill)
+
+**When:** observed in real agent runs during later development (autonomous goal rounds), collected
+as long-term failure evidence.
+
+**Phenomenon:** the agent has ALREADY decided to call a tool, but then repeatedly emits "现在执行 /
+now invoke / no more preamble" text without actually invoking the tool — and even after recognizing
+that it is in a repetition loop, it keeps repeating the declaration instead of acting.
+
+**Why it matters:** this is not a reasoning/probability failure — it is an **action-selection →
+action-execution** gap. Deliberation and stopping logic can both be correct while the loop still
+fails to convert "stop deliberating" into an actual tool call. A cognitive skill that only governs
+deliberation stops short of governing action.
+
+**Possible mechanism:** repeated self-narration ("I will now call X") is being treated as progress
+(the narration itself looks like a step), combined with no external check that the promised action
+actually happened; the model therefore drifts into re-asserting intent rather than emitting the tool
+call token.
+
+**Relation to stopping / action control:** `strategies/stopping.js` only decides WHEN deliberation
+should end; it has no notion of "declared action not yet executed". The adaptive loop also treats a
+returned executor result as the action having happened — it cannot detect an executor that only
+narrates. Closing this would require a separate action-control signal (e.g. "tool call actually
+observed this round"), which the current skill does NOT include.
+
+**Current status:** **unknown / unresolved.** The current skill has no test or mechanism that proves
+it prevents action-loop degeneration. Do not claim this is handled.
+
+---
+
+## F17 — Meta-policy self-exemption (real external failure evidence; NOT resolved by the current skill)
+
+**When:** observed across the project's own long-running development (autonomous goal rounds that
+kept continuing after multiple "complete" declarations).
+
+**Phenomenon:** the same agent can design a stopping / convergence policy for a TARGET task, but
+when it is the HOST driving its own long development, it keeps auto-discovering "the next piece of
+work" and starting further sessions even after repeatedly declaring completion. The policy constrains
+the task it is applied to, but not the host that applies it.
+
+**Failure mechanism:** the stopping/convergence policy is an OBJECT of the skill, evaluated on task
+executions the host delegates — while the host's own loop ("found another improvement → continue") is
+governed by a different, looser rule (e.g. a large session round budget). The meta-level (who decides
+to stop the host) is not subject to the first-order stopping policy.
+
+**Implication for future skill design:** a cognitive skill for agents needs an explicit self-application
+boundary: the same convergence criteria the skill imposes on target tasks should be applied to the
+agent's own meta-work (declared complete = stop until external direction). Non-trivial and currently
+unaddressed by the skill's `stopping.js`/convergence machinery.
+
+**Current status:** **unresolved; treated as real external failure evidence.** No feature was added
+to address it (out of scope for the release-blocker fix); it is recorded so the limitation is not
+overclaimed.

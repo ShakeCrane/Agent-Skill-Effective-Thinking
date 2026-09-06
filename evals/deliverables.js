@@ -28,13 +28,20 @@ check('D1: minimal Task Router', typeof route === 'function',
   check('D1b: router produces a strategy', ['fast', 'structured', 'deep'].includes(r.strategy), `strategy=${r.strategy}`);
 }
 
-// 2. All four strategy classes present.
+// 2. All four strategy classes present, and each model_action is REACHABLE from a real input
+//    (not just that the strings exist — the old `['keep','upgrade','delegate'].every((m)=>true)`
+//    was vacuously true and could never fail).
 {
   const proto = require('../strategies/protocol.js');
-  check('D2: strategies Fast/Structured/Deep (+Escalate/Delegate via model_action)',
-    ['fast', 'structured', 'deep'].every((s) => proto.PROTOCOLS[s])
-      && ['keep', 'upgrade', 'delegate'].every((m) => true),
-    'protocol for fast/structured/deep; model_action keep/upgrade/delegate');
+  check('D2: strategies Fast/Structured/Deep protocols exist',
+    ['fast', 'structured', 'deep'].every((s) => proto.PROTOCOLS[s]),
+    'protocol for fast/structured/deep');
+  const keep = route({ clarity: 0.9, hidden_constraint: 0.05, constraint_count: 1, constraint_conflict: 0, reasoning_complexity: 0.05, novelty: 0.0, error_cost: 0.05, reversibility: 0.95, verification_difficulty: 0.05, tool_dependency: false, context_size: 'small', parallelism: false, failures_so_far: 0 });
+  check('D2b: keep reachable from a real trivial task', keep.model_action === 'keep', `model=${keep.model_action}`);
+  const upgrade = route({ clarity: 0.5, hidden_constraint: 0.7, constraint_count: 3, constraint_conflict: 0.5, reasoning_complexity: 0.85, novelty: 0.6, error_cost: 0.9, reversibility: 0.05, verification_difficulty: 0.9, tool_dependency: false, context_size: 'mid', parallelism: false, failures_so_far: 0, one_shot: true });
+  check('D2c: upgrade reachable from a real one-shot high-stakes task', upgrade.model_action === 'upgrade', `model=${upgrade.model_action}`);
+  const delegate = route({ clarity: 0.85, hidden_constraint: 0.3, constraint_count: 1, constraint_conflict: 0, reasoning_complexity: 0.3, novelty: 0.4, error_cost: 0.2, reversibility: 0.9, verification_difficulty: 0.3, tool_dependency: true, context_size: 'small', parallelism: true, failures_so_far: 0 });
+  check('D2d: delegate reachable from a real parallel fan-out task', delegate.model_action === 'delegate', `model=${delegate.model_action}`);
 }
 
 // 3. Model escalation AND de-escalation logic.

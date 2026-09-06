@@ -30,30 +30,34 @@ function fanOutSync(items, worker) {
 }
 
 /**
- * reviewSync(claims, reviewers) -> [{ claim, index, votes, agreement, verdict }]
- * Each reviewer(claim) -> { agree: boolean, note?: string }. verdict is
- *   'agreed'   -> all or a strong majority agree,
- *   'disputed' -> meaningful disagreement exists (must be resolved by the main agent),
- *   'rejected' -> unanimous disagreement.
- * Survivorship: a reviewer that throws contributes a vote { agree:false, note:'reviewer error' }.
+ * reviewSync(claims, reviewers, opts?) -> [{ claim, index, votes, ...verdictSummary }]
+ * Each reviewer(claim) -> { agree: boolean, note?: string }. A vote has status:
+ *   'agree' | 'disagree' | 'unavailable' (throwing / no boolean agree).
+ * Verdict semantics (verification failure is NOT counter-evidence — a throwing reviewer is
+ * unavailable, never a dissent):
+ *   'agreed'            -> all VALID votes agree AND quorum met,
+ *   'disputed'          -> valid votes genuinely disagree AND quorum met (main agent must resolve),
+ *   'rejected'          -> all valid votes disagree AND quorum met,
+ *   'unavailable'       -> zero valid votes (no evidence either way — never 'rejected'),
+ *   'insufficient_review' -> valid votes present but below opts.minReviews (default 1).
+ * The result exposes agreeVotes / disagreeVotes / unavailableVotes / validVotes / quorumMet so a
+ * caller can see how much real evidence supports the verdict, and preserves reviewer failures as
+ * diagnostics (votes[*].note / status), never silently dropping them.
  */
-function reviewSync(claims, reviewers) {
+function reviewSync(claims, reviewers, opts = {}) {
   return claims.map((claim, index) => {
     const votes = reviewers.map((reviewer, rIdx) => {
       try {
-        const v = reviewer(claim) || {};
-        return { reviewer: rIdx, agree: v.agree !== false, note: v.note || '' };
+        const v = reviewer(claim);
+        if (v && typeof v === 'object' && typeof v.agree === 'boolean') {
+          return { reviewer: rIdx, agree: v.agree, note: v.note || '', status: v.agree ? 'agree' : 'disagree' };
+        }
+        return { reviewer: rIdx, agree: undefined, note: 'reviewer error: no boolean agree returned', status: 'unavailable' };
       } catch (err) {
-        return { reviewer: rIdx, agree: false, note: `reviewer error: ${err && err.message ? err.message : err}` };
+        return { reviewer: rIdx, agree: undefined, note: `reviewer error: ${err && err.message ? err.message : err}`, status: 'unavailable' };
       }
     });
-    const agreeCount = votes.filter((v) => v.agree).length;
-    const total = votes.length;
-    const agreement = total ? agreeCount / total : 0;
-    let verdict = 'agreed';
-    if (agreement === 0) verdict = 'rejected';
-    else if (agreement < 1) verdict = 'disputed';
-    return { claim, index, votes, agreement, verdict };
+    return { claim, index, votes, ...summarizeVotes(votes, opts) };
   });
 }
 
@@ -97,33 +101,60 @@ async function fanOutAsync(items, worker) {
 }
 
 /**
- * reviewAsync(claims, reviewers) -> Promise<[{ claim, index, votes, agreement, verdict }]>
+ * reviewAsync(claims, reviewers, opts?) -> Promise<[{ claim, index, votes, ...verdictSummary }]>
  * Async variant of reviewSync for REAL reviewers (subagents): each reviewer(claim) may return
- * { agree, note } or a Promise. Survivorship: a throwing/rejecting reviewer contributes
- * { agree:false, note:'reviewer error' } (self-eval cannot be trusted blindly).
+ * { agree, note } or a Promise. Same unavailable/quorum semantics as reviewSync: a throwing or
+ * rejecting reviewer, or one that returns no boolean `agree`, is `unavailable` (never a dissent).
  */
-async function reviewAsync(claims, reviewers) {
+async function reviewAsync(claims, reviewers, opts = {}) {
   const out = [];
   for (let index = 0; index < claims.length; index++) {
     const claim = claims[index];
     const votes = [];
     for (let rIdx = 0; rIdx < reviewers.length; rIdx++) {
       try {
-        const v = (await reviewers[rIdx](claim)) || {};
-        votes.push({ reviewer: rIdx, agree: v.agree !== false, note: v.note || '' });
+        const v = await reviewers[rIdx](claim);
+        if (v && typeof v === 'object' && typeof v.agree === 'boolean') {
+          votes.push({ reviewer: rIdx, agree: v.agree, note: v.note || '', status: v.agree ? 'agree' : 'disagree' });
+        } else {
+          votes.push({ reviewer: rIdx, agree: undefined, note: 'reviewer error: no boolean agree returned', status: 'unavailable' });
+        }
       } catch (err) {
-        votes.push({ reviewer: rIdx, agree: false, note: `reviewer error: ${err && err.message ? err.message : err}` });
+        votes.push({ reviewer: rIdx, agree: undefined, note: `reviewer error: ${err && err.message ? err.message : err}`, status: 'unavailable' });
       }
     }
-    const agreeCount = votes.filter((v) => v.agree).length;
-    const total = votes.length;
-    const agreement = total ? agreeCount / total : 0;
-    let verdict = 'agreed';
-    if (agreement === 0) verdict = 'rejected';
-    else if (agreement < 1) verdict = 'disputed';
-    out.push({ claim, index, votes, agreement, verdict });
+    out.push({ claim, index, votes, ...summarizeVotes(votes, opts) });
   }
   return out;
 }
 
-module.exports = { fanOutSync, fanOutAsync, reviewSync, reviewAsync, consolidate };
+const DEFAULT_REVIEW_QUORUM = 1; // minimum valid (non-unavailable) votes for a definite verdict
+
+function summarizeVotes(votes, opts) {
+  const minReviews = Number.isFinite(Number(opts && opts.minReviews))
+    ? Math.max(1, Math.round(Number(opts.minReviews)))
+    : DEFAULT_REVIEW_QUORUM;
+  const valid = votes.filter((v) => v.status !== 'unavailable');
+  const agreeVotes = valid.filter((v) => v.agree === true).length;
+  const disagreeVotes = valid.filter((v) => v.agree === false).length;
+  const unavailableVotes = votes.length - valid.length;
+  const validVotes = valid.length;
+  // Agreement is measured over VALID votes only (unavailable is not counter-evidence).
+  const agreement = validVotes ? agreeVotes / validVotes : 0;
+  const quorumMet = validVotes >= minReviews;
+  let verdict;
+  if (validVotes === 0) {
+    verdict = 'unavailable';
+  } else if (!quorumMet) {
+    verdict = 'insufficient_review';
+  } else if (agreement === 1) {
+    verdict = 'agreed';
+  } else if (agreeVotes === 0) {
+    verdict = 'rejected';
+  } else {
+    verdict = 'disputed';
+  }
+  return { agreeVotes, disagreeVotes, unavailableVotes, validVotes, minReviews, quorumMet, agreement, verdict };
+}
+
+module.exports = { fanOutSync, fanOutAsync, reviewSync, reviewAsync, consolidate, summarizeVotes };

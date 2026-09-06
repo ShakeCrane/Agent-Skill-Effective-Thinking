@@ -12,7 +12,7 @@ plan first, which strategy to use (Fast/Structured/Deep), whether to escalate/de
 (based on a real capability mismatch), how to verify, and when to stop deliberating — spending the
 right effort per task, not one rigid template for everything.
 
-## Changes (final converged tree — 42 intentional files)
+## Changes (final converged tree — 69 files, see CONVERGENCE PASS)
 
 - **Skill & docs:** `SKILL.md` (agent-facing contract), `AGENTS.md`, `README.md`, `changelog.md`,
   `reports/session-01.md` (this), `methods/core/task-router.md`.
@@ -28,7 +28,7 @@ right effort per task, not one rigid template for everything.
 - **bin/router.js** — CLI: task text → strategy + model action + execution protocol + when-to-stop +
   CERTAINTY + estimated effort + VERIFICATION PLAN (`npm run route`).
 - **index.js** — public library API (`require('./')` = whole skill).
-- **evals/** — 26 checks: benchmark + baseline, held-out validation, extraction fidelity, adversarial
+- **evals/** — 26 checks: benchmark + baseline, validation corpus (regression), extraction fidelity, adversarial
   probe (+ de-escalation), failure-mode coverage, capability + calibrate + robustness (over-fit guard),
   protocol, stopping, adaptive, orchestrate, deliverables gate, cli-smoke, skill-consistency, cost,
   library, dogfood (real text through the library), package-meta, principles, certainty, verify
@@ -36,15 +36,19 @@ right effort per task, not one rigid template for everything.
   llm-profile (LLM-filled signal path), fuzz (input robustness), cross-author (label agreement).
 - **research/** — router-evidence, cross-author-labels, live-verify-run, self-review-reliability,
   self-review-realistic-code, real-model-calibration, adaptive-live-run, skill-contract-audit,
-  llm-profile-live. **failures/failure-log.md** (F1–F15).
+  llm-profile-live. **failures/failure-log.md** (F1–F17).
 
 ## Evidence (npm test, exit 0; all 26 checks PASS)
 
-- Training benchmark 19/19 (+68.4 pts strategy, +15.4 pts model vs naive baseline 31.6%).
-- **Held-out validation 32/32** (profile-based, author-judged labels; cross-author re-measured in
-  Session 54 on all 32: inter-judge 96.9% strategy, router↔judge 78–81% strategy = author↔judge
-  exactly; four new boundary items where both judges coalesce against the router are documented
-  label-quality caveats).
+- Training benchmark 19/19 **routing/strategy-label accuracy** (+68.4 pts strategy, +15.4 pts model
+  vs the naive "always structured/keep" baseline at 31.6%). This is a ROUTING-LABEL benchmark — it is
+  NOT real-task success rate, just agreement with hand-authored expected routes on a fixed corpus.
+- **Validation corpus 32/32 (regression / specification consistency — NOT out-of-distribution
+  generalization):** profile-based, author-judged labels. The corpus entered the development feedback
+  loop (its misses drove router v4 changes; see F4/F5), so it is not a true held-out test set.
+  Cross-author re-measured in Session 54 on all 32: inter-judge 96.9% strategy, router↔judge 78–81%
+  strategy = author↔judge. That equality only means the cross-review did NOT detect an obvious
+  author-specific bias; it does NOT rule out author / benchmark-ecosystem overfitting.
 - End-to-end text→route 38/41 (**93%**; remaining misses are documented keyword-extraction ceilings).
 - Failure-mode coverage: all 9 objective-named modes exercised + no regression.
 - Objective-principles conformance (P1–P6): all six hold over the corpus (no rushed ambiguous, no
@@ -72,14 +76,14 @@ right effort per task, not one rigid template for everything.
   richer than the keyword heuristic, so real deployment should let an LLM fill the profile.
 - Honest confidence (threshold-margin certainty) surfaces exactly where decisions are fragile.
 
-## Failures (documented; failures/failure-log.md F1–F15)
+## Failures (documented; failures/failure-log.md F1–F17)
 
 - **F1** high error cost alone forced Deep (overthinking) — fixed (v2): stakes must be mediated by
   verification difficulty.
-- **F2** train-set 100% is co-fit — addressed with an independent held-out set + robustness test.
+- **F2** train-set 100% is co-fit — addressed with an independently-authored validation corpus + robustness test.
 - **F3** large mechanical batch boundary — no code change; candidate signal recorded.
 - **F4** naive extractor misroutes (80%→96% after general fixes) — keyword ceiling documented.
-- **F5** enlarged held-out set exposed real overfitting + extractor numeric false positives — fixed (v4).
+- **F5** enlarging the validation corpus exposed real overfitting + extractor numeric false positives — fixed (v4).
 - **F6** threshold-robustness finding: fragility is localized to boundary tasks (adjacent-strategy
   flips only) — evidence, not a code change; certainty now flags those cases.
 
@@ -97,7 +101,7 @@ right effort per task, not one rigid template for everything.
 
 ## Risks
 
-- Validation set still small (22) with author-judged labels; extractor is heuristic (93% e2e).
+- Validation corpus still small (32) with author-judged labels; extractor is heuristic (93% e2e).
 - Calibration/CONSUME measured on one model family (reasoning/context/reliability + a true ~15.6k-
   token long-context run, Session 55 — no degradation at ~8× the Session-38 size); multi-model
   comparison and extreme-length (multi-100k) context not yet done.
@@ -113,7 +117,7 @@ right effort per task, not one rigid template for everything.
    recorded honestly).
 2. ~~Run calibration probe battery on a real model~~ → DONE (Sessions 35/38: measured capacity
    {1,1,1}/tier strong + true lost-in-the-middle context 6/6).
-3. ~~Expand held-out validation with cross-author labeling~~ → DONE (Session 30: 82% strategy
+3. ~~Expand validation corpus with cross-author labeling~~ → DONE (Session 30: 82% strategy
    agreement on 22 items).
 4. ~~Publish as a reusable npm package~~ → DONE at packaging level (Sessions 34/49/51: real tarball,
    `npm run consume` end-user gate). Remaining: actual registry publish (operator).

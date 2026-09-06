@@ -51,12 +51,64 @@ const check = (name, cond, detail) => {
   check('unanimous disagreement => rejected', r[0].verdict === 'rejected', `verdict=${r[0].verdict}`);
 }
 
-// ---- review: a throwing reviewer counts as a dissent (self-eval cannot be trusted blindly) ----
+// ---- review: a throwing reviewer is UNAVAILABLE (not a dissent) — verification failure is not
+//      counter-evidence. One valid agree + one unavailable => agreed (with 1 valid vote exposed). ----
 {
   const r = reviewSync([{ id: 'c' }], [() => ({ agree: true }), () => { throw new Error('reviewer down'); }]);
-  check('throwing reviewer surfaces a dispute', r[0].verdict === 'disputed', `verdict=${r[0].verdict}`);
-  check('throwing reviewer note recorded', r[0].votes.some((v) => /reviewer error/.test(v.note)),
-    JSON.stringify(r[0].votes.map((v) => v.note)));
+  check('throwing reviewer is unavailable, not a dispute (Case A shape)',
+    r[0].verdict === 'agreed', `verdict=${r[0].verdict}`);
+  check('unavailable vote recorded as diagnostics (not a dissent)',
+    r[0].unavailableVotes === 1 && r[0].validVotes === 1 && r[0].disagreeVotes === 0
+      && r[0].votes.some((v) => /reviewer error/.test(v.note)),
+    JSON.stringify(r[0].votes.map((v) => `${v.status}:${v.note}`)));
+}
+
+// ---- Case A (explicit): 2 agree + 1 reviewer exception => agreed, NOT "2 agree / 1 disagree" ----
+{
+  const r = reviewSync([{ id: 'c', text: 'X' }], [
+    () => ({ agree: true, note: 'A ev' }),
+    () => ({ agree: true, note: 'B ev' }),
+    () => { throw new Error('reviewer down'); },
+  ]);
+  check('Case A: 2 agree + 1 exception => agreed (not disputed)',
+    r[0].verdict === 'agreed' && r[0].validVotes === 2 && r[0].agreeVotes === 2
+      && r[0].disagreeVotes === 0 && r[0].unavailableVotes === 1,
+    `verdict=${r[0].verdict} valid=${r[0].validVotes} agree=${r[0].agreeVotes} unavailable=${r[0].unavailableVotes}`);
+}
+
+// ---- Case B (explicit): all reviewers throw => unavailable (NOT rejected) ----
+{
+  const r = reviewSync([{ id: 'c' }], [() => { throw new Error('down a'); }, () => { throw new Error('down b'); }]);
+  check('Case B: all reviewers unavailable => unavailable (never rejected)',
+    r[0].verdict === 'unavailable' && r[0].validVotes === 0 && r[0].unavailableVotes === 2,
+    `verdict=${r[0].verdict} valid=${r[0].validVotes}`);
+  check('Case B: failures preserved as diagnostics',
+    r[0].votes.every((v) => v.status === 'unavailable' && /reviewer error/.test(v.note)),
+    JSON.stringify(r[0].votes.map((v) => v.status)));
+}
+
+// ---- Case C (explicit): valid reviewers genuinely disagree => still disputed ----
+{
+  const r = reviewSync([{ id: 'c' }], [() => ({ agree: true }), () => ({ agree: false, note: 'counterexample' })]);
+  check('Case C: real disagreement => disputed',
+    r[0].verdict === 'disputed' && r[0].validVotes === 2 && r[0].agreeVotes === 1 && r[0].disagreeVotes === 1,
+    `verdict=${r[0].verdict} agree=${r[0].agreeVotes} disagree=${r[0].disagreeVotes}`);
+}
+
+// ---- quorum: valid votes below minReviews => insufficient_review, never agreed/rejected ----
+{
+  const r = reviewSync([{ id: 'c' }], [() => ({ agree: true }), () => { throw new Error('down'); }], { minReviews: 2 });
+  check('quorum not met => insufficient_review (not agreed)',
+    r[0].verdict === 'insufficient_review' && r[0].quorumMet === false && r[0].validVotes === 1,
+    `verdict=${r[0].verdict} quorumMet=${r[0].quorumMet}`);
+}
+
+// ---- a reviewer returning no boolean `agree` is also unavailable (not silently agree) ----
+{
+  const r = reviewSync([{ id: 'c' }], [() => ({}), () => null]);
+  check('reviewer without boolean agree => unavailable (no silent agree)',
+    r[0].verdict === 'unavailable' && r[0].unavailableVotes === 2,
+    `verdict=${r[0].verdict} unavailable=${r[0].unavailableVotes}`);
 }
 
 // ---- consolidate: keep good results, surface failures ----
@@ -97,10 +149,13 @@ const check = (name, cond, detail) => {
   check('reviewAsync carries reviewer notes', rev[0].votes.some((v) => /counterexample/.test(v.note)),
     JSON.stringify(rev[0].votes.map((v) => v.note)));
 
-  // A rejecting async reviewer is a dissent (self-eval cannot be trusted blindly).
+  // A rejecting async reviewer is UNAVAILABLE (not a dissent): one valid agree + one unavailable
+  // => agreed, with the failure preserved as diagnostics.
   const rev2 = await reviewAsync([{ id: 'c' }], [async () => ({ agree: true }), async () => { throw new Error('reviewer down'); }]);
-  check('rejecting async reviewer surfaces a dispute', rev2[0].verdict === 'disputed' && rev2[0].votes.some((v) => /reviewer error/.test(v.note)),
-    `verdict=${rev2[0].verdict}`);
+  check('rejecting async reviewer is unavailable (not a dispute)',
+    rev2[0].verdict === 'agreed' && rev2[0].unavailableVotes === 1 && rev2[0].validVotes === 1
+      && rev2[0].votes.some((v) => /reviewer error/.test(v.note)),
+    `verdict=${rev2[0].verdict} valid=${rev2[0].validVotes} unavailable=${rev2[0].unavailableVotes}`);
 
   // consolidate over async fan-out results works identically.
   const c = consolidate(out);

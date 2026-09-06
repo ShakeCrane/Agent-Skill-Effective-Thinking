@@ -31,6 +31,9 @@ unit-tested with synthetic results, but never run against an actual model. Updat
    calibrate.js is demonstrated, not just unit-mocked.
 2. **The measured tier is `strong` for this model family** — reasonable for a capable model, but
    this is ONE family and the battery is coarse. It should not be over-read as a precise ranking.
+   **`strong` here means only "passes these 10 narrow probes on one family"; it is NOT evidence that
+   long-horizon agent behavior, tool-calling, stopping discipline, or self-control are equivalently
+   strong.** Probe capability ≠ real long-horizon behavioral capability.
 3. **Context measured with a true long-context test (Session 38):** replaced the caveat-riddled
    reading of `context=1` with a real ~7.7k-char (~1.9k-token) lost-in-the-middle document: a fact
    placed at the VERY END (K_42), a fact at the BEGINNING (port 8080), and an instruction in the
