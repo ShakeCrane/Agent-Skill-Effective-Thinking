@@ -1,0 +1,890 @@
+# Changelog
+
+## Session 57 — CONVERGENCE PASS + current-state sweep after Sessions 53–56
+
+- Ran the objective-mandated convergence pass (last formal one: Session 49). Inventory: 6 top-level
+  files + 9 dirs, 69 files total, 28 eval scripts, 7 method cards, 9 research notes + 2 persisted
+  cross-author label files; zero junk/scratch.
+- **Current-state consistency sweep** (four doc-touching sessions had passed since the last sweep)
+  found and fixed TWO genuine drifts that a reader trusting the docs would hit:
+  - `reports/session-01.md` Evidence: robustness numbers still read "single-axis ≤5.7%, all-axes
+    ≤14.3%" (the 41-item-set values) while the suite now measures the 51-item set at ≤5.9%/≤13.7%.
+  - `methods/experimental/capability-calibration.md`: said "one true long-context run" — there are
+    now two (Session 38 ~1.9k + Session 55 ~15.6k tokens); limits line updated to ~15.6k.
+  Historical records (changelog appendices, failure-log, study archives) validated as correctly
+  frozen and untouched.
+- Re-verified the whole converged state: `npm test` = 26 scripts exit 0, `npm run audit` =
+  26/26 "skill healthy", `npm run consume` PASS (tarball packs → installs → full public API works
+  for an end user). No code change.
+
+## Session 56 — live LLM-profile fills on the Session-54 boundary items (n=6)
+
+- Tested whether the LLM-fill path reproduces INDEPENDENT-JUDGE behavior on the 6 items most relevant
+  to the Session-54 finding (4 where both judges coalesced against the author/router + 2 controls).
+  A fresh fill agent produced 14-field profiles; routed through the real `fillProfileSync`→`route`.
+- **Fill sided with the judges on 2/6:** `contract-review-large-hd` → `deep/delegate` via
+  `parallelism=true` (the exact judge reading the author's profile MISSED — a 200-page review IS
+  partitionable; strongest evidence yet the LLM path beats the extractor on a delegability signal),
+  and `many-constraints-trivial-verify` → structured.
+- **Fill sided with the author on 2/6:** `ambiguous-cheap-reversible` was filled with `clarity=0.35`
+  IDENTICAL to the author — so the judges' "fast" is an alternative stance, not the dominant reading
+  (author + fill = 2-of-4 sources read ambiguity; P1-cautious structured is majority). `novel-hard-
+  verify-algo` stayed deep/keep (judges' upgrade is a model-strength preference the router reserves
+  for concrete mismatch).
+- **Session-37 over-marking mode reproduced:** the fill over-flagged both mechanical batch
+  conversions — `yaml-json-comments` (conflict 0.8 + parallelism true → wrong deep/delegate) and
+  `mech-parallel-delegate` (constraint_count 4 → spurious deep). Confirmed: the LLM path is a
+  COMPLEMENTARY, not uniformly-better, signal source — it surfaces judge-visible signals keyword
+  misses but over-flags batches, which is exactly why the adapter (sanitize + keyword fallback +
+  never-sole-source) exists.
+- Recorded in `research/llm-profile-live.md` (re-measurement section; status n=10 across 2 sessions).
+  No code change. Suite + audit green.
+
+## Session 55 — context envelope extended to ~15.6k tokens: lost-in-the-middle does NOT appear
+
+- Advanced the "extreme-length context" remaining limit: built a deterministic 750-line (~62.4k-char,
+  ~15.6k-token) document and ran a fresh model-under-test (no-tools, pure reading) against four
+  planted probes: beginning fact (entry 0005 → 31), middle fact (entry 0598 → 77), end fact
+  (entry 0746 → 42), and a mid-document embedded INSTRUCTION ("ignore preceding format facts;
+  append code 4711 as the very last thing in your reply").
+- **Result: 4/4 correct.** Beginning, middle, and end facts all recalled, and the mid-instruction
+  was followed exactly (code 4711 appended, instruction restated) — no lost-in-the-middle
+  degradation at ~8× the Session-38 (~1.9k-token) document size. Combined Sessions 38+55 = **10 real
+  context probes, 10/10**.
+- Honest caveats preserved: one model family, single run, ~15.6k tokens — the multi-100k extreme
+  ceiling is still unmeasured; `context=1` evidence is stronger but not an absolute guarantee.
+- Scratch test document removed (no repo pollution); recorded in
+  `research/real-model-calibration.md` (finding #5 + status). Docs updated (report Risks).
+
+## Session 54 — independent labels for all 32 held-out items; Session-30 findings reproduce
+
+- Closed the Session-53 open item: dispatched two FRESH, no-seed labelers to independently label ALL
+  32 `evals/validation.js` task texts (no profiles, no thresholds, no author labels). **Both settled
+  with complete 32-item labels** — a rare clean settle after several environments where fresh
+  subagents stalled — and their outputs are now persisted as durable reproducibility data
+  (`research/cross-author-labels/labelerA.json`, `labelerB.json`).
+- **Results (32 items):** author↔router 32/32 (100%); **router↔A = author↔A = 68.8% full /
+  78.1% strategy, router↔B = author↔B = 71.9% full / 81.3% strategy** — the Session-30 "router is
+  not disproportionately fitted to the author" finding reproduces EXACTLY (router agrees with
+  independent judges at the same rate the author does). Inter-judge: 93.8% full / **96.9% strategy**.
+- The two judges agree 100% on all 10 new items and coalesce WITH the router/author on 6 of them;
+  on the other 4 both judges independently pick the same alternative (`ambiguous-cheap-reversible`→
+  fast, `many-constraints-trivial-verify`→structured, `contract-review-large-hd`→delegate,
+  `novel-hard-verify-algo`→upgrade) — all defensible fast↔structured / delegate / upgrade-vs-keep
+  judgment boundaries, recorded as label-quality caveats (not router errors under the skill's own
+  rules, and importantly NOT overfit-fitted to the author).
+- No router change. Docs updated (README/report current-state + `research/cross-author-labels.md`
+  re-measurement section). Suite + audit still green.
+
+## Session 53 — held-out validation expanded 22 → 32 with new pressure-area boundary items
+
+- Grew `evals/validation.js` from 22 to **32** author-judged held-out items with NEW pressure areas
+  the old set didn't cover: anti-overthinking-under-urgency (high stakes + cheap local repro →
+  Structured, NOT deep/upgrade), the F-6b one-shot-outranks-parallel ordering (a parallel-looking
+  workload whose deliverable is one irreversible decision → upgrade, not delegate), mechanical
+  PARALLEL delegate (5 sheets vs research-parallel), single-research NO-delegate (delegation
+  restraint), hidden-constraint format-conversion disguise (YAML→JSON with comments), escalation
+  boundary at exactly 2 failures (still keep/Structured), large-context iterable contract review
+  (Deep but NOT upgrade — review list is re-checkable), ambiguity+cheap+reversible NOT deep (F-2
+  boundary), novelty+no-oracle → deep/keep, and many-constraints+trivial-verify → fast (constraint-
+  guard overthink check).
+- Labels reasoned from task nature only (same process as the original 22); several outcomes were
+  genuinely uncertain (e.g. whether the router would keep YAML→JSON at Structured, delegate the
+  mechanical-parallel batch, or go deep on the urgent-but-cheap-to-repro outage).
+- **All 10 new items generalize: validation now 32/32 strategy AND 32/32 model (100%).** No router
+  change was needed — the new boundary items pass on the existing decision procedure, which is
+  stronger generalization evidence than the old 22/22.
+- Dependent evals still green on the larger set: full suite exit 0; robustness over 51 items
+  single-axis ≤5.9% / all-axes ≤13.7% (still stable); principles P1–P7 + coverage audit PASS.
+- Docs updated to 32/32 (README + report current-state; the cross-author study on the original 22
+  remains the honest independent-label number — new 10 have author labels only, independent labels
+  deferred to a model-backed round).
+
+## Session 52 — report Risks/Next refreshed against the true current state
+
+- Re-audited `reports/session-01.md` header numbers: it still claimed "**24** independent checks" while
+  the suite is 26/26 (Session 47 fixed the README but the report header's count drifted again
+  after the Session 50/51 additions). Corrected to 26 and to the current failure-log range F1–F15.
+- Refreshed Risks + Next: marked the ORIGINAL Next list items #1–5 as DONE (wire-to-real-subagents
+  → Sessions 36/43/48; real calibration probe battery → 35/38; cross-author labels → 30; pubish →
+  34/49/51 packaging + consume gate; agent-self signal extraction → 37/45), and consolidated the
+  remaining work into one explicit line: cross-model calibration, extreme-length context, full host
+  nesting, actual registry publish (operator), larger label sets.
+- Docs-only round (convergence); no code change. Suite + audit re-run to confirm nothing moved.
+
+## Session 51 — end-user consume gate: the SHIPPED tarball is proven usable
+
+- Closed the last untested link between "package is packable" and "package works for a consumer":
+  added `evals/consumer-test.js` (requires the INSTALLED package by its root dir so internal
+  requires resolve from the installed tree, not the repo — exactly what an end user's
+  `require('cognitive-agent-skill')` does) + `bin/consume-pack.js` (pack → extract → run that test)
+  + `npm run consume`.
+- `npm run consume` PASSES: `npm pack` runs prepack (full 26-script suite green) → 37-file tarball →
+  extracted as an installed dependency → full public API exercised (route, extract, fillProfile,
+  verify, certainty, fanOutAsync, reviewAsync, runTaskAsync) — all OK. This is a repeatable
+  publish-readiness gate.
+- Fixed two environment details while building it: `spawnSync npm` ENOENT on Windows (`.cmd`
+  shim) → run npm's own CLI JS (`npm_execpath`) under node; and `npm pack` needs a temp `--cache`
+  so it never touches the sandbox-blocked global npm-cache.
+- `npm test` = 26 scripts, exit 0; `npm run audit` = 26/26, "skill healthy"; repo clean.
+
+## Session 50 — fixed F15: batch + --profile-json silently cross-contaminated rows
+
+- Audited option combinations and found a REAL semantics bug (F15): `planTasks` passed the same
+  `opts` (with one `profileJson`) to every row, so `--batch --profile-json '{...}'` applied ONE
+  task's injected profile to ALL rows — e.g. a trivial "rename" wrongly became deep/keep because an
+  architecture task's profile leaked into it. Silent (no crash), so it needed a targeted audit.
+- Fix: `planTasks` now strips `profileJson` (marks `profileJsonIgnored=true`, source stays
+  'keyword'); batch `main()` prints "NOTE: --profile-json is ignored in --batch mode". Single-task
+  injection unchanged. Regression added to `evals/cli-batch-test.js` (contamination case).
+- Verified: contaminated batch now routes rename→fast/keep + architecture→deep/keep via their OWN
+  text; single-task still `src=injected+keyword`. `npm test` = 26 scripts, exit 0; audit 26/26.
+  Failure log updated (F15).
+
+## Session 49 — CONVERGENCE PASS (fresh): README tree fixed, all docs reachable, tarball complete
+
+- Ran a fresh convergence pass (the objective's mandated check; last done Session 40). Exercises:
+  full inventory (6 top-level files, 9 dirs, 7 method cards, 9 research notes, 26 chain evals, 27
+  eval files) + junk scan (zero) + README-tree↔files cross-check.
+- **Found and fixed real gaps:** the README tree listed only `methods/core/task-router.md` (all 7
+  experimental cards missing), omitted `research/adaptive-live-run.md` + `research/skill-contract-
+  audit.md`, and had a broken `└─`/indentation line in the research tree. Fixed the tree; re-check
+  now reports ALL research + methods files referenced.
+- Re-packed: tarball = 36 files / 84.1 kB, containing ALL 7 method cards + ALL 9 research notes
+  (nothing orphaned in-tree, nothing extra). `npm test` = 26 scripts, exit 0; audit 26/26.
+
+## Session 48 — workspace write-probe + second live adaptive run (loop handles real executor stall)
+
+- **Probed the Session-43 caveat:** can a sub-agent write into the reusable WORKSPACE? YES —
+  `WROTE: yes / CONTENT_OK: yes` (probe file written + read back exactly). So agents CAN write; the
+  earlier stall was temp-target + specific executor behavior, not an absolute limit.
+- **Second live attempt** (executor asked to write the IPv4 impl into `scratch-live/`) again did not
+  settle in a reasonable time and was interrupted — recorded honestly as a REAL failure mode.
+  The skill's adaptive loop handled it exactly as designed: attempt-1 failure fed back through
+  `runAsync` → re-route (deep/keep, f=1) → attempt 2 converges; an always-failing executor stays
+  bounded at 4 attempts ("不要无限研究"). Scratch cleaned; repo clean.
+- `research/adaptive-live-run.md` updated with a Session-48 addendum. `npm test` = 26 scripts,
+  exit 0; `npm run audit` = 26/26, "skill healthy".
+
+## Session 47 — document-consistency sweep (stale current-state numbers fixed; history kept)
+
+- Audited every long-term doc for STALE CURRENT-STATE claims (not historical session records, which
+  are correctly frozen): fixed README ("24/24 checks"→26/26, "benchmark 13 tasks"→19, "validation
+  21"→22, e2e "91%"→93%, cross-author note added), `reports/session-01.md` (eval checks 24→26,
+  benchmark 13/13→19/19, e2e 32/35→38/41 (93%), extractor-ceiling 91%→93%, evals/research lists
+  updated, failure-log ref F1–F6→F1–F14), and two method cards (verify-planner, task-router: 24→26).
+- Verified true current numbers first (chain=26, benchmark 19/19, e2e 38/41) so the fixes are
+  evidence-backed, not guesses. Historical changelog entries left untouched (they record the state
+  AT that session).
+- `npm test` = 26 scripts, exit 0; `npm run audit` = 26/26, "skill healthy".
+
+## Session 46 — SKILL.md contract-sufficiency audit (doc alone can reproduce router decisions)
+
+- New evidence question: is SKILL.md (the agent-facing contract) instructive ENOUGH that a careful
+  reader could reproduce the router's decisions without reading code? Computed router ground truth
+  for 5 tasks (trivial, architecture, repeated-failure, one-shot, one-shot+parallel) and audited
+  whether SKILL.md forces each outcome.
+- **Result: sufficient at the rule level.** Every necessary outcome is forced by an explicit SKILL.md
+  statement — incl. F-6b (one_shot OVERRIDES parallel-delegation, documented verbatim at L54) and
+  repeated-failure escalation. Step-3 verify-first ladder matches ground truth. A faithful reader
+  derives the same strategy/model/primary-verification as the router on all 5.
+- A no-seed sub-agent cross-check was also dispatched but did not settle in a reasonable time
+  (interrupted; recorded honestly). The deterministic doc↔rule audit is the durable evidence.
+- New `research/skill-contract-audit.md`. `npm test` = 26 scripts, exit 0; `npm run audit` = 26/26,
+  "skill healthy".
+
+## Session 45 — SKILL.md agent-contract gaps closed (one_shot signal + LLM-fill path)
+
+- Found and fixed two real doc↔code gaps in the agent-facing contract (`SKILL.md`): the `one_shot`
+  signal was missing from the signal table entirely (it drives the F-6b one-shot-over-parallel
+  upgrade rule), and the LLM-fill profile path (`fillProfile` / `--profile-json`) — added in
+  Sessions 37/41 — was undocumented, so an agent reading the contract wouldn't know it exists.
+- Added the `one_shot` row (with its semantics: true → upgrade on high cost OR hard-to-verify, and
+  it OVERRIDES parallel-delegation) and a "Signal sources" note pointing at `fillProfile`/
+  `--profile-json` with the sanitize+keyword-fallback guarantee.
+- Verified the exact documented CLI command works end-to-end: `npm run route -- --task "..."
+  --profile-json '{"one_shot":true,...}'` → MODEL: UPGRADE (F-6b behavior reachable as documented).
+- `npm test` = 26 scripts, exit 0; `npm run audit` = 26/26, "skill healthy"; skill-consistency: no
+  drift after the SKILL.md edit.
+
+## Session 44 — input-robustness fuzz test; fixed a real crash on blank task text (F14)
+
+- Added `evals/fuzz-test.js` — feeds adversarial/malformed/extreme strings (empty, whitespace,
+  control chars, emoji/mixed-language, JSON-like, 10k chars, degenerate `--profile-json`) through
+  the WHOLE pipeline (extract → route → certainty → verify → cost → CLI decide → batch planTasks)
+  and asserts no crash + valid vocabulary. Wired into `npm test`.
+- **Found a real bug (F14):** `extract('')`/`extract('  ')` THREW, so the pipeline and CLI crashed
+  on a blank/truncated task. Fixed: `extract` degrades to a neutral low-signal profile
+  (structured/keep — "cannot judge the task", deliberately NOT fast) instead of throwing. Honors
+  "diagnose → degrade → keep evidence → finish": a blank task must not crash the skill.
+- Fuzz test passes 4/4; full `npm test` now 26 scripts, exit 0; `npm run audit` = 26/26, "skill
+  healthy". Failure log updated (F14).
+
+## Session 43 — first live adaptive-execution run (real task + real failing executor)
+
+- Closed the gap that the objective's #1 capability (adaptive execution) was only unit-tested /
+  async-wired, never driven end-to-end on a real task with a real executor failure. Task: strict
+  IPv4 validator; real 13-case test harness as ground truth; real sub-agent executor for attempt 1.
+- **Real failure, honestly used:** attempt 1 (real sub-agent) STALLED and never produced a
+  verifiable file (environment temp-write boundary). The loop fed that real failure back and
+  re-routed; result: attempt 1=deep/keep → converge → success; always-failing executor → **bounded**
+  at 4 attempts (不要无限研究 enforced live); and `extract(task)` under-rates this task as fast/keep
+  while the agent's own reading (LLM-fill path) rates it structured+verify-heavy → deep — a concrete
+  live reinforcement of the Session-37 keyword-ceiling finding.
+- Recorded in `research/adaptive-live-run.md` with honest limits (n=1; success-on-attempt-2
+  simulated after the real first-failure because the sandbox blocks sub-agent temp writes; not a
+  claim the whole host is productionized).
+- `npm test` = 25 scripts, exit 0; `npm run audit` = 25/25, "skill healthy".
+
+## Session 42 — method cards for every capability (convergence: methods/ now complete)
+
+- Added the five missing method-status cards under `methods/experimental/` — for signal extraction
+  (keyword + LLM-fill adapter), capability model + calibration, execution protocol + stopping +
+  adaptive loop, decision certainty + advisory cost, and multi-agent orchestration. Each records
+  purpose / mechanism / evidence (file+eval refs) / known limits, matching the format of
+  `core/task-router.md` and `experimental/verify-planner.md`. AGENTS.md's methodology requires a
+  status record for every method; previously only two methods had cards while the rest existed
+  only as code.
+- Statuses are honest: execution-protocol/stopping/adaptive **validated** (deterministic, heavily
+  unit-tested, async live-demoed); signal-extraction, capability-calibration, decision-certainty,
+  multi-agent-orchestration **experimental** (mechanism-tested, one real-model/long-context run, or
+  live-demoed but not host-productionized).
+- README method-status line updated to point at the complete `methods/` set. Confirmed the package
+  tarball now contains all 7 method cards (34 files, 77.6 kB).
+- `npm test` = 25 scripts, exit 0; `npm run audit` = 25/25, "skill healthy".
+
+## Session 41 — CLI now exposes the LLM-filled profile path (`--profile-json`)
+
+- Added `--profile-json <json>` to `bin/router.js`: an agent (or an LLM fill) can inject a partial
+  or full profile through the SAME entry point as keyword extraction. Missing/invalid fields fall
+  back to keyword extraction (same `sanitize` as `router/llm-profile.js`); malformed JSON degrades
+  to keyword without crashing, and the JSON output reports `source` = `injected+keyword` | `keyword`
+  honestly. This closes the gap where the Session-37 LLM-fill adapter was library-only and not
+  usable from the CLI an agent would drive.
+- Direct checks: injected one-shot+parallel → deep/upgrade (F-6b behavior reachable via CLI);
+  malformed JSON → keyword fallback with honest `source=keyword`; keyword-only unchanged.
+- Extended `evals/cli-smoke.js` with two `--profile-json` regression cases (injection + degradation
+  + source labeling). Full `npm test` = 25 scripts, exit 0; `npm run audit` = 25/25, "skill healthy".
+- Also this round: interrupted the Session-39 adversarial reviewer (it ran many rounds without
+  settling; its purpose — independent cross-check of the post-Session-29 surface — was already
+  served by the captain's own thorough node probes recorded in Session 39). Honest status: the new
+  surface is self + captain-adversarially verified; the interrupted reviewer's settlement report is
+  no longer expected.
+
+## Session 40 — CONVERGENCE PASS + failure log brought to date (F7–F13)
+
+- Executed the objective's required CONVERGENCE PASS: repo inventory (9 intentional dirs, 41 JS
+  files, clean top-level), junk scan (none), full suite + audit + deliverables gate all green.
+- **Failure log updated** (`failures/failure-log.md`) with the design-changing failures from
+  Sessions 29–37 that had no entry: F7 (repeated-failure evidence dropped by verif gate, R-1),
+  F8 (ambiguity can't force Deep, R-2), F9 (two "trivial verification" thresholds, R-3),
+  F10 (delegation over-gated + capability-disabled, R-4/R-5), F11 (one-shot gate too strict + the
+  Session 37 F-6b one-shot-loses-to-parallel ordering bug), F12 (novelty seeped into capability),
+  F13 (planted bugs must be proven real before measuring — Session 33 construction lesson). Each with
+  root cause + fix + prevention rule + generality, matching the log's one-entry-per-root-cause format.
+- The Session 39 adversarial reviewer over the post-Session-29 code surface is still settling; its
+  report will be folded in when it lands (changelog/report already note this).
+- `npm test` = 25 scripts, exit 0; `npm run audit` = 25/25, "skill healthy"; repo clean.
+
+## Session 39 — independent adversarial review of the post-Session-29 code surface
+
+- **Dispatched a fresh no-seed adversarial reviewer** over the code written since the last
+  independent review (Sessions 36–37): `router/llm-profile.js`, async orchestrate adapters
+  (`fanOutAsync`/`reviewAsync`), `runAsync`, the F-6b model-action reorder, and
+  `evals/llm-profile-test.js`. Scope: prototype pollution, count/enum/boolean sanitize edges,
+  async order + error handling, loop bounds, one-shot-vs-parallel precedence, and test vacuity.
+  Reviewer's node-run findings land when it settles (round closes with its report appended).
+- **Captain independent probes of the same surface (all reproduced, all clean):**
+  - Prototype pollution: NOT possible — `sanitize` copies only whitelisted fields, never spreads
+    raw model keys (`__proto__`/`constructor` ignored).
+  - Count edges: NaN/Infinity/`"3abc"`/negative → safely clamped to 0; 3.7 → 4; 1e9 preserved.
+  - one-shot LOW-stakes + parallel → fast/keep (no upgrade; oneShotHighStakes correctly gated on
+    cost≥0.7 OR verif>0.7). F-6b behavior: one-shot high-stakes → upgrade; pure parallel →
+    delegate.
+  - Async: `reviewAsync` preserves input order regardless of completion timing; `runAsync` with an
+    always-failing async execute is bounded (attempts ≤ budget).
+  - Degradation: a THROWING async model produces a profile byte-identical to keyword extraction;
+    partial LLM fills correctly merge keyword defaults.
+- Honest status: the new code held against the captain's own adversarial probing; the independent
+  reviewer's report is the external cross-check. `npm test` = 25 scripts, exit 0; `npm run audit` =
+  25/25, "skill healthy".
+
+## Session 38 — true long-context (lost-in-the-middle) measurement replaces the weak context=1
+
+- Closed the honest caveat from Session 35: the calibration "context" axis was only lightweight
+  placed-instruction probes, so `context=1` was weak evidence. Ran a REAL ~7.7k-char (~1.9k-token)
+  lost-in-the-middle document with a fact at the end (K_42), a fact at the beginning (port 8080),
+  and an instruction in the MIDDLE ("output only 7"); a fresh model-under-test recalled all three
+  (A=K_42, B=8080, C=7).
+- Combined with C1–C3 = **6 real context probes, 6/6** → `context=1` is now backed by a genuine
+  long-context run, not just placed-instruction checks. `research/real-model-calibration.md`
+  updated (Session 38); context is no longer the un-measured axis.
+- Honest limits kept: one model family, ~2k tokens not a multi-100k extreme, single run. Full `npm
+  test` = 25 scripts, exit 0; `npm run audit` = 25/25, "skill healthy".
+
+## Session 37 — LLM-fills-profile adapter + live measurement; F-6b one-shot-over-parallel fix
+
+- **New library path:** `router/llm-profile.js` — `fillProfile(task, {askLLM})` / `fillProfileSync`
+  let a real agent fill the task profile FROM UNDERSTANDING instead of the keyword extractor
+  (closes the objective's "agent-self signal-extraction reliability" item). Sanitizes/clamps
+  model output, validates enums/booleans/counts, falls back to the keyword extractor for missing
+  fields, and degrades to keyword on a throwing model (never crashes the router). Exposed on the
+  public API; `evals/llm-profile-test.js` (9 checks) wired into `npm test` (now 25 scripts).
+- **Live measurement:** a fresh subagent filled profiles for 4 tasks; routing those real fills vs
+  the keyword baseline exposed a REAL router ordering bug (F-6b): a one-shot irreversible judgment
+  with parallelism detected was **delegated instead of upgraded**. Fixed: one-shot-outranks-parallel
+  (a single irreversible decision is never fan-out work). Added benchmark item
+  `one-shot-parallel-judgment` + P7 covers it; P6 now exempts one-shot; extractor extended to detect
+  the new phrasing. Direct verification: T4 (one_shot+parallel) now deep/upgrade; pure parallel
+  still delegates.
+- **Also:** the live comparison showed the LLM-filled profiles are a genuine alternative signal path
+  (they caught the same routes on 3/4 tasks and revealed the one-shot bug), not a universal
+  improvement — recorded honestly in `research/llm-profile-live.md`.
+- `npm test` = 25 scripts, exit 0; e2e extraction 93%; `npm run audit` = 25/25, "skill healthy".
+
+## Session 36 — async adapters: the bridge from skill machinery to REAL subagents
+
+- Added the deferred "future integration" the code notes promised: `multi-agent/orchestrate.js` now
+  exports `fanOutAsync` + `reviewAsync` (Promise-aware fan-out and independent review with the same
+  per-item resilience), and `router/adaptive-loop.js` exports `runAsync` (async `execute` step for
+  real subagent executors). All exposed on the public API (`fanOutAsync`, `reviewAsync`,
+  `runTaskAsync`).
+- Async coverage added to `evals/orchestrate-test.js` and `evals/adaptive-test.js` (deterministic
+  async stubs: order preserved, rejections surface not abort, disagreement => disputed, rejecting
+  reviewer = dissent, runAsync escalates on repeated failure and stays bounded). Full `npm test` =
+  24 scripts, exit 0.
+- **Live demo with REAL subagents:** 3 independent verification units (router escalation, verify
+  ladder, adaptive-loop bounds) each CONFIRMED their claim with line-quoted evidence; results flowed
+  through `consolidate` (3/3 kept) and a live `reviewAsync` produced a genuine DISPUTED verdict; the
+  captain resolved it by reading the actual source (no verif-guard precedes the failures branch).
+  This closes the long-deferred "wire orchestration + adaptive loop to real subagents" item with a
+  working adapter + live demonstration.
+- Honest status: the adapters are unit-tested and live-demoed; they are the wiring point for hosts,
+  not a claim that the whole host is productionized. `npm run audit` = 24/24, "skill healthy".
+
+## Session 35 — first REAL-model calibration run (measured, not synthetic)
+
+- Closed the long-documented gap: `router/calibrate.js` existed and was unit-tested with injected
+  results, but never run against an actual model. Ran the full 10-probe battery (reasoning 4 /
+  context 3 / reliability 3) with a fresh sub-agent as the model under test; scored its answers
+  EXTERNALLY against pre-prepared ground truth (not the model's own claim).
+- **Results:** all 10 probes passed (correct multi-step arithmetic, correct probability reasoning,
+  valid schedule, transitive proof; recalled late/middle-placed facts; consistent legal reading;
+  refused to fabricate an unverifiable crater count; honest confidence). Measured capacity
+  `{1,1,1}` → tier `strong`. Router with the measured profile: hard task → deep/keep (NO upgrade,
+  capable), easy task → fast/keep with recommend_deescalate=true.
+- New `research/real-model-calibration.md`, recorded with honest caveats: one model family, coarse
+  battery, and the context axis uses light placed-instruction probes (NOT true long-context
+  pressure tests) — so context=1 is weaker evidence than it looks. Full `npm test` = 24 scripts,
+  exit 0; `npm run audit` = 24/24, "skill healthy".
+
+## Session 34 — package is genuinely packable: real tarball verified (publish gate closed)
+
+- Produced the ACTUAL npm tarball (`npm pack` with writable cache+destination, sidestepping the
+  earlier npm-cache sandbox EPERM): `cognitive-agent-skill-0.2.0.tgz`, 64.8 kB, 26 files,
+  shasum/integrity recorded. `prepack` (full `npm test`) ran as part of the pack and exit 0.
+- Verified the tarball contains EXACTLY the `files` whitelist: index.js, all of router/, strategies/,
+  multi-agent/, bin/, methods/, research/, SKILL.md, README.md, AGENTS.md, changelog.md, package.json
+  — with NO evals/, no temp, no junk, no internal-only artifacts. The earlier "publishable" claim
+  (metadata + resolving whitelist) is now backed by a real, inspectable package artifact.
+- This closes the long-deferred "package publish" item at the packaging level. The only remaining
+  action is the actual `npm publish` to a registry, which needs credentials/network and is left to
+  the operator (not an autonomous action). Full `npm test` = 24 scripts, exit 0; `npm run audit` =
+  24/24, "skill healthy".
+
+## Session 33 — self-review reliability on REALISTIC code (18/18 total, honest)
+
+- Extended the Session-32 study from tiny functions to realistic, multi-branch production-style
+  code (order-total calculator, config validator, text wrapper, semver parser), each with a
+  confirmed planted domain bug. Fresh SELF-REVIEW-ONLY agents, unanchored (spec + a few examples,
+  no hint). Ground truth by direct execution (author committed two construction errors on first
+  attempts — R3's "duplicate line" never triggered, R4's 4-segment rule wasn't in the contract —
+  both rebuilt and re-verified, itself a lesson: planted bugs must be proven to exist before
+  measuring catch rate).
+- **Result:** 4/4 realistic bugs caught at high confidence (incl. the sneakiest — R1's free-shipping
+  domain bug where example 2 is misleadingly correct), plus R4 flagged a bonus negative-major
+  misparse. Combined with Session 32: **18/18 self-review catches, zero false "CORRECT"**.
+- Honest interpretation (unchanged in spirit, now stronger): the verify ladder's rule is about
+  **guarantee, not average failure** — prefer the run (reproducible evidence) when available; never
+  promote self-review above a real check; and do NOT claim self-review always fails (these data
+  refute that). Limits: n small, one model family, bugs findable by traced reading; still an upper
+  bound, and there exist regimes (long multi-file code, concurrency, external-knowledge bugs) not
+  measured here.
+- New `research/self-review-realistic-code.md`. Full `npm test` = 24 scripts, exit 0; `npm run
+  audit` = 24/24, "skill healthy".
+
+## Session 32 — measured self-review reliability: honest negative result (14/14 catches)
+
+- Ran the largest self-review reliability test yet: 6 distinct subtle planted-bug classes (chunk
+  overlap, default sort lexicographic, falsy-destruction getPath, empty-string throw, wrong reduce
+  initializer, input mutation), each verified by a fresh SELF-REVIEW-ONLY subagent in TWO modes:
+  Round A (anchored: full contract + exposing examples + explicit hand-trace instruction) and
+  Round B (unanchored: one-line spec + one neutral example, no hint). Ground truth established by
+  direct execution (all 6 BUGGY).
+- **Result:** 6/6 caught in Round A AND 6/6 in Round B, all high-confidence with correct reasoning.
+  Including Session 31's 2 subjects: **14/14 self-review catches**.
+
+Honest interpretation (recorded, not spun): the naive claim "self-review is unreliable / reflection
+is not evidence" was NOT reproduced on this sample — a strong model that is explicitly asked to
+hand-trace catches subtle bugs even with minimal prompting. The ladder's real rationale is NOT
+"self-review always fails" (unsupported by our data) but **evidence quality + worst-case guarantee**:
+self-review offers no guarantee, while a run is reproducible evidence. The design (prefer the run,
+self-review last/never-primary) stands, but its stated justification is sharpened and overclaims are
+removed. Method stays `experimental` (n=14, one model family, hand-picked well-known bug classes —
+an upper bound on self-review competence, not a production miss rate).
+- New `research/self-review-reliability.md` (protocol, results, honest limits). Full `npm test` = 24
+  scripts, exit 0; `npm run audit` = 24/24, "skill healthy".
+
+## Session 31 — first live-LLM-executor verify-ladder run (honest, incl. negative result)
+
+- Ran the **first real-agent test of the verify planner's channels**: for two planted-bug subjects,
+  a self-review-only subagent and an independent subagent (allowed to execute tests) each returned a
+  verdict; the captain established ground truth by direct execution. Recorded in
+  `research/live-verify-run.md`.
+- **Result:** both channels caught both bugs; the expected "self-review misses it, execution
+  catches it" gap was NOT observed at n=2. Rather than spin this, recorded it as the honest finding:
+  self-review produced correct assertions here, but execution is the only channel yielding
+  reproducible evidence, so the ladder's rule ("run the check first; self-review last, never
+  primary") stands on that rationale — not on an overclaim that self-review always fails.
+- Verify planner stays `experimental` (first live run done but n=2 and no measured failure-rate
+  gap → not `validated`). Method card + research brief updated.
+- Full `npm test` = 24 scripts, exit 0; `npm run audit` = 24/24, "skill healthy".
+
+## Session 30 — cross-author label agreement: independent judges validate the router
+
+- **Closed the "author-only labels" risk with a measured, repeatable study.** Two fresh, no-seed
+  subagents (`A`, `B`) labeled all 22 held-out validation tasks from TASK TEXT ONLY (no profiles,
+  no thresholds, no author labels). Comparison harness added at `evals/cross-author-check.js` and
+  study write-up at `research/cross-author-labels.md`.
+- **Results (22 items):** strategy agreement between A and B = **22/22 (100%)**; router vs A/B
+  strategy = **18/22 (82%)**, identical to author vs A/B (18/22). Full strategy+model-action
+  agreement 68–77% (upgrade-vs-keep variance). Author↔router stays 22/22.
+- **Key finding:** the router agrees with independent judges at THE SAME RATE the author does (82%
+  strategy, identical on both labelers) — so it is not disproportionately fitted to the author; the
+  residual is genuine task-judgment variance, concentrated in the caller-overridable model-action
+  hint (upgrade-vs-keep is "seriously consider" per the objective, and the strategy dimension that
+  matters most is 82%).
+- **No router change made.** The 4 strategy disagreements are all documented fast↔structured
+  boundary items where the router's author-aligned choice is defensible; retuning to any single
+  judge would recreate author-fit. Honest reporting updated: validation = "22/22 author, 82%
+  independent (strategy), 68–77% (full)".
+- Full `npm test` = 24 scripts, exit 0; `npm run audit` = 24/24, "skill healthy".
+
+## Session 29 — independent adversarial review: 7 router defects + 2 certainty bugs confirmed & fixed
+
+- **Truly independent review (multi-agent principle realized in the loop):** two fresh, no-seed
+  reviewer subagents adversarially attacked (a) the router and (b) the verify/certainty planners,
+  required to RUN `node` counterexamples rather than assert. Both reported structured findings; the
+  router reviewer reproduced every claim, and I independently re-verified each against the code
+  before acting. This closed the objective's "Agent 的自评不能直接作为结论" gap with genuine
+  external evidence.
+- **Router v6 fixes (F-1..F-7):**
+  - F-1 HIGH — repeated failures no longer suppressed at `verif <= 0.5`; failure escalation is now
+    unconditional (empirical evidence trumps the profile's verification claim).
+  - F-2 — ambiguity can now force Deep (`clarity < CLR_DEEP && verif > V_MID`); cheap vague tasks
+    stay Structured/clarify.
+  - F-3 — unified the "not trivially verifiable" bar to `> V_EASY` for novelty/constraints/stakes
+    (was inconsistent V_EASY vs V_MID); removed the verif=0.4 asymmetric-deep behavior.
+  - F-4 — parallel delegation no longer requires `tool_dependency` (any non-trivial fan-out).
+  - F-5 — passing `model_capabilities`/`mismatch` no longer silently disables delegation (reordered).
+  - F-6 — one-shot upgrade gate relaxed to EITHER high cost OR hard-to-verify (was all-of).
+  - F-7 — removed `novelty*0.15` from the capability requirement (novelty no longer tips escalation).
+- **Certainty fixes (Verifier V5/V6/V7):** hidden-constraint deep trigger now contributes a REAL
+  margin (was silently falling back to 0.3 → falsely HIGH); structured certainty is now hard-capped
+  below 'high' (the old 0.5 fallback did not cap); doc corrected to the implemented max-aggregation
+  semantics.
+- **Verify planner fix (V1):** one-shot note now agrees with `primary` (no more "lead with
+  independent review" while primary = external-test); `strategy` param documented + test-locked as
+  profile-driven (V8).
+- **Test-quality fixes (V2/V3/V4):** ladder-order check now validates against an independent spec
+  order (was tautological); field-test's "independent opinion" is now a structurally different
+  computation (was `*1` copy); S2 now actually RUNS the planner-selected compiler/runtime channel.
+- **Benchmark meta-fix:** five new principle-coverage items (one_shot, non-tool parallel,
+  low-verif repeated-failure, ambiguity+hard-verify) closing the P7/P8 gaps the reviewer found —
+  those rules had no test. Benchmark now 18/18 (100%) vs 50% baseline; robustness max flip 5.0–12.5%.
+- **Docs reconciled:** changelog, `methods/core/task-router.md` (v6 rules + status history), README
+  (verify-planner status already `experimental`), report. `npm test` = 24 scripts × PASS, exit 0;
+  `npm run audit` = 24/24, "skill healthy".
+
+## Session 28 — independent adversarial review round + library API completion
+
+- **Independent review (multi-agent principle):** dispatched two fresh adversarial reviewers (router +
+  verify planner) with no conversation seed to try to BREAK the skill and report only reproducible
+  node-executed findings — answering the objective's "Agent 的自评不能直接作为结论" with genuinely
+  independent evidence (results appended when they settle).
+- **Found & fixed a real library gap (independently, not via the reviewers):** `index.js` did NOT
+  export `verify`/`certainty` — the Session 26 planner was CLI-tested but absent from the public
+  API, so `require('./')` consumers couldn't use it. Added `verificationPlan`, `VERIFY_LADDER`, and
+  the `certainty` module to `index.js`; extended `evals/library-test.js` to assert the full surface
+  (15 members) + working calls through the API. All PASS.
+- **Boundary probe:** characterized `verificationPlan` depth steps (external-test only ≤0.3; jumps to
+  compiler+authoritative at 0.31; independent-computation+multi-source at 0.51; reviewer at 0.71).
+  Documented the coarse-boundary over-verification risk as a known limitation (advisory-only plan,
+  not binding) in the method card.
+- **Added missing method-status card** `methods/experimental/verify-planner.md` — AGENTS.md requires
+  a per-method record (purpose/mechanism/applicability/trigger/evidence/limits); the experimental
+  planner had none. README method-status line updated. `files` whitelist already includes `methods/`.
+- Independent re-verification of core principles (not reviewer-dependent): cheap+high-stakes does
+  NOT go deep; one-shot high-stakes → upgrade; repeated failure → deep/upgrade; capability mismatch
+  → upgrade; easy+strong-model → recommend de-escalate; end-to-end extraction sanity (rename→fast,
+  SaaS-auth-design→deep, CSV→fast, flaky-CI→structured). All correct.
+- `npm test` = 24 eval scripts, exit 0; `npm run audit` = 24/24; `npm pack --dry-run` blocked only
+  by npm-cache sandbox (EPERM, not a repo/packaging issue) — `files` whitelist verified resolving
+  directly (11/11 + main).
+- Still `experimental`; NOT yet core (no live-LLM-executor run).
+
+## Session 27 — verification planner FIELD test (does the chosen channel actually catch errors?)
+
+- Added `strategies/verify.js` usage REAL-exercise — `evals/verify-field-test.js`: a mutation-style
+  harness that PROVES the planner's selected verification channels catch planted errors, not just
+  that the ladder "looks right". Four in-process subjects (arithmetic aggregator, boundary clamp +
+  structural invariant, one-shot contract decision with an INDEPENDENT second opinion, string
+  transform): correct impl must pass its channel, planted mutations must be caught, self-review is
+  never primary, and independent computation / independent-reviewer channels disagree with mutated
+  code. All PASS.
+- Two initial test-authoring flaws found and fixed (not planner flaws): (1) I asserted
+  independent-computation in a difficulty-0.4 plan when the ladder correctly only adds it >0.5 —
+  fixed the assertion to match the design; (2) my "lo-bias clamp" mutation did not actually violate
+  the lower-bound invariant it was meant to test — replaced with a real lower-bound-violation
+  mutation. This is the objective's 反思原则 in action: the field test caught MY mistakes, which is
+  exactly what a verification harness is for.
+- Wired `evals/verify-field-test.js` into the `npm test` chain + `npm run audit` (24 checks, exit 0).
+- Honest status: verify planner promoted to **experimental** (unit + mutation-field evidence), NOT
+  core — still no live-LLM-executor run yet.
+
+## Session 26 — verification-priority planner (independent from the router)
+
+- Added `strategies/verify.js` — an INDEPENDENT post-route verification planner that answers
+  "for this chosen strategy, how do we actually verify the outcome, in priority order?" It returns
+  `{ primary, methods, note }` and respects the objective's reflection-is-not-evidence ladder:
+  external-test > compiler/static > primary-source > independent-computation > multi-source >
+  independent-reviewer > self-review (self-review ALWAYS last, never listed as primary).
+- Cheap-verification honesty: `verificationPlan` never lets a cheap/LOW-verify plan masquerade as
+  strong evidence — when the strategy is fast AND verification_difficulty is low it says so
+  explicitly and still prioritizes whatever real check exists (external test >> self-review), so a
+  fast task stays fast without overstating its confidence. It is deliberately independent of the
+  task router: the router picks HOW HARD to think, the planner picks HOW TO PROVE the result.
+- Added `evals/verify-test.js` (10 cases) — verifies the ladder ordering (external > compiler >
+  self-review last), fast/low-verify never offers self-review as primary, deep/high-error tasks get
+  multi-method plans, public API surface (unsigned integer field count, named exports, no
+  camelCase leakage), CLI smoke coverage. All PASS.
+- Wired the plan into the CLI: `bin/router.js` imports `verificationPlan` and now prints a
+  `VERIFICATION PLAN:` block (primary + ordered methods) for every single-task triage.
+- Full `npm test` exits 0 (23 eval scripts in the chain incl. verify-test; benchmark vs
+  no-reasoning baseline: strategy 100% on the benchmark suite vs 38.5% baseline, model action
+  84.6% baseline → 100%).
+
+## Session 25 — publish-ready package metadata
+
+- Made the package genuinely publishable: `private:false`, `version 0.2.0`, `license: MIT`,
+  `keywords`, and a `files` whitelist (index.js, router/, strategies/, multi-agent/, bin/, methods/,
+  research/, SKILL.md, README.md, AGENTS.md, changelog.md) so accidental junk is never published.
+- Added `prepack: npm test` — self-verification before ANY publish (a broken skill can't be shipped).
+- Extended `evals/package-meta-test.js` with publish-metadata checks: license/keywords present,
+  every `files`-whitelist entry resolves, `prepack` is defined, `private:false`. All PASS.
+- Full `npm test` exits 0 (24 checks incl. extended package-meta).
+
+## Session 24 — batch triage (multi-task CLI mode)
+
+- Added batch mode to the CLI: `node bin/router.js --batch` reads many tasks (one per non-empty
+  stdin line) and triages them at once into a compact table (STRATEGY|MODEL|CERTAINTY). Backed by
+  `planTasks` (exported, in-process, testable) in bin/router.js.
+- Added `evals/cli-batch-test.js` (5 cases) — in-process planTasks test (deliberately avoids the
+  spawn/piped-stdout sandbox limitation). Verified: skips blanks, full valid decisions, trivial→fast,
+  repeated-failure→deep/upgrade. Wired into `npm test`; PASS.
+- Demo: `--batch` triaged 4 real tasks → FAST|KEEP, STRUCTURED|KEEP, DEEP|KEEP, DEEP|UPGRADE.
+- Full `npm test` exits 0 (23 checks incl. cli-batch); repo file count grows to include cli-batch-test.js.
+
+## Session 23 — self-audit command (one-command health report)
+
+- Added `bin/self-audit.js` + `npm run audit` — runs every check in the npm test chain and prints a
+  concise PASS/FAIL ledger + aggregated exit code. One command answers "is the whole skill healthy?"
+  without inspecting 22 reports. Wired as `audit` script.
+- Note: captures child stdout via piped stdio was blocked by the sandbox (documented EPERM boundary)
+  → restructured to `stdio:'inherit'` + exit-status judgment rather than retrying.
+- Verified: `npm run audit` → 21/21 checks PASS, exit 0, "skill healthy".
+
+## Session 22 — decision-certainty classifier (honest confidence flag)
+
+- Added `strategies/certainty.js` — the router now surfaces HOW SURE it is: `classify(profile)` →
+  { strategy, certainty: high|medium|boundary, margin }, computed from the distance between the
+  governing signals and their thresholds (fast = distance under the caps; deep = strongest
+  supporting trigger; structured = nearest-boundary flip distance, never falsely 'high').
+  Boundary ratings flag exactly the F6 jitter-sensitive cases, so an agent verifies more precisely
+  when it should. Wired into the CLI as `CERTAINTY:`.
+- Added `evals/certainty-test.js` (5 cases) — decisive tasks high, F6-boundary items not high,
+  structured honest, margin monotone under manipulation. Fixing an initial margin-formula flaw
+  (deep under-used multi-trigger support; structured over-stated) → verified by re-run.
+  Wired into `npm test`; PASS.
+- Full `npm test` exits 0 (22 checks incl. certainty); repo file count grows to include
+  certainty.js + certainty-test.js.
+
+## Session 21 — objective-principles conformance test
+
+- Added `evals/principles-test.js` — a higher-level audit that the router honors the objective's
+  OWN stated rules over the whole eval corpus (independent of exact per-item labels): don't rush
+  ambiguous tasks (P1), don't overthink cheap/easy tasks (P2), large-context → Deep (P3),
+  repeated-failure → escalate/deepen (P4), high-risk + hard-to-verify → Deep (P5), parallel
+  research → delegate not upgrade (P6). All six pass with zero violations. Wired into `npm test`;
+  PASS.
+- Full `npm test` exits 0 (21 checks incl. principles); repo file count grows to include
+  principles-test.js.
+
+## Session 20 — package-integrity guard (package contract sound)
+
+- Added `package.json` metadata (`main: index.js`, `engines: node >=18`) and `evals/package-meta-test.js`
+  — a drift guard asserting: `main` resolves, every npm `scripts.*` node-target file exists, and
+  every file in the `npm test` chain exists. Catches "script points to a missing file" maintenance
+  drift in the growing repo. Wired into `npm test`; PASS.
+- Full `npm test` exits 0 (20 checks incl. package-meta); repo file count grows to include
+  package-meta-test.js.
+
+## Session 19 — dogfood integration test (composed skill coherence)
+
+- Added `evals/dogfood-test.js` — runs REAL task text (10 tasks across the objective's categories)
+  through the PUBLIC library (index.js) end to end and asserts the composed system stays coherent:
+  every emitted strategy/action is within the documented vocabulary, protocol always exists for any
+  emitted strategy, stopping always responds decisively, and the adaptive loop terminates bounded.
+  Catches integration gaps between components that per-unit tests miss. Wired into `npm test`; PASS.
+- Full `npm test` exits 0 (19 checks incl. dogfood); repo file count grows to include dogfood-test.js.
+
+## Session 18 — library entry point (consumable skill)
+
+- Added `index.js` — one public library API exposing the full skill: `route`, `extract`,
+  `capabilities`, `calibrate`, `adaptiveLoop`, `runTask`, `fanOut`, `review`, `consolidate`,
+  `protocol`, `stopping`, `cost`. Other agents/systems can consume the whole skill via `require('./')`.
+- Added `evals/library-test.js` (8 cases) — asserts the public surface and that key behaviors work
+  end-to-end through it (extract→route, cost ordering, stopping, fanOut, protocol). Wired into
+  `npm test`; PASS.
+- Full `npm test` exits 0 (18 checks incl. library); repo file count grows to include index.js,
+  no junk.
+
+## Session 17 — cost / effort estimator (cost-aware, quality-safe)
+
+- Added `strategies/cost.js` — operationalizes the objective's "Token / 时间成本" metric and the
+  "在足够质量下使用最低合理成本" principle: relative order-of-magnitude effort indices per strategy
+  (fast 1 / structured 3 / deep 10), adjusted by large-context and tool-dependency. `budgetCheck`
+  is strictly ADVISORY — it surfaces cost but never auto-downgrades a strategy the router chose for
+  quality/verification reasons (quality stays the arbiter).
+- Added `evals/cost-test.js` (9 cases) — ordering, adjustments, budget fits/over, and proof the
+  budget check has no strategy-override path. Wired into `npm test`; PASS.
+- CLI now prints ESTIMATED EFFORT (relative, advisory) after the extracted profile.
+- Full `npm test` exits 0 (17 checks incl. cost); repo file count grows accordingly, no junk.
+
+## Session 16 — skill-consistency guard (doc/code drift guard)
+
+- Added `evals/skill-consistency.js` — protects the agent-facing contract (SKILL.md): asserts it
+  documents all router strategies, the model-switch autonomy principles (mismatch-driven
+  escalation, downgrade, don't-abuse-upgrade), external-verification-over-self-review, that every
+  SKILL.md-referenced impl path exists, and that all protocol step concepts are described
+  (bilingual-aware, concept-based — not exact-phrase). Wired into `npm test`; PASS.
+- Two test-authoring bugs caught and fixed while building (binding the module object instead of
+  the function; case-sensitive and empty-token-set false negatives) — each verified by re-run.
+- Full `npm test` exits 0 (16 checks incl. skill-consistency); repo = 33 intentional files, no junk.
+
+## Session 15 — threshold-robustness test (closes F2 with evidence)
+
+- Added `evals/robustness-test.js` — perturbs every default threshold ±10% and ±20% (single-axis
+  and all-at-once) and measures how many routing decisions flip across the full 35-item set.
+  Result: single-axis ≤5.7% flips, all-axes ≤14.3%; all flips are adjacent-strategy transitions on
+  genuinely boundary tasks. This is evidence that the ~100% eval scores are NOT an artifact of
+  exact thresholds (F2 closed with data). Wired into `npm test`; PASS.
+- Recorded the finding as F6 in `failures/failure-log.md` (robustness, no code change) and banned
+  future fragility via the test sitting in the gate.
+- Full `npm test` exits 0 (14 checks incl. robustness); repo = 30 intentional files, no junk.
+
+## Session 14 — capability calibration harness (measured model capability)
+
+- Added `router/calibrate.js` — makes "当前模型能力" a MEASURED quantity, not a hand-set constant:
+  a small probe battery (reasoning / long-context / reliability), `probeModel({ runProbe })` runs
+  every probe (env-agnostic; real models via an adapter, deterministic doubles in tests) →
+  per-axis pass rates → `calibrate()` maps to a `{reasoning, context, reliability}` capacity and
+  assigns the NEAREST tier (strong/mid/cheap). The measured capacity feeds `route({model_capabilities})`.
+- Added `evals/calibrate-test.js` (8 cases) — wired into `npm test`; PASS. Verified: all-pass model
+  ↦ strong (KEEP on hard task), all-fail model ↦ cheap (UPGRADE on hard task), per-probe results
+  auditable, axis rates reflect exactly which probes passed.
+- Full `npm test` exits 0 (13 checks incl. calibrate); repo = 29 intentional files, no junk.
+
+## Session 13 — capability-based escalation model
+
+- Added `router/capabilities.js` — the objective's escalation principle made literal: escalate only
+  on a REAL task-vs-model capability mismatch ("当前模型能力与任务要求之间存在实际不匹配"), never
+  for length/jargon/novelty. Derives task requirements (reasoning/context/reliability) from the
+  profile, provides tier capability profiles (strong/mid/cheap), and computes which axes fell short.
+- `route()` now accepts `model_capabilities` — capability-mismatch escalation fires even with 0
+  failures (a hard task on a weak model upgrades; same task on a strong model does not).
+- CLI: `--capability strong|mid|cheap` — demonstrated: hard architecture task + cheap model →
+  UPGRADE (with transparent reason naming axes), + strong model → KEEP.
+- Added `evals/capability-test.js` (9 cases) — wired into `npm test`; PASS. No regression to the
+  existing 22-task held-out validation (capability path is opt-in).
+- Full `npm test` exits 0 (12 checks incl. capability); repo = 27 intentional files, no junk.
+
+## Session 12 — multi-agent orchestration layer (fan-out / review / consolidate)
+
+- Added `multi-agent/orchestrate.js` — implements the objective's 多 Agent 使用原则 as testable
+  machinery: `fanOutSync` (run independent units; one failure does NOT discard others),
+  `reviewSync` (independent reviewers vote; verdicts agreed/disputed/rejected; a throwing
+  reviewer counts as a dissent — self-review can't be trusted blindly),
+  `consolidate` (keep good results, surface failures as evidence). Environment-agnostic (injected
+  workers/reviewers), so it works with deterministic doubles now and real subagents later.
+- Added `evals/orchestrate-test.js` (10 cases) — wired into `npm test`; PASS. Two test-authoring
+  bugs found and fixed during development (reviewer definitions that didn't match intent).
+- `SKILL.md`/`README.md` updated: the delegate/review/fan-out principles now point to concrete,
+  tested machinery.
+- Full `npm test` exits 0 (11 checks incl. orchestrate); repo = 26 intentional files, no junk.
+
+## Session 11 — deliverables gate + consolidated report (convergence close-out)
+
+- Added `evals/deliverables.js` — an automated gate machine-verifying all 10 objective
+  minimum-deliverables (router, 4 strategies, upgrade+downgrade logic, benchmark, baseline
+  comparison, failure analysis, router revision, final verification, repo convergence, report)
+  plus no-pollution checks. Wired into `npm test`; PASS.
+- Rewrote `reports/session-01.md` as the consolidated session report (objective/changes/evidence/
+  findings/failures/decisions/risks/next) reflecting the complete converged state.
+- Full `npm test` exits 0 (10 checks incl. deliverables gate); repo = 25 intentional files, no junk.
+
+## Session 10 — adaptive execution loop (failure feedback → re-route)
+
+- Added `router/adaptive-loop.js` — closes the feedback loop: route → EXECUTE → observe →
+  feed `failures_so_far` back into the router (may deepen/upgrade at the repeated-failure
+  threshold) → bounded retry. Implements "已发生失败次数" for real, plus escalation rules
+  ("多次修改仍重复失败 → 升级") and "不要无限研究" (bounded attempts).
+  - Always executes at least once (deliberation-done != task-done).
+  - Success → done; failure → re-route; deep strategy additionally bounded by the stopping
+    conditions; hard attempt budget caps everything.
+  - Combines task-inherent prior failures (e.g. text "has failed 5 times") with in-loop failures.
+- Added `evals/adaptive-test.js` — 9-case mock-executor test: trivial task succeeds on attempt 1
+  with no escalation; a failing task escalates to deep/upgrade exactly when failures≥3 fed back
+  then succeeds; always-failing loop stays bounded; step-wise controller works. Wired into
+  `npm test`; PASS.
+- Full `npm test` exits 0 (9 checks: probe, de-escalate, validation 22/22, e2e 91%, coverage,
+  protocol, stopping, adaptive, cli-smoke, benchmark 13/13).
+
+## Session 09 — stopping conditions ("when to stop deliberating")
+
+- Added `strategies/stopping.js` — state machine implementing "什么时候应该停止继续思考并开始
+  执行" and the anti-无限研究 rules. Per strategy:
+  - **fast**: stop immediately, execute directly.
+  - **structured**: stop once the light plan is written AND assumptions are explicit.
+  - **deep**: keep deliberating while it GENERATES new information; stop when evidence is
+    sufficient, OR no new info for 2 rounds (stagnation), OR 4 attempts exhausted. Deliberation
+    that produces no new information is just re-reading — stop and act (or parallelize).
+- Added `evals/stopping-test.js` — 13-case transition-table test (all strategies + anti-
+  over-deliberation). Wired into `npm test`; PASS.
+- `bin/router.js` now prints "WHEN TO STOP DELIBERATING" alongside the protocol, making the
+  decision fully actionable (strategy + model + protocol + stop condition).
+- Full `npm test` exits 0 (8 checks: probe, de-escalate, validation 22/22, e2e 91%, coverage,
+  protocol, stopping, cli-smoke, benchmark 13/13).
+
+## Session 08 — execution-strategy protocols
+
+- Added `strategies/protocol.js` — turns a routing decision into a concrete, machine-checkable
+  execution protocol per the objective's definitions:
+  - **structured**: REQUIRED Objective / Hard Constraints / Assumptions / Plan / Verification (brief);
+  - **deep**: REQUIRED core plan block + OPTIONAL deliberation toolkit (decomposition,
+    alternatives, counterexamples, strongest objection, assumption checks, external evidence,
+    independent review, adversarial tests);
+  - **fast**: NO required heavy structure (anti-overthinking at the protocol level); plan is
+    `directExecute`.
+- Added `evals/protocol-test.js` — asserts each strategy's required/optional set and correct
+  intensity ordering (deep > structured > fast). The initial weight formula was flawed (made
+  structured appear heavier than deep) and the test caught it; fixed to total protocol breadth.
+  Wired into `npm test`; PASS.
+- `bin/router.js` now prints the EXECUTION PROTOCOL (required + optional + note) so a routing
+  decision is directly actionable.
+- Full `npm test` exits 0 (7 checks: probe, de-escalate, validation 22/22, e2e 91%, coverage,
+  protocol, cli-smoke, benchmark 13/13).
+
+## Session 07 — agent-facing CLI / integration layer
+
+- Added `bin/router.js` — end-to-end CLI: raw task text → extract → route → human/agent-readable
+  decision (strategy, model action, de-escalation recommendation, extracted profile, decisive
+  reasons). Usage `npm run route -- "task"`; supports `--tier strong|cheap|auto`, `--stdin`,
+  `--json`.
+- Added `evals/cli-smoke.js` — regression test of the TEXT→decision path (exactly the layer the
+  profile-based evals do not cover). Wired into `npm test`; PASS.
+- Full `npm test` exits 0: probe + de-escalate PASS, validation 22/22, e2e 91%, coverage PASS,
+  CLI smoke PASS, benchmark 13/13.
+
+## Session 06 — failure-mode coverage audit
+
+- Added `evals/coverage.js` — operationalizes the objective's "重点观察" list as an auditable
+  checklist wired to the real eval sets: for each of 9 failure modes (难度误判, 过度思考,
+  思考不足, 过早执行, 不必要升级, 升级过晚, 约束遗漏, 误派发, 漏派发) it asserts the mode is
+  EXERCISED by real cases AND the router shows NO REGRESSION. Wired into `npm test`.
+- Added a 22nd held-out validation case (`val-mechanical-csv-parse`); re-labeled it `structured`
+  on coherent task-nature grounds (parse+aggregate is a light pipeline, not fast; keep, not
+  delegate — the anti-false-delegate claim holds).
+- Result: validation **22/22 (100%)**; e2e extraction **32/35 (91%)**; coverage PASS; probe +
+  de-escalate PASS; train benchmark 13/13; `npm test` exits 0.
+- Docs updated (README).
+
+## Session 05 — de-escalation (downgrade) logic + tests
+
+- Made model downgrade a real, tested, bidirectional decision: added `current_model_tier`
+  ('strong'|'cheap'|'auto') to `route()` and `recommend_deescalate` — a fast mechanical task run
+  on a STRONG model is recommended to be handed DOWN to a cheaper model; on a cheap model there is
+  nothing to downgrade from (cost floor). Mirrors escalation in the cost direction.
+- Added 4 dedicated de-escalation probes (mechanical+strong → recommend downgrade; mechanical+cheap
+  → no downgrade; deep task → never downgrade; default auto → conservative no-op).
+- Closes the "明确模型升级与降级逻辑" minimum deliverable (upgrade AND downgrade both tested).
+- Docs: `methods/core/task-router.md` (de-escalation rule + output), `changelog`, README.
+- Full `npm test` exits 0 (probe + de-escalation PASS; validation 21/21; e2e 91%; benchmark 13/13).
+
+## Session 04 — expanded held-out validation & router v4
+
+- Grew the held-out validation set 12→**21** with harder, independent tasks (overthink guard,
+  high-novelty mechanical, tool-lookup, no-oracle high-stakes, vague-but-cheap, one-shot decisions).
+- The expanded set exposed real overfitting the small set hid: profile-based validation dropped to
+  85.7%. Drove **v4** fixes:
+  - constraint-count & novelty no longer force Deep when verification is trivial (overthinking);
+  - new `one_shot` signal + one-shot high-stakes escalation rule;
+  - extractor fixes: removed two false-positive context triggers ("500 files", "30-line") that
+    forced Deep on mechanical work; added vague/novelty/cost/one-shot detection.
+- Result: profile-based validation **21/21 (100%)**; e2e extraction **31/34 (91%)**; probe PASS;
+  train benchmark 13/13; `npm test` exits 0.
+- Docs: `methods/core/task-router.md` (v4 rules, one_shot signal), `failures/failure-log.md` (F5),
+  README updated.
+
+## Session 03 — end-to-end pipeline & signal extraction
+
+- Added `router/extract.js` — keyword/pattern signal extractor: raw task text → profile.
+- Added `evals/extraction.js` — measures e2e fidelity (route(extract(task)) vs expected) AND
+  profile MAE; wired into `npm test` (floor 70%).
+- Quantified the bottleneck: profile-router ≈100%, but e2e from text started at **80%**, now
+  **96%** combined (24/25; train 13/13, held-out validation 11/12) after general extractor fixes.
+- Router **v3**: new general Deep trigger — repeated failures (`>= FAILURE_THRESHOLD`) +
+  not-trivially-verifiable ⇒ Deep (problem harder than it appears; also fixes "upgrade-late").
+- Documented F4 (extraction bottleneck + a regression I introduced and fixed); updated
+  `methods/core/task-router.md` pipeline + status; `README.md`.
+
+## Session 02 — validation & generalization evidence
+
+- Added `evals/validation.js` — held-out validation set (12 tasks) authored independently of the
+  thresholds; labels reasoned from task nature. Wired into `npm test`.
+- Result: **v2 generalizes 12/12 (100%) strategy + model on held-out validation** — co-fit-
+  independent evidence that substantially closes failure-log F2.
+- Failure analysis (F3): `val-batch-classify` boundary (10k mechanical batch → fast). No code
+  change (would co-fit); recorded as open candidate "large-mechanical-batch safety" in
+  `methods/core/task-router.md`.
+- Updated `methods/core/task-router.md` status + open candidates; `failures/failure-log.md`
+  (F2 closed, F3 added).
+
+## Session 01 — v0.1.0 (experimental)
+
+- Added `SKILL.md` — task-judgment & adaptive-execution skill: signal extraction, routing,
+  model-switch principles, guardrails.
+- Added `methods/core/task-router.md` — router method spec (signals, decision procedure,
+  thresholds, status).
+- Added `router/task-router.js` — deterministic, inspectable router (v2).
+- Added `evals/benchmark.js` — 13 labeled tasks across required categories + baseline comparison.
+- Added `evals/probe.js` — adversarial boundary regression probes.
+- Added `research/router-evidence.md` — external evidence grounding (overthinking, self-correction
+  failure, long-context degradation, cost-aware routing, miscalibration).
+- Added `failures/failure-log.md` — F1 (overthinking fixed in v2), F2 (training-set overfit caveat).
+- Added `README.md`, `package.json`, this changelog.
+
+### Engineer notes
+- v1 routed high error cost alone → Deep (overthink). Fixed in v2: error-cost Deep trigger now
+  requires verification_difficulty > V_MID; high-stakes-but-cheaply-verifiable → Structured.
+- Status: `experimental`, not `validated`.
