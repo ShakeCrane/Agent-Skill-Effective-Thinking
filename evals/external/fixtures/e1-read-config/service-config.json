@@ -1,0 +1,6 @@
+{
+  "port": 8080,
+  "timeout_ms": 1000,
+  "log_level": "info",
+  "replicas": 3
+}

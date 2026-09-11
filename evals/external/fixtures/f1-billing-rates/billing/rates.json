@@ -1,0 +1,10 @@
+{
+  "currency": "EUR",
+  "effective_date": "2026-10-01",
+  "plan_name": "standard",
+  "rates": {
+    "basic": 10,
+    "pro": 24,
+    "enterprise": 99.8
+  }
+}

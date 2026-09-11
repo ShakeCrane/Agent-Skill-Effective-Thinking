@@ -1,0 +1,10 @@
+{
+  "currency": "USD",
+  "rates": {
+    "standard": 20,
+    "premium": 50
+  },
+  "legacy_rate": 15,
+  "rate_note": "legacy_rate is frozen and must not change",
+  "discount_rate_percent": 5
+}

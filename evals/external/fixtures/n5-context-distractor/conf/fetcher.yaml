@@ -1,0 +1,3 @@
+fetcher:
+  retry_limit: 9
+  backoff_multiplier: 3

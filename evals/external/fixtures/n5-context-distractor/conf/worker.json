@@ -1,0 +1,6 @@
+{
+  "worker": {
+    "retry_limit": 2,
+    "backoff_multiplier": 3
+  }
+}

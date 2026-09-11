@@ -1,0 +1,6 @@
+{
+  "worker": {
+    "retry_limit": 3,
+    "backoff": "exponential"
+  }
+}

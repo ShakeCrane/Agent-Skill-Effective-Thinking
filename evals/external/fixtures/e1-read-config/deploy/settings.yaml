@@ -1,0 +1,7 @@
+service:
+  name: billing-api
+  port: 8412
+  timeout_ms: 2500
+  region: eu-west-1
+  tls:
+    enabled: true

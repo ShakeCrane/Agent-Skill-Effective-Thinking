@@ -1,0 +1,456 @@
+{
+  "seed": 20260909,
+  "generatedAt": "2026-09-09T07:37:47.739Z",
+  "runs": [
+    {
+      "seq": 1,
+      "taskId": "n3-version-compare",
+      "condition": "treatment",
+      "runId": "n3-version-compare__treatment"
+    },
+    {
+      "seq": 2,
+      "taskId": "n3-version-compare",
+      "condition": "controlB",
+      "runId": "n3-version-compare__controlB"
+    },
+    {
+      "seq": 3,
+      "taskId": "n3-version-compare",
+      "condition": "controlA",
+      "runId": "n3-version-compare__controlA"
+    },
+    {
+      "seq": 4,
+      "taskId": "b2-implement-retry",
+      "condition": "controlA",
+      "runId": "b2-implement-retry__controlA"
+    },
+    {
+      "seq": 5,
+      "taskId": "b2-implement-retry",
+      "condition": "treatment",
+      "runId": "b2-implement-retry__treatment"
+    },
+    {
+      "seq": 6,
+      "taskId": "b2-implement-retry",
+      "condition": "controlB",
+      "runId": "b2-implement-retry__controlB"
+    },
+    {
+      "seq": 7,
+      "taskId": "n6-two-defects",
+      "condition": "controlA",
+      "runId": "n6-two-defects__controlA"
+    },
+    {
+      "seq": 8,
+      "taskId": "n6-two-defects",
+      "condition": "controlB",
+      "runId": "n6-two-defects__controlB"
+    },
+    {
+      "seq": 9,
+      "taskId": "n6-two-defects",
+      "condition": "treatment",
+      "runId": "n6-two-defects__treatment"
+    },
+    {
+      "seq": 10,
+      "taskId": "a1-csv-to-json",
+      "condition": "controlB",
+      "runId": "a1-csv-to-json__controlB"
+    },
+    {
+      "seq": 11,
+      "taskId": "a1-csv-to-json",
+      "condition": "controlA",
+      "runId": "a1-csv-to-json__controlA"
+    },
+    {
+      "seq": 12,
+      "taskId": "a1-csv-to-json",
+      "condition": "treatment",
+      "runId": "a1-csv-to-json__treatment"
+    },
+    {
+      "seq": 13,
+      "taskId": "h1-failure-recovery",
+      "condition": "treatment",
+      "runId": "h1-failure-recovery__treatment"
+    },
+    {
+      "seq": 14,
+      "taskId": "h1-failure-recovery",
+      "condition": "controlA",
+      "runId": "h1-failure-recovery__controlA"
+    },
+    {
+      "seq": 15,
+      "taskId": "h1-failure-recovery",
+      "condition": "controlB",
+      "runId": "h1-failure-recovery__controlB"
+    },
+    {
+      "seq": 16,
+      "taskId": "n1-paginate",
+      "condition": "controlA",
+      "runId": "n1-paginate__controlA"
+    },
+    {
+      "seq": 17,
+      "taskId": "n1-paginate",
+      "condition": "controlB",
+      "runId": "n1-paginate__controlB"
+    },
+    {
+      "seq": 18,
+      "taskId": "n1-paginate",
+      "condition": "treatment",
+      "runId": "n1-paginate__treatment"
+    },
+    {
+      "seq": 19,
+      "taskId": "n2-format-truncate",
+      "condition": "treatment",
+      "runId": "n2-format-truncate__treatment"
+    },
+    {
+      "seq": 20,
+      "taskId": "n2-format-truncate",
+      "condition": "controlA",
+      "runId": "n2-format-truncate__controlA"
+    },
+    {
+      "seq": 21,
+      "taskId": "n2-format-truncate",
+      "condition": "controlB",
+      "runId": "n2-format-truncate__controlB"
+    },
+    {
+      "seq": 22,
+      "taskId": "n9-compound-count",
+      "condition": "controlB",
+      "runId": "n9-compound-count__controlB"
+    },
+    {
+      "seq": 23,
+      "taskId": "n9-compound-count",
+      "condition": "treatment",
+      "runId": "n9-compound-count__treatment"
+    },
+    {
+      "seq": 24,
+      "taskId": "n9-compound-count",
+      "condition": "controlA",
+      "runId": "n9-compound-count__controlA"
+    },
+    {
+      "seq": 25,
+      "taskId": "e1-read-config",
+      "condition": "controlA",
+      "runId": "e1-read-config__controlA"
+    },
+    {
+      "seq": 26,
+      "taskId": "e1-read-config",
+      "condition": "treatment",
+      "runId": "e1-read-config__treatment"
+    },
+    {
+      "seq": 27,
+      "taskId": "e1-read-config",
+      "condition": "controlB",
+      "runId": "e1-read-config__controlB"
+    },
+    {
+      "seq": 28,
+      "taskId": "f1-billing-rates",
+      "condition": "treatment",
+      "runId": "f1-billing-rates__treatment"
+    },
+    {
+      "seq": 29,
+      "taskId": "f1-billing-rates",
+      "condition": "controlA",
+      "runId": "f1-billing-rates__controlA"
+    },
+    {
+      "seq": 30,
+      "taskId": "f1-billing-rates",
+      "condition": "controlB",
+      "runId": "f1-billing-rates__controlB"
+    },
+    {
+      "seq": 31,
+      "taskId": "n12-unique-id",
+      "condition": "treatment",
+      "runId": "n12-unique-id__treatment"
+    },
+    {
+      "seq": 32,
+      "taskId": "n12-unique-id",
+      "condition": "controlA",
+      "runId": "n12-unique-id__controlA"
+    },
+    {
+      "seq": 33,
+      "taskId": "n12-unique-id",
+      "condition": "controlB",
+      "runId": "n12-unique-id__controlB"
+    },
+    {
+      "seq": 34,
+      "taskId": "g1-long-context",
+      "condition": "treatment",
+      "runId": "g1-long-context__treatment"
+    },
+    {
+      "seq": 35,
+      "taskId": "g1-long-context",
+      "condition": "controlA",
+      "runId": "g1-long-context__controlA"
+    },
+    {
+      "seq": 36,
+      "taskId": "g1-long-context",
+      "condition": "controlB",
+      "runId": "g1-long-context__controlB"
+    },
+    {
+      "seq": 37,
+      "taskId": "n4-three-sources",
+      "condition": "treatment",
+      "runId": "n4-three-sources__treatment"
+    },
+    {
+      "seq": 38,
+      "taskId": "n4-three-sources",
+      "condition": "controlB",
+      "runId": "n4-three-sources__controlB"
+    },
+    {
+      "seq": 39,
+      "taskId": "n4-three-sources",
+      "condition": "controlA",
+      "runId": "n4-three-sources__controlA"
+    },
+    {
+      "seq": 40,
+      "taskId": "n8-refactor",
+      "condition": "treatment",
+      "runId": "n8-refactor__treatment"
+    },
+    {
+      "seq": 41,
+      "taskId": "n8-refactor",
+      "condition": "controlA",
+      "runId": "n8-refactor__controlA"
+    },
+    {
+      "seq": 42,
+      "taskId": "n8-refactor",
+      "condition": "controlB",
+      "runId": "n8-refactor__controlB"
+    },
+    {
+      "seq": 43,
+      "taskId": "j1-one-shot-decision",
+      "condition": "treatment",
+      "runId": "j1-one-shot-decision__treatment"
+    },
+    {
+      "seq": 44,
+      "taskId": "j1-one-shot-decision",
+      "condition": "controlB",
+      "runId": "j1-one-shot-decision__controlB"
+    },
+    {
+      "seq": 45,
+      "taskId": "j1-one-shot-decision",
+      "condition": "controlA",
+      "runId": "j1-one-shot-decision__controlA"
+    },
+    {
+      "seq": 46,
+      "taskId": "e2-count-todos",
+      "condition": "treatment",
+      "runId": "e2-count-todos__treatment"
+    },
+    {
+      "seq": 47,
+      "taskId": "e2-count-todos",
+      "condition": "controlB",
+      "runId": "e2-count-todos__controlB"
+    },
+    {
+      "seq": 48,
+      "taskId": "e2-count-todos",
+      "condition": "controlA",
+      "runId": "e2-count-todos__controlA"
+    },
+    {
+      "seq": 49,
+      "taskId": "d1-arch-decision",
+      "condition": "treatment",
+      "runId": "d1-arch-decision__treatment"
+    },
+    {
+      "seq": 50,
+      "taskId": "d1-arch-decision",
+      "condition": "controlA",
+      "runId": "d1-arch-decision__controlA"
+    },
+    {
+      "seq": 51,
+      "taskId": "d1-arch-decision",
+      "condition": "controlB",
+      "runId": "d1-arch-decision__controlB"
+    },
+    {
+      "seq": 52,
+      "taskId": "i1-parallel-logs",
+      "condition": "controlA",
+      "runId": "i1-parallel-logs__controlA"
+    },
+    {
+      "seq": 53,
+      "taskId": "i1-parallel-logs",
+      "condition": "treatment",
+      "runId": "i1-parallel-logs__treatment"
+    },
+    {
+      "seq": 54,
+      "taskId": "i1-parallel-logs",
+      "condition": "controlB",
+      "runId": "i1-parallel-logs__controlB"
+    },
+    {
+      "seq": 55,
+      "taskId": "n5-context-distractor",
+      "condition": "treatment",
+      "runId": "n5-context-distractor__treatment"
+    },
+    {
+      "seq": 56,
+      "taskId": "n5-context-distractor",
+      "condition": "controlB",
+      "runId": "n5-context-distractor__controlB"
+    },
+    {
+      "seq": 57,
+      "taskId": "n5-context-distractor",
+      "condition": "controlA",
+      "runId": "n5-context-distractor__controlA"
+    },
+    {
+      "seq": 58,
+      "taskId": "a2-rename-ext",
+      "condition": "controlA",
+      "runId": "a2-rename-ext__controlA"
+    },
+    {
+      "seq": 59,
+      "taskId": "a2-rename-ext",
+      "condition": "controlB",
+      "runId": "a2-rename-ext__controlB"
+    },
+    {
+      "seq": 60,
+      "taskId": "a2-rename-ext",
+      "condition": "treatment",
+      "runId": "a2-rename-ext__treatment"
+    },
+    {
+      "seq": 61,
+      "taskId": "n11-rate-trap",
+      "condition": "controlB",
+      "runId": "n11-rate-trap__controlB"
+    },
+    {
+      "seq": 62,
+      "taskId": "n11-rate-trap",
+      "condition": "treatment",
+      "runId": "n11-rate-trap__treatment"
+    },
+    {
+      "seq": 63,
+      "taskId": "n11-rate-trap",
+      "condition": "controlA",
+      "runId": "n11-rate-trap__controlA"
+    },
+    {
+      "seq": 64,
+      "taskId": "n7-no-extra-files",
+      "condition": "controlB",
+      "runId": "n7-no-extra-files__controlB"
+    },
+    {
+      "seq": 65,
+      "taskId": "n7-no-extra-files",
+      "condition": "controlA",
+      "runId": "n7-no-extra-files__controlA"
+    },
+    {
+      "seq": 66,
+      "taskId": "n7-no-extra-files",
+      "condition": "treatment",
+      "runId": "n7-no-extra-files__treatment"
+    },
+    {
+      "seq": 67,
+      "taskId": "n10-parallel-rows",
+      "condition": "treatment",
+      "runId": "n10-parallel-rows__treatment"
+    },
+    {
+      "seq": 68,
+      "taskId": "n10-parallel-rows",
+      "condition": "controlB",
+      "runId": "n10-parallel-rows__controlB"
+    },
+    {
+      "seq": 69,
+      "taskId": "n10-parallel-rows",
+      "condition": "controlA",
+      "runId": "n10-parallel-rows__controlA"
+    },
+    {
+      "seq": 70,
+      "taskId": "b1-fix-date-range",
+      "condition": "treatment",
+      "runId": "b1-fix-date-range__treatment"
+    },
+    {
+      "seq": 71,
+      "taskId": "b1-fix-date-range",
+      "condition": "controlB",
+      "runId": "b1-fix-date-range__controlB"
+    },
+    {
+      "seq": 72,
+      "taskId": "b1-fix-date-range",
+      "condition": "controlA",
+      "runId": "b1-fix-date-range__controlA"
+    },
+    {
+      "seq": 73,
+      "taskId": "c1-intermittent-cache",
+      "condition": "treatment",
+      "runId": "c1-intermittent-cache__treatment"
+    },
+    {
+      "seq": 74,
+      "taskId": "c1-intermittent-cache",
+      "condition": "controlA",
+      "runId": "c1-intermittent-cache__controlA"
+    },
+    {
+      "seq": 75,
+      "taskId": "c1-intermittent-cache",
+      "condition": "controlB",
+      "runId": "c1-intermittent-cache__controlB"
+    }
+  ]
+}

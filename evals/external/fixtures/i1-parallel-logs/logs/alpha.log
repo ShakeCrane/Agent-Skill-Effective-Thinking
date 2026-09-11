@@ -1,0 +1,6 @@
+INFO start
+ERROR disk full
+WARN retry
+error lower case
+ERROR second
+TERROR not a match

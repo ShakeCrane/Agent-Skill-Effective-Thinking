@@ -1,0 +1,6 @@
+{
+  "pool": {
+    "retry_limit": 7,
+    "backoff_multiplier": 5
+  }
+}
