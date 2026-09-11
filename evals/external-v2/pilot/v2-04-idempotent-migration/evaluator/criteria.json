@@ -1,0 +1,53 @@
+{
+  "taskId": "v2-04",
+  "taskDir": "v2-04-idempotent-migration",
+  "family": "state/idempotency",
+  "commonTaskTextFile": "task.md",
+  "criteria": [
+    {
+      "id": "V2-04-C1",
+      "description": "The migration is idempotent: a second run produces a deep-equal result and never duplicates the default entry.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "MIGRATIONS.md",
+      "sourceExcerpt": "1. **Idempotent.** ... `migrate(migrate(c))` must deep-equal `migrate(c)`."
+    },
+    {
+      "id": "V2-04-C2",
+      "description": "A user-provided builtin-safe entry is left exactly as configured (not replaced by the default).",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "MIGRATIONS.md",
+      "sourceExcerpt": "2. **Never overwrite user entries.** If an entry with id `builtin-safe` already exists, it is left exactly as the user configured it"
+    },
+    {
+      "id": "V2-04-C3",
+      "description": "Existing entries keep their relative order and a newly added default entry is appended at the end.",
+      "primary": true,
+      "hard": false,
+      "sourceType": "repository_contract",
+      "source": "MIGRATIONS.md",
+      "sourceExcerpt": "4. **Preserve order.** The user's existing entries keep their original relative order; a newly added default entry goes at the end."
+    },
+    {
+      "id": "V2-04-C4",
+      "description": "The caller's config object and its nested entries are not mutated.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "MIGRATIONS.md",
+      "sourceExcerpt": "5. **No input mutation.** The caller's object (and its nested entries) must not be modified."
+    },
+    {
+      "id": "V2-04-C5",
+      "description": "Public API unchanged: migrate is exported and takes one argument.",
+      "primary": true,
+      "hard": false,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "保持已有用户配置，并确保重复执行安全。"
+    }
+  ]
+}

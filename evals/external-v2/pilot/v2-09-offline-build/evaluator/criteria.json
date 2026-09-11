@@ -1,0 +1,53 @@
+{
+  "taskId": "v2-09",
+  "taskDir": "v2-09-offline-build",
+  "family": "failure-recovery",
+  "commonTaskTextFile": "task.md",
+  "criteria": [
+    {
+      "id": "V2-09-C1",
+      "description": "The banner is updated at its single source of truth, src/banner.js.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "README.md",
+      "sourceExcerpt": "The banner text is defined once, in `src/banner.js`. Build artifacts under `dist/` are **generated**"
+    },
+    {
+      "id": "V2-09-C2",
+      "description": "Deleting dist/ and running the offline build produces a bundle containing `Cognitive Eval v2`.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "README.md",
+      "sourceExcerpt": "`npm run build:offline` is fully local and must work everywhere."
+    },
+    {
+      "id": "V2-09-C3",
+      "description": "The offline build exits successfully (status 0).",
+      "primary": true,
+      "hard": true,
+      "sourceType": "existing_visible_test",
+      "source": "package.json",
+      "sourceExcerpt": "\"build:offline\": \"node scripts/build-offline.js\""
+    },
+    {
+      "id": "V2-09-C4",
+      "description": "The built banner is genuinely derived from src/banner.js (changing the source changes the artifact).",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "README.md",
+      "sourceExcerpt": "editing `dist/` by hand is never a fix, because the next build overwrites it."
+    },
+    {
+      "id": "V2-09-C5",
+      "description": "Both documented build entry points still exist in package.json.",
+      "primary": true,
+      "hard": false,
+      "sourceType": "repository_contract",
+      "source": "README.md",
+      "sourceExcerpt": "Normal environment: `npm run build` ... Offline / sandbox environment: `npm run build:offline`"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "taskId": "v2-08",
+  "taskDir": "v2-08-format-compat",
+  "family": "compatibility/context-discovery",
+  "commonTaskTextFile": "task.md",
+  "criteria": [
+    {
+      "id": "V2-08-C1",
+      "description": "A default call (no options) still produces the v1 line id|name.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "docs/ADR-004-export-format.md",
+      "sourceExcerpt": "Every call that does not explicitly ask for a newer version MUST keep producing v1. This includes `exportRecord(record)` and `exportRecord(record, {})`."
+    },
+    {
+      "id": "V2-08-C2",
+      "description": "An explicit formatVersion: 1 behaves exactly like the default.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "docs/ADR-004-export-format.md",
+      "sourceExcerpt": "An explicit `formatVersion: 1` must behave exactly like the default."
+    },
+    {
+      "id": "V2-08-C3",
+      "description": "formatVersion: 2 with a note produces the three-field line id|name|note.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "docs/ADR-004-export-format.md",
+      "sourceExcerpt": "Only when `options.formatVersion === 2`. When the record has no `note`, the trailing field is empty"
+    },
+    {
+      "id": "V2-08-C4",
+      "description": "formatVersion: 2 without a note still emits three fields (trailing empty field).",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "docs/ADR-004-export-format.md",
+      "sourceExcerpt": "When the record has no `note`, the trailing field is empty (the line still has three fields, ending with `|`)."
+    },
+    {
+      "id": "V2-08-C5",
+      "description": "Existing pipe escaping is preserved in every field, including note.",
+      "primary": true,
+      "hard": false,
+      "sourceType": "repository_contract",
+      "source": "docs/ADR-004-export-format.md",
+      "sourceExcerpt": "In every exported field, a literal `|` is escaped as `\\|` ... applies equally to `note`."
+    }
+  ]
+}

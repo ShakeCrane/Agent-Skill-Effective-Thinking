@@ -1,0 +1,25 @@
+{
+  "frozen": true,
+  "note": "Condition differences exist ONLY inside the run workspace TASK.md. The dispatcher instruction sent to the agent is byte-identical for all three conditions.",
+  "dispatcher": "Read TASK.md and the repository contents. Complete the task in this workspace. Work autonomously and leave the workspace in its final completed state.",
+  "conditions": {
+    "controlA": {
+      "label": "bare agent — task text only",
+      "taskMdTemplate": "# Task\n\n{COMMON_TASK_TEXT}\n"
+    },
+    "controlB": {
+      "label": "minimal cognitive scaffold (frozen; never optimised)",
+      "taskMdTemplate": "# Task\n\n{COMMON_TASK_TEXT}\n\n# Working guidance\n\n先确认任务目标和约束，再执行；完成后用最直接可靠的方法验证结果。不要做与任务无关的改动。\n"
+    },
+    "treatment": {
+      "label": "full Cognitive Skill (frozen SKILL.md)",
+      "taskMdTemplate": "# Task\n\n{COMMON_TASK_TEXT}\n\n# Cognitive Skill\n\n{SKILL_MD}\n"
+    }
+  },
+  "artifactExclusions": [
+    "TASK.md",
+    "evaluator/",
+    "*.v2meta.json"
+  ],
+  "inputSizePolicy": "Condition-injected text length is recorded separately as inputChars; it is NEVER counted as agent output artifact size."
+}

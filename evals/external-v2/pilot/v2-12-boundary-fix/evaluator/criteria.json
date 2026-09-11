@@ -1,0 +1,62 @@
+{
+  "taskId": "v2-12",
+  "taskDir": "v2-12-boundary-fix",
+  "family": "cheap-verification-negative-control",
+  "commonTaskTextFile": "task.md",
+  "criteria": [
+    {
+      "id": "V2-12-C1",
+      "description": "The min boundary is included: isWithin(5,5,10) is true.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "RANGE.md",
+      "sourceExcerpt": "1. **Inclusive boundaries.** `min` and `max` are part of the valid range: `isWithin(5, 5, 10)` and `isWithin(10, 5, 10)` are both `true`."
+    },
+    {
+      "id": "V2-12-C2",
+      "description": "The max boundary is included: isWithin(10,5,10) is true.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "RANGE.md",
+      "sourceExcerpt": "1. **Inclusive boundaries.** ... `isWithin(10, 5, 10)` ... `true`."
+    },
+    {
+      "id": "V2-12-C3",
+      "description": "Values strictly inside the range are true.",
+      "primary": true,
+      "hard": false,
+      "sourceType": "repository_contract",
+      "source": "RANGE.md",
+      "sourceExcerpt": "3. **Values strictly inside are true.**"
+    },
+    {
+      "id": "V2-12-C4",
+      "description": "Values strictly below min or above max are false.",
+      "primary": true,
+      "hard": false,
+      "sourceType": "repository_contract",
+      "source": "RANGE.md",
+      "sourceExcerpt": "2. **Strictly outside is false.** Values below `min` or above `max` are `false`."
+    },
+    {
+      "id": "V2-12-C5",
+      "description": "The unrelated module and the contract document are unchanged.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "只修这个 helper"
+    },
+    {
+      "id": "V2-12-C6",
+      "description": "No extra file was created in the workspace.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "只修这个 helper，并运行最直接的相关测试验证。"
+    }
+  ]
+}

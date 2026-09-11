@@ -1,0 +1,71 @@
+{
+  "taskId": "v2-03",
+  "taskDir": "v2-03-config-precedence",
+  "family": "constraint/precedence",
+  "commonTaskTextFile": "task.md",
+  "criteria": [
+    {
+      "id": "V2-03-C1",
+      "description": "CLI values take precedence over ENV values for the same field.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "CONFIG.md",
+      "sourceExcerpt": "CLI  >  ENV  >  config file  >  defaults"
+    },
+    {
+      "id": "V2-03-C2",
+      "description": "ENV values take precedence over config-file values for the same field.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "CONFIG.md",
+      "sourceExcerpt": "CLI  >  ENV  >  config file  >  defaults"
+    },
+    {
+      "id": "V2-03-C3",
+      "description": "Config-file values take precedence over defaults.",
+      "primary": true,
+      "hard": false,
+      "sourceType": "repository_contract",
+      "source": "CONFIG.md",
+      "sourceExcerpt": "CLI  >  ENV  >  config file  >  defaults"
+    },
+    {
+      "id": "V2-03-C4",
+      "description": "Only undefined means absent: a missing value falls through to the next source and finally to the documented default.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "CONFIG.md",
+      "sourceExcerpt": "**Only `undefined` means \"not provided\".** A value is taken from the highest-priority source in which it is not `undefined`."
+    },
+    {
+      "id": "V2-03-C5",
+      "description": "retries: 0 (a falsy but legal value) survives merging.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "CONFIG.md",
+      "sourceExcerpt": "`0` is a legal value and must survive merging (e.g. `retries: 0` must stay `0`)."
+    },
+    {
+      "id": "V2-03-C6",
+      "description": "verbose: false (a falsy but legal value) survives merging.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "CONFIG.md",
+      "sourceExcerpt": "`false` is a legal value and must survive merging (e.g. `verbose: false` must stay `false`)."
+    },
+    {
+      "id": "V2-03-C7",
+      "description": "Public API unchanged: loadConfig is exported and takes one argument.",
+      "primary": true,
+      "hard": false,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "保持公共 API。"
+    }
+  ]
+}

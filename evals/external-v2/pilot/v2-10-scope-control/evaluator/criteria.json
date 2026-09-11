@@ -1,0 +1,62 @@
+{
+  "taskId": "v2-10",
+  "taskDir": "v2-10-scope-control",
+  "family": "stopping/scope",
+  "commonTaskTextFile": "task.md",
+  "criteria": [
+    {
+      "id": "V2-10-C1",
+      "description": "slugify(null) returns the empty string instead of throwing.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "修复 `slugify(null)` 崩溃：null/undefined 返回空字符串"
+    },
+    {
+      "id": "V2-10-C2",
+      "description": "slugify(undefined) returns the empty string instead of throwing.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "修复 `slugify(null)` 崩溃：null/undefined 返回空字符串"
+    },
+    {
+      "id": "V2-10-C3",
+      "description": "Existing string behaviour is unchanged (spacing, case, empty string).",
+      "primary": true,
+      "hard": true,
+      "sourceType": "existing_visible_test",
+      "source": "test/slugify.test.js",
+      "sourceExcerpt": "assert.strictEqual(slugify('Hello World'), 'hello-world'); assert.strictEqual(slugify('  Foo Bar  '), 'foo-bar'); assert.strictEqual(slugify(''), '');"
+    },
+    {
+      "id": "V2-10-C4",
+      "description": "Falsy-but-legal scalars keep their existing behaviour (0 -> '0', false -> 'false', 42 -> '42').",
+      "primary": true,
+      "hard": true,
+      "sourceType": "existing_visible_test",
+      "source": "test/slugify.test.js",
+      "sourceExcerpt": "assert.strictEqual(slugify(42), '42');"
+    },
+    {
+      "id": "V2-10-C5",
+      "description": "No unrelated source file is modified (parser/database/TODO stay byte-identical to the seed).",
+      "primary": true,
+      "hard": true,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "只修复这个 bug，不处理仓库中的其它 TODO，也不要重构无关代码。"
+    },
+    {
+      "id": "V2-10-C6",
+      "description": "No extra file is created in the workspace.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "只修复这个 bug"
+    }
+  ]
+}

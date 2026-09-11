@@ -1,0 +1,484 @@
+{
+  "suite": "external-eval-v2",
+  "status": "constructed-not-frozen",
+  "generatedAt": "2026-09-11T00:42:26.774Z",
+  "plannedRuns": 36,
+  "conditions": [
+    "controlA",
+    "controlB",
+    "treatment"
+  ],
+  "familyMapping": {
+    "v2-01-redaction": "verification",
+    "v2-02-date-only": "root-cause",
+    "v2-03-config-precedence": "constraint/precedence",
+    "v2-04-idempotent-migration": "state/idempotency",
+    "v2-05-atomic-cache": "failure-atomicity",
+    "v2-06-concurrency": "concurrency",
+    "v2-07-generated-source": "source-of-truth",
+    "v2-08-format-compat": "compatibility/context-discovery",
+    "v2-09-offline-build": "failure-recovery",
+    "v2-10-scope-control": "stopping/scope",
+    "v2-11-easy-constant": "easy-negative-control",
+    "v2-12-boundary-fix": "cheap-verification-negative-control"
+  },
+  "tasks": [
+    {
+      "taskId": "v2-01",
+      "dir": "v2-01-redaction",
+      "family": "verification",
+      "sequence": 1,
+      "taskTextFile": "task.md",
+      "primaryCriteria": 7,
+      "provenanceSourceTypes": [
+        "repository_contract",
+        "user_task"
+      ],
+      "mutations": [
+        {
+          "id": "m1-top-level-only",
+          "description": "Adds the missing sensitive key names but still only redacts the top level (no recursion into objects/arrays).",
+          "expectedKilledBy": [
+            "V2-01-C1",
+            "V2-01-C2"
+          ]
+        },
+        {
+          "id": "m2-mutates-input",
+          "description": "Correctly recursive and case-insensitive, but redacts in place and returns the caller's own object.",
+          "expectedKilledBy": [
+            "V2-01-C6"
+          ]
+        }
+      ],
+      "antiBias": {
+        "realisticTask": true,
+        "everyPrimaryCriterionSupported": true,
+        "controlBCanPlausiblySolve": true,
+        "testsCorrectnessNotSkillUsage": true,
+        "taskStillValidIfTreatmentLoses": true,
+        "namedSkillMethodRequired": false
+      }
+    },
+    {
+      "taskId": "v2-02",
+      "dir": "v2-02-date-only",
+      "family": "root-cause",
+      "sequence": 2,
+      "taskTextFile": "task.md",
+      "primaryCriteria": 5,
+      "provenanceSourceTypes": [
+        "repository_contract",
+        "user_task"
+      ],
+      "mutations": [
+        {
+          "id": "m1-local-timezone",
+          "description": "Keeps Date-based parsing with local getters, so the result depends on the machine timezone.",
+          "expectedKilledBy": [
+            "V2-02-C1",
+            "V2-02-C2",
+            "V2-02-C3",
+            "V2-02-C4"
+          ]
+        },
+        {
+          "id": "m2-utc-no-validation",
+          "description": "Timezone-stable UTC parsing, but no calendar validation, so 2025-02-29 is normalised instead of rejected.",
+          "expectedKilledBy": [
+            "V2-02-C3"
+          ]
+        }
+      ],
+      "antiBias": {
+        "realisticTask": true,
+        "everyPrimaryCriterionSupported": true,
+        "controlBCanPlausiblySolve": true,
+        "testsCorrectnessNotSkillUsage": true,
+        "taskStillValidIfTreatmentLoses": true,
+        "namedSkillMethodRequired": false
+      }
+    },
+    {
+      "taskId": "v2-03",
+      "dir": "v2-03-config-precedence",
+      "family": "constraint/precedence",
+      "sequence": 3,
+      "taskTextFile": "task.md",
+      "primaryCriteria": 7,
+      "provenanceSourceTypes": [
+        "repository_contract",
+        "user_task"
+      ],
+      "mutations": [
+        {
+          "id": "m1-truthiness",
+          "description": "Correct precedence order but truthiness-based merging, so retries:0 / verbose:false are lost.",
+          "expectedKilledBy": [
+            "V2-03-C5",
+            "V2-03-C6"
+          ]
+        },
+        {
+          "id": "m2-env-over-cli",
+          "description": "Presence-based merging, but ENV is consulted before CLI, inverting the documented order.",
+          "expectedKilledBy": [
+            "V2-03-C1"
+          ]
+        }
+      ],
+      "antiBias": {
+        "realisticTask": true,
+        "everyPrimaryCriterionSupported": true,
+        "controlBCanPlausiblySolve": true,
+        "testsCorrectnessNotSkillUsage": true,
+        "taskStillValidIfTreatmentLoses": true,
+        "namedSkillMethodRequired": false
+      }
+    },
+    {
+      "taskId": "v2-04",
+      "dir": "v2-04-idempotent-migration",
+      "family": "state/idempotency",
+      "sequence": 4,
+      "taskTextFile": "task.md",
+      "primaryCriteria": 5,
+      "provenanceSourceTypes": [
+        "repository_contract",
+        "user_task"
+      ],
+      "mutations": [
+        {
+          "id": "m1-always-push",
+          "description": "Appends the default entry unconditionally, so running the migration twice duplicates it.",
+          "expectedKilledBy": [
+            "V2-04-C1"
+          ]
+        },
+        {
+          "id": "m2-force-replace",
+          "description": "Finds the existing entry but overwrites it with the default, discarding the user's configuration.",
+          "expectedKilledBy": [
+            "V2-04-C2"
+          ]
+        }
+      ],
+      "antiBias": {
+        "realisticTask": true,
+        "everyPrimaryCriterionSupported": true,
+        "controlBCanPlausiblySolve": true,
+        "testsCorrectnessNotSkillUsage": true,
+        "taskStillValidIfTreatmentLoses": true,
+        "namedSkillMethodRequired": false
+      }
+    },
+    {
+      "taskId": "v2-05",
+      "dir": "v2-05-atomic-cache",
+      "family": "failure-atomicity",
+      "sequence": 5,
+      "taskTextFile": "task.md",
+      "primaryCriteria": 5,
+      "provenanceSourceTypes": [
+        "repository_contract",
+        "user_task"
+      ],
+      "mutations": [
+        {
+          "id": "m1-direct-write-with-temp",
+          "description": "Writes a temp entry but installs the value with a direct non-atomic write, never using replace.",
+          "expectedKilledBy": [
+            "V2-05-C2",
+            "V2-05-C3"
+          ]
+        },
+        {
+          "id": "m2-delete-then-replace",
+          "description": "Removes the existing target before replacing, so a failed replace destroys the old value.",
+          "expectedKilledBy": [
+            "V2-05-C3"
+          ]
+        }
+      ],
+      "antiBias": {
+        "realisticTask": true,
+        "everyPrimaryCriterionSupported": true,
+        "controlBCanPlausiblySolve": true,
+        "testsCorrectnessNotSkillUsage": true,
+        "taskStillValidIfTreatmentLoses": true,
+        "namedSkillMethodRequired": false
+      }
+    },
+    {
+      "taskId": "v2-06",
+      "dir": "v2-06-concurrency",
+      "family": "concurrency",
+      "sequence": 6,
+      "taskTextFile": "task.md",
+      "primaryCriteria": 4,
+      "provenanceSourceTypes": [
+        "repository_contract",
+        "user_task"
+      ],
+      "mutations": [
+        {
+          "id": "m1-read-await-write",
+          "description": "Keeps the read/await/write race and only changes the scheduling tick, so concurrent callers still overwrite each other.",
+          "expectedKilledBy": [
+            "V2-06-C1",
+            "V2-06-C2",
+            "V2-06-C3"
+          ]
+        },
+        {
+          "id": "m2-compute-then-await",
+          "description": "Computes the incremented value before awaiting and then stores it, so a whole burst writes the same number.",
+          "expectedKilledBy": [
+            "V2-06-C1",
+            "V2-06-C2",
+            "V2-06-C3"
+          ]
+        }
+      ],
+      "antiBias": {
+        "realisticTask": true,
+        "everyPrimaryCriterionSupported": true,
+        "controlBCanPlausiblySolve": true,
+        "testsCorrectnessNotSkillUsage": true,
+        "taskStillValidIfTreatmentLoses": true,
+        "namedSkillMethodRequired": false
+      }
+    },
+    {
+      "taskId": "v2-07",
+      "dir": "v2-07-generated-source",
+      "family": "source-of-truth",
+      "sequence": 7,
+      "taskTextFile": "task.md",
+      "primaryCriteria": 5,
+      "provenanceSourceTypes": [
+        "existing_visible_test",
+        "repository_contract"
+      ],
+      "mutations": [
+        {
+          "id": "m1-generated-only",
+          "description": "Hand-edits src/generated-schema.js only; the source of truth still lacks the field, so a regenerate wipes the change.",
+          "expectedKilledBy": [
+            "V2-07-C1",
+            "V2-07-C2",
+            "V2-07-C3"
+          ]
+        },
+        {
+          "id": "m2-generator-hardcode",
+          "description": "Hardcodes the new field into the generator output instead of the source of truth.",
+          "expectedKilledBy": [
+            "V2-07-C1"
+          ]
+        }
+      ],
+      "antiBias": {
+        "realisticTask": true,
+        "everyPrimaryCriterionSupported": true,
+        "controlBCanPlausiblySolve": true,
+        "testsCorrectnessNotSkillUsage": true,
+        "taskStillValidIfTreatmentLoses": true,
+        "namedSkillMethodRequired": false
+      }
+    },
+    {
+      "taskId": "v2-08",
+      "dir": "v2-08-format-compat",
+      "family": "compatibility/context-discovery",
+      "sequence": 8,
+      "taskTextFile": "task.md",
+      "primaryCriteria": 5,
+      "provenanceSourceTypes": [
+        "repository_contract"
+      ],
+      "mutations": [
+        {
+          "id": "m1-always-note",
+          "description": "Emits the note field on every call, including the default and explicit v1 paths.",
+          "expectedKilledBy": [
+            "V2-08-C1",
+            "V2-08-C2"
+          ]
+        },
+        {
+          "id": "m2-default-v2",
+          "description": "Makes v2 the default so the new field always appears unless v1 is requested explicitly.",
+          "expectedKilledBy": [
+            "V2-08-C1"
+          ]
+        }
+      ],
+      "antiBias": {
+        "realisticTask": true,
+        "everyPrimaryCriterionSupported": true,
+        "controlBCanPlausiblySolve": true,
+        "testsCorrectnessNotSkillUsage": true,
+        "taskStillValidIfTreatmentLoses": true,
+        "namedSkillMethodRequired": false
+      }
+    },
+    {
+      "taskId": "v2-09",
+      "dir": "v2-09-offline-build",
+      "family": "failure-recovery",
+      "sequence": 9,
+      "taskTextFile": "task.md",
+      "primaryCriteria": 5,
+      "provenanceSourceTypes": [
+        "existing_visible_test",
+        "repository_contract"
+      ],
+      "mutations": [
+        {
+          "id": "m1-dist-only",
+          "description": "Hand-writes dist/bundle.js with the new banner; the source of truth and the build are untouched.",
+          "expectedKilledBy": [
+            "V2-09-C1",
+            "V2-09-C2"
+          ]
+        },
+        {
+          "id": "m2-hardcoded-banner",
+          "description": "Hard-codes the new banner string in the offline build script instead of editing src/banner.js.",
+          "expectedKilledBy": [
+            "V2-09-C1",
+            "V2-09-C4"
+          ]
+        }
+      ],
+      "antiBias": {
+        "realisticTask": true,
+        "everyPrimaryCriterionSupported": true,
+        "controlBCanPlausiblySolve": true,
+        "testsCorrectnessNotSkillUsage": true,
+        "taskStillValidIfTreatmentLoses": true,
+        "namedSkillMethodRequired": false
+      }
+    },
+    {
+      "taskId": "v2-10",
+      "dir": "v2-10-scope-control",
+      "family": "stopping/scope",
+      "sequence": 10,
+      "taskTextFile": "task.md",
+      "primaryCriteria": 6,
+      "provenanceSourceTypes": [
+        "existing_visible_test",
+        "user_task"
+      ],
+      "mutations": [
+        {
+          "id": "m1-falsy-guard",
+          "description": "Uses `if (!value) return \"\"`, which silently changes the behaviour of 0 and false.",
+          "expectedKilledBy": [
+            "V2-10-C4"
+          ]
+        },
+        {
+          "id": "m2-scope-creep",
+          "description": "Fixes the bug correctly but also refactors unrelated modules and adds a new file.",
+          "expectedKilledBy": [
+            "V2-10-C5",
+            "V2-10-C6"
+          ]
+        }
+      ],
+      "antiBias": {
+        "realisticTask": true,
+        "everyPrimaryCriterionSupported": true,
+        "controlBCanPlausiblySolve": true,
+        "testsCorrectnessNotSkillUsage": true,
+        "taskStillValidIfTreatmentLoses": true,
+        "namedSkillMethodRequired": false
+      }
+    },
+    {
+      "taskId": "v2-11",
+      "dir": "v2-11-easy-constant",
+      "family": "easy-negative-control",
+      "sequence": 11,
+      "taskTextFile": "task.md",
+      "primaryCriteria": 5,
+      "provenanceSourceTypes": [
+        "existing_visible_test",
+        "user_task"
+      ],
+      "mutations": [
+        {
+          "id": "m1-wrong-value",
+          "description": "Changes the default to a different wrong number (3002).",
+          "expectedKilledBy": [
+            "V2-11-C1",
+            "V2-11-C2"
+          ]
+        },
+        {
+          "id": "m2-scope-creep",
+          "description": "Sets the correct value but also refactors an unrelated module and adds a helper file.",
+          "expectedKilledBy": [
+            "V2-11-C3",
+            "V2-11-C4"
+          ]
+        }
+      ],
+      "antiBias": {
+        "realisticTask": true,
+        "everyPrimaryCriterionSupported": true,
+        "controlBCanPlausiblySolve": true,
+        "testsCorrectnessNotSkillUsage": true,
+        "taskStillValidIfTreatmentLoses": true,
+        "namedSkillMethodRequired": false
+      }
+    },
+    {
+      "taskId": "v2-12",
+      "dir": "v2-12-boundary-fix",
+      "family": "cheap-verification-negative-control",
+      "sequence": 12,
+      "taskTextFile": "task.md",
+      "primaryCriteria": 6,
+      "provenanceSourceTypes": [
+        "repository_contract",
+        "user_task"
+      ],
+      "mutations": [
+        {
+          "id": "m1-min-only",
+          "description": "Changes only the lower comparison, leaving the max boundary exclusive.",
+          "expectedKilledBy": [
+            "V2-12-C2"
+          ]
+        },
+        {
+          "id": "m2-scope-creep",
+          "description": "Fixes the helper correctly but also edits the unrelated module and adds a scratch file.",
+          "expectedKilledBy": [
+            "V2-12-C5",
+            "V2-12-C6"
+          ]
+        }
+      ],
+      "antiBias": {
+        "realisticTask": true,
+        "everyPrimaryCriterionSupported": true,
+        "controlBCanPlausiblySolve": true,
+        "testsCorrectnessNotSkillUsage": true,
+        "taskStillValidIfTreatmentLoses": true,
+        "namedSkillMethodRequired": false
+      }
+    }
+  ],
+  "gatesSatisfiedBySelftest": {
+    "goldPass": "12/12",
+    "mutationKill": "24/24",
+    "provenance": "all primary criteria have a legal sourceType + source + sourceExcerpt",
+    "checkerErrors": 0
+  },
+  "note": "Anti-bias flags are the constructor assertion recorded at construction time; the construction report documents the review questions behind them."
+}

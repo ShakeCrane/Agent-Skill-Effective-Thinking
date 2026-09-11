@@ -1,0 +1,259 @@
+{
+  "seed": 20260911,
+  "generatedAt": "2026-09-11T00:42:37.330Z",
+  "totalRuns": 36,
+  "runs": [
+    {
+      "taskId": "v2-03-config-precedence",
+      "condition": "controlB",
+      "replicate": 1,
+      "runId": "v2-03-config-precedence__controlB__r1",
+      "order": 1
+    },
+    {
+      "taskId": "v2-12-boundary-fix",
+      "condition": "controlB",
+      "replicate": 1,
+      "runId": "v2-12-boundary-fix__controlB__r1",
+      "order": 2
+    },
+    {
+      "taskId": "v2-11-easy-constant",
+      "condition": "controlB",
+      "replicate": 1,
+      "runId": "v2-11-easy-constant__controlB__r1",
+      "order": 3
+    },
+    {
+      "taskId": "v2-10-scope-control",
+      "condition": "controlA",
+      "replicate": 1,
+      "runId": "v2-10-scope-control__controlA__r1",
+      "order": 4
+    },
+    {
+      "taskId": "v2-06-concurrency",
+      "condition": "controlB",
+      "replicate": 1,
+      "runId": "v2-06-concurrency__controlB__r1",
+      "order": 5
+    },
+    {
+      "taskId": "v2-11-easy-constant",
+      "condition": "treatment",
+      "replicate": 1,
+      "runId": "v2-11-easy-constant__treatment__r1",
+      "order": 6
+    },
+    {
+      "taskId": "v2-12-boundary-fix",
+      "condition": "treatment",
+      "replicate": 1,
+      "runId": "v2-12-boundary-fix__treatment__r1",
+      "order": 7
+    },
+    {
+      "taskId": "v2-05-atomic-cache",
+      "condition": "treatment",
+      "replicate": 1,
+      "runId": "v2-05-atomic-cache__treatment__r1",
+      "order": 8
+    },
+    {
+      "taskId": "v2-04-idempotent-migration",
+      "condition": "controlB",
+      "replicate": 1,
+      "runId": "v2-04-idempotent-migration__controlB__r1",
+      "order": 9
+    },
+    {
+      "taskId": "v2-08-format-compat",
+      "condition": "controlB",
+      "replicate": 1,
+      "runId": "v2-08-format-compat__controlB__r1",
+      "order": 10
+    },
+    {
+      "taskId": "v2-07-generated-source",
+      "condition": "controlA",
+      "replicate": 1,
+      "runId": "v2-07-generated-source__controlA__r1",
+      "order": 11
+    },
+    {
+      "taskId": "v2-02-date-only",
+      "condition": "controlB",
+      "replicate": 1,
+      "runId": "v2-02-date-only__controlB__r1",
+      "order": 12
+    },
+    {
+      "taskId": "v2-06-concurrency",
+      "condition": "controlA",
+      "replicate": 1,
+      "runId": "v2-06-concurrency__controlA__r1",
+      "order": 13
+    },
+    {
+      "taskId": "v2-01-redaction",
+      "condition": "controlA",
+      "replicate": 1,
+      "runId": "v2-01-redaction__controlA__r1",
+      "order": 14
+    },
+    {
+      "taskId": "v2-10-scope-control",
+      "condition": "controlB",
+      "replicate": 1,
+      "runId": "v2-10-scope-control__controlB__r1",
+      "order": 15
+    },
+    {
+      "taskId": "v2-04-idempotent-migration",
+      "condition": "treatment",
+      "replicate": 1,
+      "runId": "v2-04-idempotent-migration__treatment__r1",
+      "order": 16
+    },
+    {
+      "taskId": "v2-09-offline-build",
+      "condition": "treatment",
+      "replicate": 1,
+      "runId": "v2-09-offline-build__treatment__r1",
+      "order": 17
+    },
+    {
+      "taskId": "v2-05-atomic-cache",
+      "condition": "controlB",
+      "replicate": 1,
+      "runId": "v2-05-atomic-cache__controlB__r1",
+      "order": 18
+    },
+    {
+      "taskId": "v2-03-config-precedence",
+      "condition": "treatment",
+      "replicate": 1,
+      "runId": "v2-03-config-precedence__treatment__r1",
+      "order": 19
+    },
+    {
+      "taskId": "v2-09-offline-build",
+      "condition": "controlB",
+      "replicate": 1,
+      "runId": "v2-09-offline-build__controlB__r1",
+      "order": 20
+    },
+    {
+      "taskId": "v2-08-format-compat",
+      "condition": "controlA",
+      "replicate": 1,
+      "runId": "v2-08-format-compat__controlA__r1",
+      "order": 21
+    },
+    {
+      "taskId": "v2-01-redaction",
+      "condition": "treatment",
+      "replicate": 1,
+      "runId": "v2-01-redaction__treatment__r1",
+      "order": 22
+    },
+    {
+      "taskId": "v2-09-offline-build",
+      "condition": "controlA",
+      "replicate": 1,
+      "runId": "v2-09-offline-build__controlA__r1",
+      "order": 23
+    },
+    {
+      "taskId": "v2-01-redaction",
+      "condition": "controlB",
+      "replicate": 1,
+      "runId": "v2-01-redaction__controlB__r1",
+      "order": 24
+    },
+    {
+      "taskId": "v2-05-atomic-cache",
+      "condition": "controlA",
+      "replicate": 1,
+      "runId": "v2-05-atomic-cache__controlA__r1",
+      "order": 25
+    },
+    {
+      "taskId": "v2-03-config-precedence",
+      "condition": "controlA",
+      "replicate": 1,
+      "runId": "v2-03-config-precedence__controlA__r1",
+      "order": 26
+    },
+    {
+      "taskId": "v2-06-concurrency",
+      "condition": "treatment",
+      "replicate": 1,
+      "runId": "v2-06-concurrency__treatment__r1",
+      "order": 27
+    },
+    {
+      "taskId": "v2-08-format-compat",
+      "condition": "treatment",
+      "replicate": 1,
+      "runId": "v2-08-format-compat__treatment__r1",
+      "order": 28
+    },
+    {
+      "taskId": "v2-04-idempotent-migration",
+      "condition": "controlA",
+      "replicate": 1,
+      "runId": "v2-04-idempotent-migration__controlA__r1",
+      "order": 29
+    },
+    {
+      "taskId": "v2-11-easy-constant",
+      "condition": "controlA",
+      "replicate": 1,
+      "runId": "v2-11-easy-constant__controlA__r1",
+      "order": 30
+    },
+    {
+      "taskId": "v2-07-generated-source",
+      "condition": "treatment",
+      "replicate": 1,
+      "runId": "v2-07-generated-source__treatment__r1",
+      "order": 31
+    },
+    {
+      "taskId": "v2-02-date-only",
+      "condition": "controlA",
+      "replicate": 1,
+      "runId": "v2-02-date-only__controlA__r1",
+      "order": 32
+    },
+    {
+      "taskId": "v2-12-boundary-fix",
+      "condition": "controlA",
+      "replicate": 1,
+      "runId": "v2-12-boundary-fix__controlA__r1",
+      "order": 33
+    },
+    {
+      "taskId": "v2-07-generated-source",
+      "condition": "controlB",
+      "replicate": 1,
+      "runId": "v2-07-generated-source__controlB__r1",
+      "order": 34
+    },
+    {
+      "taskId": "v2-02-date-only",
+      "condition": "treatment",
+      "replicate": 1,
+      "runId": "v2-02-date-only__treatment__r1",
+      "order": 35
+    },
+    {
+      "taskId": "v2-10-scope-control",
+      "condition": "treatment",
+      "replicate": 1,
+      "runId": "v2-10-scope-control__treatment__r1",
+      "order": 36
+    }
+  ]
+}

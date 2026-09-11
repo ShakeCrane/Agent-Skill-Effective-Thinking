@@ -1,0 +1,53 @@
+{
+  "taskId": "v2-05",
+  "taskDir": "v2-05-atomic-cache",
+  "family": "failure-atomicity",
+  "commonTaskTextFile": "task.md",
+  "criteria": [
+    {
+      "id": "V2-05-C1",
+      "description": "After a successful save, read(key) returns the new value.",
+      "primary": true,
+      "hard": false,
+      "sourceType": "repository_contract",
+      "source": "CACHE.md",
+      "sourceExcerpt": "5. **Success.** After a successful call, `read(key)` returns the new value."
+    },
+    {
+      "id": "V2-05-C2",
+      "description": "The new value is installed through writeTemp + replace; the target is never written directly.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "CACHE.md",
+      "sourceExcerpt": "1. **Temp first.** The new value is written through `writeTemp`; the target must never be written directly ... 2. **Atomic install.** ... through `store.replace`."
+    },
+    {
+      "id": "V2-05-C3",
+      "description": "When replace throws, the previously stored value is still readable and unchanged.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "CACHE.md",
+      "sourceExcerpt": "3. **Failure keeps the old value.** If `replace` throws, the previously stored value for `key` must still be readable and unchanged"
+    },
+    {
+      "id": "V2-05-C4",
+      "description": "No temporary entry is left behind, on success or on failure.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "CACHE.md",
+      "sourceExcerpt": "4. **Temp cleanup.** No temporary entry may be left behind — after a success *and* after a failure."
+    },
+    {
+      "id": "V2-05-C5",
+      "description": "Public API unchanged: saveCache is exported and takes three arguments.",
+      "primary": true,
+      "hard": false,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "保持公共 API。"
+    }
+  ]
+}

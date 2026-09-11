@@ -1,0 +1,10 @@
+{
+  "name": "v2-seed-migration",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Config migration step",
+  "main": "src/migrate.js",
+  "scripts": {
+    "test": "node test/migrate.test.js"
+  }
+}

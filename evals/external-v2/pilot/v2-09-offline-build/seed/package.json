@@ -1,0 +1,11 @@
+{
+  "name": "v2-seed-offline-build",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Banner build with an online and an offline path",
+  "scripts": {
+    "build": "node scripts/build-online.js",
+    "build:offline": "node scripts/build-offline.js",
+    "test": "node test/banner.test.js"
+  }
+}

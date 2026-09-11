@@ -1,0 +1,12 @@
+{
+  "phase1BaselineCommit": "599beac09a461f81518217cadc606b5448e6bf31",
+  "phase1PackageVersion": "0.2.0",
+  "branch": "phase2-external-behavioral-eval",
+  "sourceSkillPath": "SKILL.md",
+  "sourceSkillSha256": "a5a52ff0d813059fc8398ac0c55525cfe23eb09468b7b8c76f2ce5786b561c98",
+  "frozenSkillPath": "evals/external-v2/frozen/SKILL.md",
+  "frozenSkillSha256": "a5a52ff0d813059fc8398ac0c55525cfe23eb09468b7b8c76f2ce5786b561c98",
+  "freezeTimestamp": "2026-09-11T00:50:36.397Z",
+  "pilotProtocolVersion": "v2-pilot-1",
+  "note": "The frozen snapshot is the ONLY Cognitive Skill text injected into Treatment runs. The live repository SKILL.md is never read at prepare time."
+}

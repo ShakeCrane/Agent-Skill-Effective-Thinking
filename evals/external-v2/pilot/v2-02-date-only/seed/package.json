@@ -1,0 +1,10 @@
+{
+  "name": "v2-seed-date-only",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Calendar date-only parsing helper",
+  "main": "src/date-only.js",
+  "scripts": {
+    "test": "node test/date-only.test.js"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "v2-seed-format-compat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Record exporter with a versioned output format",
+  "main": "src/exporter.js",
+  "scripts": {
+    "test": "node test/exporter.test.js"
+  }
+}

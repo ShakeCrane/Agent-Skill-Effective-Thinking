@@ -1,0 +1,10 @@
+{
+  "name": "v2-seed-counter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Async counter with per-key values",
+  "main": "src/counter.js",
+  "scripts": {
+    "test": "node test/counter.test.js"
+  }
+}

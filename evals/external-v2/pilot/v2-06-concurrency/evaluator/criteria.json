@@ -1,0 +1,44 @@
+{
+  "taskId": "v2-06",
+  "taskDir": "v2-06-concurrency",
+  "family": "concurrency",
+  "commonTaskTextFile": "task.md",
+  "criteria": [
+    {
+      "id": "V2-06-C1",
+      "description": "100 concurrent increments on one key end at exactly 100 (no lost updates).",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "CONCURRENCY.md",
+      "sourceExcerpt": "1. **No lost updates.** ... `await Promise.all(...100...)` must leave `counter.get('a') === 100`."
+    },
+    {
+      "id": "V2-06-C2",
+      "description": "A second burst of 50 concurrent increments brings the same key to exactly 150.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "CONCURRENCY.md",
+      "sourceExcerpt": "2. **Bursts compose.** A following burst of 50 concurrent increments must bring the value to 150."
+    },
+    {
+      "id": "V2-06-C3",
+      "description": "Two different keys are counted independently under concurrent load.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "CONCURRENCY.md",
+      "sourceExcerpt": "3. **Per-key independence.** Different keys are counted independently and must not interfere."
+    },
+    {
+      "id": "V2-06-C4",
+      "description": "Public API unchanged: Counter is exported with async increment(key) and sync get(key).",
+      "primary": true,
+      "hard": false,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "保持公共 API。"
+    }
+  ]
+}

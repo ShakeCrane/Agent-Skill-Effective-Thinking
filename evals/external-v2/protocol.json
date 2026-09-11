@@ -1,0 +1,220 @@
+{
+  "suite": "external-eval-v2",
+  "status": "constructed-not-frozen",
+  "constructionRound": "v2 pilot corpus construction",
+  "question": "Does loading the full Cognitive Skill (treatment) produce repeatable behavioural benefit over a bare agent (controlA) and, most importantly, over a minimal cognitive scaffold (controlB)?",
+  "keyComparison": "treatment vs controlB",
+  "corpus": {
+    "pilotTasks": 12,
+    "conditions": ["controlA", "controlB", "treatment"],
+    "replicatesPerTask": 1,
+    "plannedRuns": 36,
+    "runOrderFile": "run-order.json",
+    "seed": 20260911,
+    "taskRuntime": "Node.js >=18, CommonJS, no third-party dependencies"
+  },
+  "difficultyDesign": {
+    "principle": "Difficulty comes from reasoning / verification choice / source-of-truth / recovery / stopping — NOT from repo size or from added explicit requirements.",
+    "shape": "A plausible-looking wrong decision remains available; correct cognitive control makes success more likely.",
+    "bannedDesign": "No task may be reverse-engineered to make a named Skill method necessary or to make treatment win."
+  },
+  "dispatcher": "Read TASK.md and the repository contents. Complete the task in this workspace. Work autonomously and leave the workspace in its final completed state.",
+  "conditionsFile": "conditions.json",
+  "budgetPreregistration": {
+    "model": "same across conditions",
+    "thinkingConfiguration": "same across conditions",
+    "toolEnvironment": "same across conditions",
+    "workspace": "fresh per run (seed copy only; evaluator never present)",
+    "maxTaskAttempts": 3,
+    "maxIdenticalFailedCommandRepeats": 2,
+    "recommendedMaxExternalActions": 30,
+    "enforcementNote": "If the host cannot reliably enforce a tool/action budget, record telemetry only and do NOT fake a hard budget. Lack of strict tool counting must not block the pilot."
+  },
+  "workspacePreparation": {
+    "agentSees": ["seed/**", "TASK.md"],
+    "agentNeverSees": ["evaluator/**", "gold", "mutations", "checker", "criteria.json", "other conditions' outputs"],
+    "artifactExclusions": ["TASK.md", "evaluator/**", "*.v2meta.json"],
+    "inputSizePolicy": "Condition-injected text length is recorded separately (inputChars); never counted as artifact size."
+  },
+  "sensitivityGate": {
+    "note": "TWO INDEPENDENT CHANNELS, registered before any pilot outcome is visible. They are reported separately and are never compressed into one number. Equality of task-pass across conditions does NOT by itself mean the corpus has no behavioural sensitivity: the skill also targets tool efficiency, stopping, retrying and overthinking, which are measurable separately.",
+    "evaluatedAfter": "all 36 runs completed, checked, and condition-blinded",
+    "quality": {
+      "channel": "QUALITY SENSITIVITY",
+      "metric": "task-level taskPass across the three conditions",
+      "ceilingLimitedIfAllConditionsPassOnAtLeast": 9,
+      "ceilingLimitedIfDisagreementOnFewerThan": 4,
+      "verdicts": ["INFORMATIVE", "CEILING-LIMITED"],
+      "rule": "If >=9/12 tasks have all three conditions passing, OR fewer than 4/12 tasks show any condition-level taskPass disagreement, then QUALITY SENSITIVITY = CEILING-LIMITED, else INFORMATIVE. A treatment win and a control win both count as disagreement; the verdict never looks at direction."
+    },
+    "efficiency": {
+      "channel": "EFFICIENCY SENSITIVITY",
+      "primaryMetric": "toolCalls / externalActions",
+      "ifHostCannotCountActions": "EFFICIENCY SENSITIVITY = UNMEASURABLE (never substitute fabricated data; elapsed time alone is NOT a gate because scheduling noise dominates)",
+      "materialActionSpread": {
+        "maxMinusMinAtLeast": 3,
+        "maxOverMinAtLeast": 1.5,
+        "rule": "a task shows material action-count spread when, among the three ANONYMOUS conditions, max(actions) - min(actions) >= 3 AND max(actions) / max(1, min(actions)) >= 1.5",
+        "scope": "pilot-level heuristic for whether an efficiency signal is worth measuring further; it is NOT a significance test and NOT a skill-effectiveness criterion"
+      },
+      "informativeIfReliableTelemetryTasksAtLeast": 10,
+      "informativeIfMaterialSpreadTasksAtLeast": 4,
+      "verdicts": ["INFORMATIVE", "LOW", "UNMEASURABLE"],
+      "rule": "INFORMATIVE when >=10/12 tasks have reliable action telemetry AND >=4/12 tasks show material action-count spread; otherwise LOW or UNMEASURABLE. Spread must be assessed while conditions are anonymised."
+    },
+    "combinedInterpretation": {
+      "quality_informative__efficiency_informative": "pilot highly valuable",
+      "quality_informative__efficiency_low": "still supports a quality-focused Main",
+      "quality_ceiling_limited__efficiency_informative": "NOT a full ceiling failure — the corpus cannot separate final correctness but can separate cognitive execution cost; a future Main would be scoped explicitly as quality ceiling-limited / efficiency-focused",
+      "quality_ceiling_limited__efficiency_low": "PILOT SENSITIVITY FAIL — CEILING-LIMITED; do NOT proceed to Main"
+    },
+    "failLabel": "PILOT SENSITIVITY FAIL — CEILING-LIMITED",
+    "onFail": "Do NOT proceed to Main Evaluation.",
+    "legacyNote": "The original single quality gate is preserved above as the quality channel."
+  },
+  "blindingOrder": [
+    "run all 36 runs",
+    "run deterministic checkers",
+    "strip condition labels",
+    "assess task-level variance / sensitivity",
+    "confirm whether the corpus discriminates",
+    "only then unblind",
+    "only then compare treatment vs controlB vs controlA"
+  ],
+  "blindnessProhibition": "Never inspect whether treatment is leading before the sensitivity decision is recorded.",
+  "statistics": {
+    "sampleSize": "small (36 runs, 12 tasks)",
+    "allowed": ["absolute difference", "relative difference", "paired win/loss counts", "exact paired tests", "bootstrap CI if a sound implementation exists"],
+    "limitations": ["small sample", "task heterogeneity", "criteria within a task are not independent"],
+    "prohibited": ["p-hacking", "expanding the sample until significance appears", "pseudo-precise significance claims"]
+  },
+  "telemetrySchema": {
+    "toolCalls": null,
+    "failedToolCalls": null,
+    "uniqueCommands": null,
+    "repeatedFailedCommands": null,
+    "filesReadBeforeFirstEdit": null,
+    "filesChanged": null,
+    "unrelatedFilesChanged": null,
+    "testsRun": null,
+    "editsBeforeFirstTest": null,
+    "retryCount": null,
+    "elapsedMs": null,
+    "outputBytesExcludingConditionInputs": null,
+    "inputChars": null,
+    "checkerStatus": null,
+    "taskPass": null,
+    "primaryPassed": null,
+    "primaryTotal": null,
+    "inputTokens": null,
+    "outputTokens": null,
+    "reasoningTokens": null,
+    "unavailablePolicy": "Any field the host cannot measure is recorded as null. Never fabricate a value."
+  },
+  "f16Telemetry": {
+    "repeatedActionFailure": "same failing action/command >= 3 times with no new evidence in between (secondary observation only)",
+    "declaredActionGap": "only measurable when the host reliably exposes transcript + tool events; otherwise unknown",
+    "noProgressStreak": "consecutive agent turns with no new tool result, no file change, no new evidence",
+    "policy": "Never a primary success criterion."
+    },
+  "f17Proxy": {
+    "tasks": ["v2-10", "v2-11", "v2-12"],
+    "observe": ["postSuccessUnrelatedActions", "unrelatedFilesChanged"],
+    "caveat": "Passing these three tasks does NOT mean host-level F17 (meta-policy self-exemption) is solved."
+  },
+  "checkerOutputContract": {
+    "ok": { "taskId": "v2-01", "checkerStatus": "ok", "taskPass": true, "primaryPassed": 5, "primaryTotal": 5, "criteria": [{ "id": "V2-01-C1", "passed": true }], "secondary": {}, "notes": [] },
+    "error": { "checkerStatus": "error", "taskPass": false },
+    "rule": "A checker exception is NEVER interpreted as a task pass."
+  },
+  "provenanceContract": {
+    "allowedSourceTypes": ["user_task", "repository_contract", "public_api_contract", "existing_visible_test", "schema_contract"],
+    "forbiddenSourceTypes": ["reviewer_preference", "good_agent_should_do_this", "skill_preference", "hidden_expectation"],
+    "rule": "If an agent could not reasonably know a requirement before running (from the task text or the repository), it must not be a primary pass/fail criterion."
+  },
+  "gates": {
+    "A_goldPass": "gold implementation => checker PASS",
+    "B_mutationKill": ">=2 plausible wrong mutations per task => checker FAIL, and the failure must come from the expected criterion",
+    "C_provenance": "every primary criterion has a valid provenance entry",
+    "admission": "All three gates must hold for a task to enter the pilot."
+  },
+  "stopCondition": "Construction + self-test + convergence only. The 36 real agent runs require independent reviewer approval; they are NOT part of this round.",
+  "frozenState": {
+    "skillSnapshot": "frozen/SKILL.md",
+    "skillSnapshotMetadata": "frozen/freeze-metadata.json",
+    "manifest": "freeze-manifest.json",
+    "verifier": "scripts/verify-freeze.js",
+    "rule": "Treatment always injects frozen/SKILL.md. The live repository SKILL.md is never read at prepare time, so run 1 and run 36 use identical bytes even if the working tree changes mid-pilot.",
+    "verificationPoints": ["before the pilot", "before each batch", "before final aggregation"],
+    "driftPolicy": "After the first real pilot run begins, a frozen-artifact change is an evaluation-integrity failure. The manifest is NEVER silently regenerated to absorb drift."
+  },
+  "afterFreezeProhibitions": [
+    "changing any common task text",
+    "changing any seed repository",
+    "changing the Control B guidance",
+    "changing the frozen Skill snapshot",
+    "changing the dispatcher text",
+    "changing any primary criterion",
+    "changing checker semantics",
+    "changing the run order",
+    "changing the pilot sensitivity thresholds",
+    "modifying the Phase 1 Cognitive Skill",
+    "adding requirements based on results",
+    "deleting hard tasks based on results",
+    "editing mutations based on results",
+    "editing a checker so a particular condition wins",
+    "re-drawing the random order",
+    "deleting a legitimate Treatment loss"
+  ],
+  "measurementFixProtocol": {
+    "trigger": "a real checker/harness bug found during the frozen pilot",
+    "firstStep": "stop judging the affected task",
+    "record": ["bug", "root cause", "time discovered", "already-affected runs", "whether it could be condition-correlated", "whether condition/outcome was already observed"],
+    "allowedOnlyIf": "the checker/harness clearly contradicts the pre-registered contract",
+    "procedure": [
+      "save the old checker hash",
+      "save the new checker hash",
+      "write a measurement amendment",
+      "re-judge all affected A/B/T runs symmetrically",
+      "if the task or gold requirement itself must change, mark that task 'invalidated' for the formal pilot sensitivity analysis rather than silently redefining it"
+    ],
+    "prohibition": "A measurement fix may never become outcome-driven benchmark tuning."
+  },
+  "invalidRunClasses": [
+    "valid_completed",
+    "infra_invalid_rerun",
+    "measurement_invalid",
+    "unrecoverable_environment_failure"
+  ],
+  "invalidRunRule": {
+    "infraInvalidOnlyIf": "infrastructure prevented the agent from receiving the task/workspace/tools normally",
+    "notValidExclusionReasons": ["looked odd", "the model may have been in a bad state"],
+    "validData": ["a poor agent output", "the agent got it wrong", "the agent did something clumsy"],
+    "rerunPolicy": "re-run under the identical frozen task/condition; apply the same rule to all three conditions; keep the invalidation evidence",
+    "cherryPickProhibition": "Never exclude or delete a legitimate Treatment loss."
+  },
+  "concurrencyPolicy": {
+    "maxParallelAgents": 5,
+    "rationale": "v1 showed that wide parallel dispatch can cause silent infrastructure failures",
+    "onRepeatedInstability": "lower concurrency further rather than trade experimental integrity for speed"
+  },
+  "blindSensitivityProcedure": {
+    "step1": "complete all 36 valid runs",
+    "step2": "run the frozen checkers",
+    "step3": "create an anonymous condition mapping (condition-X/Y/Z)",
+    "step4": "compute QUALITY sensitivity on the anonymous conditions",
+    "step5": "compute EFFICIENCY sensitivity on the anonymous conditions (material action-count spread)",
+    "step6": "save and LOCK the blind sensitivity result",
+    "step7": "only then reveal controlA/controlB/treatment and run the condition analyses"
+  },
+  "pilotOutcomeDecision": {
+    "PILOT INFORMATIVE": "at least one of the Quality / Efficiency channels is INFORMATIVE — this means the design is worth planning a Main around; it does NOT mean the skill is effective",
+    "PILOT CEILING-LIMITED": "Quality is CEILING-LIMITED and Efficiency is LOW/UNMEASURABLE",
+    "PILOT INVALID": "an integrity/harness/freeze problem that cannot be reliably repaired",
+    "mainDecision": "Even when PILOT INFORMATIVE, do NOT auto-start Main. Main is decided by the main reviewer based on the pilot report."
+  },
+  "pilotInferenceLimits": {
+    "forbidden": ["statistical significance claims", "generalization claims", "stable causal claims", "experimental -> validated promotion"],
+    "permittedPurpose": ["corpus sensitivity", "failure discovery", "initial effect direction", "whether Main is worth running"]
+  }
+}

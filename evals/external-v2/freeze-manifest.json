@@ -1,0 +1,469 @@
+{
+  "suite": "external-eval-v2",
+  "protocolVersion": "v2-pilot-1",
+  "freezeTimestamp": "2026-09-11T00:50:36.397Z",
+  "phase1BaselineCommit": "599beac09a461f81518217cadc606b5448e6bf31",
+  "phase1PackageVersion": "0.2.0",
+  "frozenSkillSha256": "a5a52ff0d813059fc8398ac0c55525cfe23eb09468b7b8c76f2ce5786b561c98",
+  "sourceSkillSha256": "a5a52ff0d813059fc8398ac0c55525cfe23eb09468b7b8c76f2ce5786b561c98",
+  "generatedAt": "2026-09-11T00:51:06.886Z",
+  "artifactCount": 84,
+  "artifacts": [
+    {
+      "kind": "protocol",
+      "path": "protocol.json",
+      "sha256": "dfd3f2ce9e376a5e306b9789fbca15c3a262199ce48766a249f282708711982e"
+    },
+    {
+      "kind": "protocol",
+      "path": "conditions.json",
+      "sha256": "7cc7dd2a31dc5369e2ff58c1daf88a2d2c35b42abc9aff1575cb145b1062fbae"
+    },
+    {
+      "kind": "protocol",
+      "path": "pilot-manifest.json",
+      "sha256": "2fcb04dbc15a4441f02aa54ffadffc223744f0e3a740b8fcf96c8f5fd15817fa"
+    },
+    {
+      "kind": "protocol",
+      "path": "run-order.json",
+      "sha256": "695ca56ec9887a3243cc91f02492d4ce317b924f148b695900cb9bca2d2578dd"
+    },
+    {
+      "kind": "protocol",
+      "path": "README.md",
+      "sha256": "960941f393adcdee66f09f9afa2d21efcd7a1318a782425af3a8dea9592ed653"
+    },
+    {
+      "kind": "frozenSkill",
+      "path": "frozen/SKILL.md",
+      "sha256": "a5a52ff0d813059fc8398ac0c55525cfe23eb09468b7b8c76f2ce5786b561c98"
+    },
+    {
+      "kind": "frozenMetadata",
+      "path": "frozen/freeze-metadata.json",
+      "sha256": "9d3a5e143f73d9f94d421d3606817e7ab40141234ce570342608d19359cb538d"
+    },
+    {
+      "kind": "harness",
+      "path": "scripts/lib.js",
+      "sha256": "27732fbfe1b616dc232a1769b95372fc1488e4d1cef7f956db8dc403b80c8064"
+    },
+    {
+      "kind": "harness",
+      "path": "scripts/prepare-run.js",
+      "sha256": "da059bf9161a1e03687e1348bcc5de0f25fe43b408aa6f12267e28470af64706"
+    },
+    {
+      "kind": "harness",
+      "path": "scripts/check-run.js",
+      "sha256": "6671ddda2331691a19d2175e8af7428c578669316e5a75c4930a4bdcb5c0d40a"
+    },
+    {
+      "kind": "harness",
+      "path": "scripts/generate-order.js",
+      "sha256": "542ca5ab8192cd368422883cbc476f827e0a2c3b254809dfb4897b6b4fb24a03"
+    },
+    {
+      "kind": "harness",
+      "path": "scripts/selftest.js",
+      "sha256": "2681bcf6a885fe21cb90f142e72a2ca26808173000f3281510da947a2a30eb60"
+    },
+    {
+      "kind": "taskText",
+      "path": "pilot/v2-01-redaction/task.md",
+      "sha256": "dd2eaf0782c7f3623c05530bf72ffda8e75e98a6aad2302995a4fac36f3a0227"
+    },
+    {
+      "kind": "seed",
+      "path": "pilot/v2-01-redaction/seed/",
+      "tree": true,
+      "sha256": "783879ea5a800f4d4f6c3c24ae41d8154a0135537175bfdc9242a074bd6ad740"
+    },
+    {
+      "kind": "criteria",
+      "path": "pilot/v2-01-redaction/evaluator/criteria.json",
+      "sha256": "18a4c66fbb5c4c15dda8b18a74a1698a34c32745f305e0251595ad18cfd87288"
+    },
+    {
+      "kind": "checker",
+      "path": "pilot/v2-01-redaction/evaluator/checker.js",
+      "sha256": "0c74b3faa9950d8dfbd532eacd53dc37b59935c293d6c0ef6d8fbb660e17c682"
+    },
+    {
+      "kind": "gold",
+      "path": "pilot/v2-01-redaction/evaluator/gold/",
+      "tree": true,
+      "sha256": "87127b887fa8ddb6e306e84e7e6c4d5ebdffbce6ab384ef5cc253c37b1a190cd"
+    },
+    {
+      "kind": "mutations",
+      "path": "pilot/v2-01-redaction/evaluator/mutations/",
+      "tree": true,
+      "sha256": "a12438300e21b9ea40362235fb4b95a2644a4ea58f190e33dd1e24b8234bd2ed"
+    },
+    {
+      "kind": "taskText",
+      "path": "pilot/v2-02-date-only/task.md",
+      "sha256": "7eea49d296f8689e738dbfb741a6dbf60fb4d2f8b167d0cb775081e39d56a6ba"
+    },
+    {
+      "kind": "seed",
+      "path": "pilot/v2-02-date-only/seed/",
+      "tree": true,
+      "sha256": "0b50bb1e09be8b875dc5756b52af36c245f15791d8be53e022670fae739db605"
+    },
+    {
+      "kind": "criteria",
+      "path": "pilot/v2-02-date-only/evaluator/criteria.json",
+      "sha256": "c907b526282cc6c964aec071d6c2c7ea611c33c4397646b686cd7c3c1bf9eb11"
+    },
+    {
+      "kind": "checker",
+      "path": "pilot/v2-02-date-only/evaluator/checker.js",
+      "sha256": "f6d358620a7ff888171da1d410a8a001e96deae1c552e7b47e36372457804c13"
+    },
+    {
+      "kind": "gold",
+      "path": "pilot/v2-02-date-only/evaluator/gold/",
+      "tree": true,
+      "sha256": "3c8ba6269183c876116d47bc6297f452307221406978d082e812cdb1bb772b23"
+    },
+    {
+      "kind": "mutations",
+      "path": "pilot/v2-02-date-only/evaluator/mutations/",
+      "tree": true,
+      "sha256": "f94fc2dbc06cc158ddfac39536b0dfa344db9e634367dc37642fc48fd980077e"
+    },
+    {
+      "kind": "taskText",
+      "path": "pilot/v2-03-config-precedence/task.md",
+      "sha256": "932af6cef0a4b9dac937d701a85ca82981eb1e1e46f4f3803a147515ff1021c7"
+    },
+    {
+      "kind": "seed",
+      "path": "pilot/v2-03-config-precedence/seed/",
+      "tree": true,
+      "sha256": "c7006722193095be893d7da2872859039d46914bdb68be2dd07c48b070a1177b"
+    },
+    {
+      "kind": "criteria",
+      "path": "pilot/v2-03-config-precedence/evaluator/criteria.json",
+      "sha256": "27c13f086acf623a4e91605e2fda50eb6904eb9b131972d9ea840a4b590da898"
+    },
+    {
+      "kind": "checker",
+      "path": "pilot/v2-03-config-precedence/evaluator/checker.js",
+      "sha256": "88fa662305aba6deb694a8278821ede0eb4ea846136d4071b5c49a167227cccd"
+    },
+    {
+      "kind": "gold",
+      "path": "pilot/v2-03-config-precedence/evaluator/gold/",
+      "tree": true,
+      "sha256": "e4be06a47d9ecf137c37528e2746e51dac6bc8067b9c5fb7e27817874f0753ab"
+    },
+    {
+      "kind": "mutations",
+      "path": "pilot/v2-03-config-precedence/evaluator/mutations/",
+      "tree": true,
+      "sha256": "20419ae80e1179df2433189c140767506f05de099c3abc2f1db7a1c12a32df32"
+    },
+    {
+      "kind": "taskText",
+      "path": "pilot/v2-04-idempotent-migration/task.md",
+      "sha256": "38b7792908aaf3dfff246bfa0ad53cfb9c3eb870fe0abda45e91b5c24721794e"
+    },
+    {
+      "kind": "seed",
+      "path": "pilot/v2-04-idempotent-migration/seed/",
+      "tree": true,
+      "sha256": "9dded0f0334f376a3c8439e3b59062eb3c79af35770f6d78089f61efeff6d92d"
+    },
+    {
+      "kind": "criteria",
+      "path": "pilot/v2-04-idempotent-migration/evaluator/criteria.json",
+      "sha256": "aef29ddf189ca4dd33af4489915f2c38884676521840a5b6573bbedd52bc3507"
+    },
+    {
+      "kind": "checker",
+      "path": "pilot/v2-04-idempotent-migration/evaluator/checker.js",
+      "sha256": "7f79dd03c3716f818f6158c281975facc113809f5303229513c34dcf146933d1"
+    },
+    {
+      "kind": "gold",
+      "path": "pilot/v2-04-idempotent-migration/evaluator/gold/",
+      "tree": true,
+      "sha256": "93935eb6a8405b7b64a8cf4124ab3447a457ff2742daf24ff009ced916aa6c88"
+    },
+    {
+      "kind": "mutations",
+      "path": "pilot/v2-04-idempotent-migration/evaluator/mutations/",
+      "tree": true,
+      "sha256": "41ad9c96f677dd6adf1dddef34a050d57581ce6ba76a5c588b60573c98ea8b3d"
+    },
+    {
+      "kind": "taskText",
+      "path": "pilot/v2-05-atomic-cache/task.md",
+      "sha256": "89d62668d14c4ed42dd4488b2baf908422dfe3b822520ac57b0412997cb24c05"
+    },
+    {
+      "kind": "seed",
+      "path": "pilot/v2-05-atomic-cache/seed/",
+      "tree": true,
+      "sha256": "638956fd2575d907fe4a30cea4145c3d2b1d0d4c753c8360da2942a664922b8a"
+    },
+    {
+      "kind": "criteria",
+      "path": "pilot/v2-05-atomic-cache/evaluator/criteria.json",
+      "sha256": "fec9970c23fd75362c23ea62166a8896b382227545e6c526859d9b09e0e41227"
+    },
+    {
+      "kind": "checker",
+      "path": "pilot/v2-05-atomic-cache/evaluator/checker.js",
+      "sha256": "a4b860dd1a3f661b32ab3b9a25798f342a7d4a8529f8914d696edbf62e50a6a8"
+    },
+    {
+      "kind": "gold",
+      "path": "pilot/v2-05-atomic-cache/evaluator/gold/",
+      "tree": true,
+      "sha256": "d8913c85dff8f9f6b58783d093c3aa2bb09862c062422450913ad3ee9d249793"
+    },
+    {
+      "kind": "mutations",
+      "path": "pilot/v2-05-atomic-cache/evaluator/mutations/",
+      "tree": true,
+      "sha256": "e7da5279bea0bdc35e6f1b008eacdbd12009e384c4700450adc6733d00b262e3"
+    },
+    {
+      "kind": "taskText",
+      "path": "pilot/v2-06-concurrency/task.md",
+      "sha256": "890396f5d654b3654c5cdb75069dcce89a12c2812de2b608495c00e37062d62e"
+    },
+    {
+      "kind": "seed",
+      "path": "pilot/v2-06-concurrency/seed/",
+      "tree": true,
+      "sha256": "02cef0a35715f16a91d3d9df3dc816524a203e390eafae6e8a30eab74826b389"
+    },
+    {
+      "kind": "criteria",
+      "path": "pilot/v2-06-concurrency/evaluator/criteria.json",
+      "sha256": "1c7fb55d4c8ec810ddb526dfe2d78dc8dd4d0c32d03fe5b2aa10aef7111e270d"
+    },
+    {
+      "kind": "checker",
+      "path": "pilot/v2-06-concurrency/evaluator/checker.js",
+      "sha256": "9d19e8f9b26aad7c0f5f88f677d440649116100ab9d0b8ecbf483dd472a65968"
+    },
+    {
+      "kind": "gold",
+      "path": "pilot/v2-06-concurrency/evaluator/gold/",
+      "tree": true,
+      "sha256": "304b5053517bbfabc80b89e1fed3d2c19269d668d7de8160aee8d9062f66011e"
+    },
+    {
+      "kind": "mutations",
+      "path": "pilot/v2-06-concurrency/evaluator/mutations/",
+      "tree": true,
+      "sha256": "3e62b57bf8a13d97e7b32c8ddb6f5233575cad889aa9cfb39f966f4cac4e8ee9"
+    },
+    {
+      "kind": "taskText",
+      "path": "pilot/v2-07-generated-source/task.md",
+      "sha256": "598bf384a03ebd14cd92d62c5fb38e6dbce4a0708a65c5517947ab1805bce2be"
+    },
+    {
+      "kind": "seed",
+      "path": "pilot/v2-07-generated-source/seed/",
+      "tree": true,
+      "sha256": "3a334b3e051914e19a753076c281fb12027d3cd601fb649c5113a639fe1c3ced"
+    },
+    {
+      "kind": "criteria",
+      "path": "pilot/v2-07-generated-source/evaluator/criteria.json",
+      "sha256": "3cf87b1f34a557aac51f632be9fe96c1cba42b9b964139aa04c374abe6acb3e7"
+    },
+    {
+      "kind": "checker",
+      "path": "pilot/v2-07-generated-source/evaluator/checker.js",
+      "sha256": "ac9caa7fb4c2f04dc29a490ead636c1d462cf45c352da16421df28de57640aba"
+    },
+    {
+      "kind": "gold",
+      "path": "pilot/v2-07-generated-source/evaluator/gold/",
+      "tree": true,
+      "sha256": "6cdcff7ef0b630625ce449d15d684a7c7fd2ad4f3dfc7805b9e68d420400bd7c"
+    },
+    {
+      "kind": "mutations",
+      "path": "pilot/v2-07-generated-source/evaluator/mutations/",
+      "tree": true,
+      "sha256": "2389a35753b1dc968ff5b9bd42b6d2923d982dd01478d39018d9cde007bc065d"
+    },
+    {
+      "kind": "taskText",
+      "path": "pilot/v2-08-format-compat/task.md",
+      "sha256": "0dfd79ecfcccbd1be312db7ab8cf1700c9f0f1731672e6635d40b74f0e2e6926"
+    },
+    {
+      "kind": "seed",
+      "path": "pilot/v2-08-format-compat/seed/",
+      "tree": true,
+      "sha256": "1cdb4cddb4eb39f7c44fc74f5faaf57d863ee569c748f96c18e604fa03d2c009"
+    },
+    {
+      "kind": "criteria",
+      "path": "pilot/v2-08-format-compat/evaluator/criteria.json",
+      "sha256": "54f3da6e24e62fd00831d8057fe78e54375fa973e306ae66fac4b112c84c3bfd"
+    },
+    {
+      "kind": "checker",
+      "path": "pilot/v2-08-format-compat/evaluator/checker.js",
+      "sha256": "149b3731cde635fe15fe46c3b05758647a2744e1363372dde23ac43ffb00a857"
+    },
+    {
+      "kind": "gold",
+      "path": "pilot/v2-08-format-compat/evaluator/gold/",
+      "tree": true,
+      "sha256": "0be36a943d5f9da51c2a55d21ff342da2b7432d89f52e62862c803c372a9e36d"
+    },
+    {
+      "kind": "mutations",
+      "path": "pilot/v2-08-format-compat/evaluator/mutations/",
+      "tree": true,
+      "sha256": "49a910dc1f1bdbb1f6653f98ace00abd45eca39fa8d57b1955c0f64fe98a0bcf"
+    },
+    {
+      "kind": "taskText",
+      "path": "pilot/v2-09-offline-build/task.md",
+      "sha256": "67eef6b0390934c0ab8ba5e670f63f7194377e5bca36499b2224ea47bef4e0f7"
+    },
+    {
+      "kind": "seed",
+      "path": "pilot/v2-09-offline-build/seed/",
+      "tree": true,
+      "sha256": "60ef6e4febc52edeac0d6e25bccad07a513bfabf58ebc005d11ccc1eb08b4878"
+    },
+    {
+      "kind": "criteria",
+      "path": "pilot/v2-09-offline-build/evaluator/criteria.json",
+      "sha256": "316a7df0cea1fca9bd013fd4f9627920f0a0cdef2312bc3778568556ecad73e3"
+    },
+    {
+      "kind": "checker",
+      "path": "pilot/v2-09-offline-build/evaluator/checker.js",
+      "sha256": "5332ae8ea08bc7f0d33f2034c8e2f70502fd717229d3a551b8ee78eae796a0e6"
+    },
+    {
+      "kind": "gold",
+      "path": "pilot/v2-09-offline-build/evaluator/gold/",
+      "tree": true,
+      "sha256": "daea13b76fc4a472178949271aa63e9eac4ea4d58eed7707c648d7d406f7ad35"
+    },
+    {
+      "kind": "mutations",
+      "path": "pilot/v2-09-offline-build/evaluator/mutations/",
+      "tree": true,
+      "sha256": "50fdb5106254d06df106af59220502ec6ed32e2ad862af7883f89d631bbba584"
+    },
+    {
+      "kind": "taskText",
+      "path": "pilot/v2-10-scope-control/task.md",
+      "sha256": "0a22a6751b20af1aeb60e673e054ed099d947f49a28ab4190d26c78cf8616fc7"
+    },
+    {
+      "kind": "seed",
+      "path": "pilot/v2-10-scope-control/seed/",
+      "tree": true,
+      "sha256": "7dca35f7b5439d67eea88c13e487413f916ddaf031463880d14a02c0ee03ca8f"
+    },
+    {
+      "kind": "criteria",
+      "path": "pilot/v2-10-scope-control/evaluator/criteria.json",
+      "sha256": "453fca75b32975d869f7b0acf6265925dfcb8312019f884c1f00805fb2dc9bc9"
+    },
+    {
+      "kind": "checker",
+      "path": "pilot/v2-10-scope-control/evaluator/checker.js",
+      "sha256": "02f76c4b4a1efa8449fe785d0a637c28e7496c867acb74d3ad199e592e2e33cc"
+    },
+    {
+      "kind": "gold",
+      "path": "pilot/v2-10-scope-control/evaluator/gold/",
+      "tree": true,
+      "sha256": "305a25263a17fb0ccf5b4ccd87c4116e1e3481b7ae4399dee91df9e50eeaf838"
+    },
+    {
+      "kind": "mutations",
+      "path": "pilot/v2-10-scope-control/evaluator/mutations/",
+      "tree": true,
+      "sha256": "05e53c1156f853f753cfbfb0cb1613beaa28ca7dbde6431e4f2e7a87ed717abc"
+    },
+    {
+      "kind": "taskText",
+      "path": "pilot/v2-11-easy-constant/task.md",
+      "sha256": "72f44e3dc4fd34cecefe60a6851a46851f32265d073142def5d30d01646bdebe"
+    },
+    {
+      "kind": "seed",
+      "path": "pilot/v2-11-easy-constant/seed/",
+      "tree": true,
+      "sha256": "4edc738ea2531c1ffce723d14b5f3ee6bcfcc946bc6649dc9189a1a669b130b2"
+    },
+    {
+      "kind": "criteria",
+      "path": "pilot/v2-11-easy-constant/evaluator/criteria.json",
+      "sha256": "375760a800545c9283455937e420f2e107add5f35a7e280cf35709354173f793"
+    },
+    {
+      "kind": "checker",
+      "path": "pilot/v2-11-easy-constant/evaluator/checker.js",
+      "sha256": "3e40a2268f523a3bcb57d4a2c418f6147f933cca7fde2a69921f8c575ceb5f0c"
+    },
+    {
+      "kind": "gold",
+      "path": "pilot/v2-11-easy-constant/evaluator/gold/",
+      "tree": true,
+      "sha256": "74512e47518cedcdb68a038ea7f582f6a2a180593616559e0f6fe40c61d14410"
+    },
+    {
+      "kind": "mutations",
+      "path": "pilot/v2-11-easy-constant/evaluator/mutations/",
+      "tree": true,
+      "sha256": "1691cfe9eb5f57d9b795bb0a0e90f7461a5513e6acfb2da6a792230c3aaee6cd"
+    },
+    {
+      "kind": "taskText",
+      "path": "pilot/v2-12-boundary-fix/task.md",
+      "sha256": "514ecb86b3dbee2c78fc5c389e1041a14123f2a40e468b2fa5314f637540cd29"
+    },
+    {
+      "kind": "seed",
+      "path": "pilot/v2-12-boundary-fix/seed/",
+      "tree": true,
+      "sha256": "74bb479afca9ea9d861d64272bef439849e34ab00282f5bc6c293f9810d7b694"
+    },
+    {
+      "kind": "criteria",
+      "path": "pilot/v2-12-boundary-fix/evaluator/criteria.json",
+      "sha256": "fd678da18c3013ad42efd48e01bd658f8b31290c0d13494c61b8488049f849ca"
+    },
+    {
+      "kind": "checker",
+      "path": "pilot/v2-12-boundary-fix/evaluator/checker.js",
+      "sha256": "fda89a7c9816d10e0436619d851873c5106254b5dac4721ae642f9e32a8b0a39"
+    },
+    {
+      "kind": "gold",
+      "path": "pilot/v2-12-boundary-fix/evaluator/gold/",
+      "tree": true,
+      "sha256": "c113de50f45c1af942c56fe341c92a48c6b1cd50b911bb9af5ff54d05e609c01"
+    },
+    {
+      "kind": "mutations",
+      "path": "pilot/v2-12-boundary-fix/evaluator/mutations/",
+      "tree": true,
+      "sha256": "20790353c442bec70536a6cb5ebc6cf8c001be6f080e3f4e071ea87a8adeb16d"
+    }
+  ]
+}

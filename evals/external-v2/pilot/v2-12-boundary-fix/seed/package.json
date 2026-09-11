@@ -1,0 +1,10 @@
+{
+  "name": "v2-seed-boundary-fix",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Numeric range helper",
+  "main": "src/range.js",
+  "scripts": {
+    "test": "node test/range.test.js"
+  }
+}

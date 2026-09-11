@@ -1,0 +1,7 @@
+{
+  "fields": [
+    { "name": "id", "type": "string", "required": true },
+    { "name": "title", "type": "string", "required": true },
+    { "name": "archived", "type": "integer", "required": false, "default": 0 }
+  ]
+}

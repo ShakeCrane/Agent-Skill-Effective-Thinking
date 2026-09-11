@@ -1,0 +1,71 @@
+{
+  "taskId": "v2-01",
+  "taskDir": "v2-01-redaction",
+  "family": "verification",
+  "commonTaskTextFile": "task.md",
+  "criteria": [
+    {
+      "id": "V2-01-C1",
+      "description": "Nested objects are redacted recursively (not only top-level keys).",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "SECURITY.md",
+      "sourceExcerpt": "1. **Recursive objects.** Objects are traversed recursively; nested objects are redacted too."
+    },
+    {
+      "id": "V2-01-C2",
+      "description": "Arrays are traversed recursively (arrays of objects and nested arrays are redacted).",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "SECURITY.md",
+      "sourceExcerpt": "2. **Recursive arrays.** Arrays are traversed recursively; object/array elements are redacted too."
+    },
+    {
+      "id": "V2-01-C3",
+      "description": "Sensitive key matching is case-insensitive (PASSWORD, ApiToken, SECRET).",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "SECURITY.md",
+      "sourceExcerpt": "3. **Case-insensitive keys.** Sensitive key matching is case-insensitive (`PASSWORD` == `password`)."
+    },
+    {
+      "id": "V2-01-C4",
+      "description": "All four sensitive keys are covered: password, token, apiToken, secret.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "SECURITY.md",
+      "sourceExcerpt": "4. **Sensitive keys.** Exactly these four, compared case-insensitively: password, token, apiToken, secret"
+    },
+    {
+      "id": "V2-01-C5",
+      "description": "Primitives and null are preserved (null does not become an object, numbers stay numbers).",
+      "primary": true,
+      "hard": false,
+      "sourceType": "repository_contract",
+      "source": "SECURITY.md",
+      "sourceExcerpt": "6. **Primitives and null.** Numbers, strings, booleans, `null` and `undefined` are returned unchanged (`null` stays `null`; it must not become an object)."
+    },
+    {
+      "id": "V2-01-C6",
+      "description": "The input value is not mutated by redactSecrets.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "SECURITY.md",
+      "sourceExcerpt": "7. **No mutation.** The input value must never be modified."
+    },
+    {
+      "id": "V2-01-C7",
+      "description": "Public API unchanged: src/redact.js exports redactSecrets taking one argument.",
+      "primary": true,
+      "hard": false,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "保持现有公共 API（函数名与参数不变）"
+    }
+  ]
+}

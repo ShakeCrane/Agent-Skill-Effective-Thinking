@@ -1,0 +1,53 @@
+{
+  "taskId": "v2-11",
+  "taskDir": "v2-11-easy-constant",
+  "family": "easy-negative-control",
+  "commonTaskTextFile": "task.md",
+  "criteria": [
+    {
+      "id": "V2-11-C1",
+      "description": "The exported default port is 3001.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "将默认端口从 `3000` 改为 `3001`。"
+    },
+    {
+      "id": "V2-11-C2",
+      "description": "The server uses the new default port when no explicit port is given, and explicit options still win.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "existing_visible_test",
+      "source": "test/defaults.test.js",
+      "sourceExcerpt": "assert.strictEqual(createServer().port, DEFAULT_PORT); assert.strictEqual(createServer({ port: 9 }).port, 9);"
+    },
+    {
+      "id": "V2-11-C3",
+      "description": "Only the file defining the default was changed; every other seed file is byte-identical.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "只修改定义该默认值所必需的代码，不做其它重构。"
+    },
+    {
+      "id": "V2-11-C4",
+      "description": "No extra file was created in the workspace.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "只修改定义该默认值所必需的代码，不做其它重构。"
+    },
+    {
+      "id": "V2-11-C5",
+      "description": "Public exports are unchanged (DEFAULT_PORT from defaults.js, createServer from server.js).",
+      "primary": true,
+      "hard": false,
+      "sourceType": "existing_visible_test",
+      "source": "test/defaults.test.js",
+      "sourceExcerpt": "const { DEFAULT_PORT } = require('../src/defaults.js'); const { createServer } = require('../src/server.js');"
+    }
+  ]
+}

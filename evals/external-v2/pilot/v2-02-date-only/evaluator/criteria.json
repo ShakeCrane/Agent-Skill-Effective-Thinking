@@ -1,0 +1,53 @@
+{
+  "taskId": "v2-02",
+  "taskDir": "v2-02-date-only",
+  "family": "root-cause",
+  "commonTaskTextFile": "task.md",
+  "criteria": [
+    {
+      "id": "V2-02-C1",
+      "description": "parseDateOnly gives identical results under TZ=UTC, TZ=Asia/Shanghai and TZ=America/Los_Angeles.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "DATE_CONTRACT.md",
+      "sourceExcerpt": "1. **Timezone independence.** ... (`TZ=UTC`, `TZ=Asia/Shanghai`, `TZ=America/Los_Angeles` must all agree)."
+    },
+    {
+      "id": "V2-02-C2",
+      "description": "The leap day 2024-02-29 parses to {2024,2,29} in every timezone.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "DATE_CONTRACT.md",
+      "sourceExcerpt": "4. **Leap years.** `2024-02-29` is valid and must parse to `{ year: 2024, month: 2, day: 29 }`."
+    },
+    {
+      "id": "V2-02-C3",
+      "description": "Non-existent calendar dates are rejected by throwing (2025-02-29, 2026-02-30, 2026-13-01, 2026-00-10).",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "DATE_CONTRACT.md",
+      "sourceExcerpt": "3. **Calendar validity.** A syntactically well-formed but non-existent calendar date must be rejected by throwing."
+    },
+    {
+      "id": "V2-02-C4",
+      "description": "formatDateOnly round-trips every valid input unchanged in every timezone.",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "DATE_CONTRACT.md",
+      "sourceExcerpt": "2. **Round-trip stability.** For every valid input, `formatDateOnly(value) === value`."
+    },
+    {
+      "id": "V2-02-C5",
+      "description": "Public API unchanged: both helpers are exported and take exactly one argument.",
+      "primary": true,
+      "hard": false,
+      "sourceType": "user_task",
+      "source": "task.md",
+      "sourceExcerpt": "保持现有 API。"
+    }
+  ]
+}

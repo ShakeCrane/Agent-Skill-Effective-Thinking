@@ -1,0 +1,53 @@
+{
+  "taskId": "v2-07",
+  "taskDir": "v2-07-generated-source",
+  "family": "source-of-truth",
+  "commonTaskTextFile": "task.md",
+  "criteria": [
+    {
+      "id": "V2-07-C1",
+      "description": "The source of truth schema/source.json declares the new priority field (type integer, default 0).",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "SCHEMA.md",
+      "sourceExcerpt": "schema/source.json = the source of truth (edited by hand) ... The generated file must never be the only place a change is made."
+    },
+    {
+      "id": "V2-07-C2",
+      "description": "Running the repository generator from the source produces a generated module that contains priority (integer, default 0).",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "SCHEMA.md",
+      "sourceExcerpt": "scripts/generate.js = the generator: source.json -> src/generated-schema.js"
+    },
+    {
+      "id": "V2-07-C3",
+      "description": "The committed generated artifact is exactly what the generator produces from the current source (it was not hand-edited).",
+      "primary": true,
+      "hard": true,
+      "sourceType": "repository_contract",
+      "source": "SCHEMA.md",
+      "sourceExcerpt": "A change that exists only in `src/generated-schema.js` is destroyed by the next `npm run generate`."
+    },
+    {
+      "id": "V2-07-C4",
+      "description": "Pre-existing fields (id, title, archived) and their defaults survive the change.",
+      "primary": true,
+      "hard": false,
+      "sourceType": "repository_contract",
+      "source": "SCHEMA.md",
+      "sourceExcerpt": "`FIELDS` — the field list, in source order ... `DEFAULTS` — a map of field name -> default value"
+    },
+    {
+      "id": "V2-07-C5",
+      "description": "The generator itself still runs successfully (exit status 0).",
+      "primary": true,
+      "hard": false,
+      "sourceType": "existing_visible_test",
+      "source": "package.json",
+      "sourceExcerpt": "\"generate\": \"node scripts/generate.js\""
+    }
+  ]
+}
