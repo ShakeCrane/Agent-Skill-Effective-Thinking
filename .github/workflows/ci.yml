@@ -1,0 +1,126 @@
+name: CI
+
+# Minimal, deterministic contract gate.
+#
+# What this job guarantees: the repository's own test chain, the DSH skill-sync check, the DSH
+# packaging/provider contract in its ORDINARY form, and the package-meta whitelist contract — all on
+# a clean runner with NO DeepSeek Harness host installed.
+#
+# Why there is no required-host job here: `test:dsh:host` / `release:verify` deliberately FAIL when
+# no real DSH host is present, and this workflow does not install one. Faking a host to make that
+# gate green would be exactly the false evidence the strict mode exists to prevent, so the real-host
+# gate is left to a release environment that actually has DSH pinned (see README → Release).
+#
+# Note on `npm test`: it includes eval scripts that write nothing and need no network. It is the
+# frozen Phase 1 contract chain and is expected to stay green on every push.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    name: contract (node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 18 is the declared engine floor; 22 is the current LTS line used for releases.
+        node: ['18', '22']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      # The package has zero runtime dependencies and no lockfile, so there is nothing to install.
+      # This step only proves the manifest is parseable and dependency-free.
+      - name: Verify dependency-free manifest
+        run: |
+          node -e "const p=require('./package.json');const n=Object.keys(p.dependencies||{}).length+Object.keys(p.optionalDependencies||{}).length+Object.keys(p.peerDependencies||{}).length;if(n)throw new Error('unexpected dependencies: '+n);console.log('dependency-free OK, node',process.version)"
+
+      - name: npm test (frozen Phase 1 chain)
+        run: npm test
+
+      - name: dsh:check (packaged skill has not drifted from SKILL.md)
+        run: npm run dsh:check
+
+      - name: test:dsh (DSH packaging + provider contract; host may SKIP)
+        run: npm run test:dsh
+
+      - name: package-meta (npm package + release-facing whitelist contract)
+        run: npm run package-meta
+
+      - name: freeze verification (External Eval v2 frozen artifacts unchanged)
+        run: node evals/external-v2/scripts/verify-freeze.js
+
+      - name: release:check (reproducible, host-free release contract)
+        run: npm run release:check
+
+  pack:
+    name: pack contract
+    runs-on: ubuntu-latest
+    needs: contract
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # `npm pack` triggers prepack -> release:check, so this proves a plain pack succeeds in an
+      # environment with no DSH host, and that the tarball carries the release-facing files.
+      - name: npm pack (prepack runs release:check)
+        run: npm pack
+
+      - name: Inspect tarball contents
+        run: |
+          set -euo pipefail
+          TGZ=$(ls -1 cognitive-agent-skill-*.tgz | head -n1)
+          echo "tarball: $TGZ"
+          tar -tzf "$TGZ" | sort > /tmp/contents.txt
+          cat /tmp/contents.txt
+          for required in \
+            package/evals/dsh-plugin-test.js \
+            package/scripts/check-dsh-skill-sync.js \
+            package/scripts/sync-dsh-skill.js \
+            package/dsh/index.mjs \
+            package/dsh/skill-meta.mjs \
+            package/dsh/cordis.patch.yml \
+            package/dsh/skill/effective-thinking.md \
+            package/index.js \
+            package/router/adaptive-loop.js \
+            package/SKILL.md \
+            package/LICENSE
+          do
+            grep -qx "$required" /tmp/contents.txt || { echo "MISSING FROM TARBALL: $required"; exit 1; }
+          done
+          echo "all release-facing files present"
+          # The eval corpus (except the DSH contract test) must NOT ship.
+          if grep -qE '^package/evals/(benchmark|validation|extraction)\.js$' /tmp/contents.txt; then
+            echo "eval corpus leaked into the tarball"; exit 1
+          fi
+
+      - name: Isolated consume check (load the packed artifact)
+        run: |
+          set -euo pipefail
+          TGZ=$(ls -1 cognitive-agent-skill-*.tgz | head -n1)
+          WORK=$(mktemp -d)
+          tar -xzf "$TGZ" -C "$WORK"
+          cd "$WORK/package"
+          node -e "
+            const assert=require('assert');
+            const lib=require(process.cwd());
+            assert.strictEqual(typeof lib.route,'function','root require works');
+            const r=lib.route(lib.extract('Rename the local variable foo to bar in a 30-line function.'));
+            assert.strictEqual(r.strategy,'fast','routing works from the packed tree');
+            const p=require(process.cwd()+'/package.json');
+            assert.ok(p.exports['./dsh'],'./dsh export exists');
+            assert.ok(require('fs').existsSync(process.cwd()+'/dsh/skill/effective-thinking.md'),'packaged DSH asset exists');
+            console.log('isolated consume OK');
+          "
+          npm run dsh:check

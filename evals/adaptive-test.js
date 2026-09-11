@@ -4,7 +4,8 @@
 //
 // Run: node evals/adaptive-test.js
 'use strict';
-const { run, runAsync, adaptiveLoop } = require('../router/adaptive-loop.js');
+const { run, runAsync, adaptiveLoop, normalizeMaxSteps, DEFAULT_BUDGET, ATTEMPT_BUDGET_REASON } =
+  require('../router/adaptive-loop.js');
 
 let failures = 0;
 const check = (name, cond, detail) => {
@@ -68,6 +69,112 @@ const check = (name, cond, detail) => {
   check('always-failing loop is bounded', final.done === true && final.success === false,
     `attempts=${final.attempts} calls=${calls}`);
   check('loop stops within the attempt budget', final.attempts <= 10, `attempts=${final.attempts}`);
+}
+
+// ============================================================================
+// Case 8-11 (P1 regression): the EXECUTION attempt budget is exact.
+//
+// Bug being locked down: `run()`/`runAsync()` kept their own `guard < cap + 1` counter while
+// `adaptiveLoop` separately enforced `budgets.MAX_STEPS`, so:
+//   - maxSteps=1 executed the task TWICE and could return `done:false`;
+//   - maxSteps=2 executed three times;
+//   - an exhausted hard budget was even reported with the STRATEGY's stopping reason
+//     ("deep: keep deliberating — …"), which is semantically the opposite of a hard stop.
+// Invariant now: maxSteps=N -> execute() is called at most N times, the loop is terminal at N, and
+// exhaustion has its own reason that can never be mistaken for a deliberation decision.
+// ============================================================================
+const ALWAYS_FAIL_TASK = 'Review the security of our auth flow before we launch to production.';
+const failExpr = (counter) => () => { counter.calls += 1; return { ok: false }; };
+
+// ---- Case 8: maxSteps=1, executor always fails -> exactly 1 attempt, terminal, budget reason ----
+{
+  const c = { calls: 0 };
+  const final = run({ task: ALWAYS_FAIL_TASK, maxSteps: 1, execute: failExpr(c) });
+  check('maxSteps=1 executes exactly once', c.calls === 1, `execute calls=${c.calls}`);
+  check('maxSteps=1 is terminal after one failure',
+    final.done === true && final.success === false && final.attempts === 1,
+    `done=${final.done} success=${final.success} attempts=${final.attempts}`);
+  check('maxSteps=1 reports the execution attempt budget reason',
+    final.stopReason === ATTEMPT_BUDGET_REASON, JSON.stringify(final.stopReason));
+  check('maxSteps=1 history reason is the budget reason (not a strategy reason)',
+    final.history[final.history.length - 1].stopReason === ATTEMPT_BUDGET_REASON,
+    JSON.stringify(final.history[final.history.length - 1].stopReason));
+  check('maxSteps=1 does not reuse a deep/deliberation stop reason',
+    !/deliberat|without new information|evidence sufficient/.test(String(final.stopReason)),
+    JSON.stringify(final.stopReason));
+}
+
+// ---- Case 9: maxSteps=2, executor always fails -> exactly 2 attempts, terminal ----
+{
+  const c = { calls: 0 };
+  const final = run({ task: ALWAYS_FAIL_TASK, maxSteps: 2, execute: failExpr(c) });
+  check('maxSteps=2 executes exactly twice', c.calls === 2, `execute calls=${c.calls}`);
+  check('maxSteps=2 is terminal at the budget',
+    final.done === true && final.success === false && final.attempts === 2,
+    `done=${final.done} attempts=${final.attempts}`);
+  check('maxSteps=2 reports the execution attempt budget reason',
+    final.stopReason === ATTEMPT_BUDGET_REASON, JSON.stringify(final.stopReason));
+}
+
+// ---- Case 10: maxSteps=1 and the FIRST attempt succeeds -> exactly 1 attempt, success ----
+{
+  const c = { calls: 0 };
+  const final = run({
+    task: 'Rename the local variable foo to bar in a 30-line function.',
+    maxSteps: 1,
+    execute: () => { c.calls += 1; return { ok: true }; },
+  });
+  check('maxSteps=1 first-attempt success executes once and succeeds',
+    c.calls === 1 && final.done === true && final.success === true && final.attempts === 1,
+    `execute calls=${c.calls} done=${final.done} success=${final.success}`);
+  check('a successful run carries no failure stop reason', final.stopReason === null,
+    JSON.stringify(final.stopReason));
+}
+
+// ---- Case 11: success on the FINAL permitted attempt -> not cut short, marked success ----
+{
+  const c = { calls: 0 };
+  const final = run({
+    task: ALWAYS_FAIL_TASK,
+    maxSteps: 2,
+    execute: () => { c.calls += 1; return { ok: c.calls >= 2 }; }, // succeed on the last allowed attempt
+  });
+  check('success on the final permitted attempt is not cut short',
+    c.calls === 2 && final.attempts === 2 && final.done === true && final.success === true,
+    `execute calls=${c.calls} attempts=${final.attempts} done=${final.done} success=${final.success}`);
+}
+
+// ---- Case 12: explicit `maxSteps` wins over `budgets.MAX_STEPS`, and `budgets.MAX_STEPS` alone
+//      (the direct `adaptiveLoop` spelling) is honored. One source of truth for both spellings. ----
+{
+  check('explicit maxSteps wins over budgets.MAX_STEPS',
+    normalizeMaxSteps({ maxSteps: 1, budgets: { MAX_STEPS: 9 } }) === 1,
+    `maxSteps=1 budgets.MAX_STEPS=9 -> ${normalizeMaxSteps({ maxSteps: 1, budgets: { MAX_STEPS: 9 } })}`);
+  check('budgets.MAX_STEPS is honored when maxSteps is absent',
+    normalizeMaxSteps({ budgets: { MAX_STEPS: 3 } }) === 3,
+    `-> ${normalizeMaxSteps({ budgets: { MAX_STEPS: 3 } })}`);
+  check('default attempt budget is used when neither is given',
+    normalizeMaxSteps({}) === DEFAULT_BUDGET.MAX_STEPS, `-> ${normalizeMaxSteps({})}`);
+  let threw = null;
+  try { normalizeMaxSteps({ maxSteps: 0 }); } catch (e) { threw = e; }
+  check('an impossible (0) attempt budget fails loud instead of guessing', threw instanceof RangeError,
+    threw ? threw.message : 'no error thrown');
+}
+
+// ---- Case 13: direct loop API — `adaptiveLoop({budgets:{MAX_STEPS:1}})` is terminal after ONE
+//      failure, with the execution-budget reason and NOT a strategy reason. ----
+{
+  const loop = adaptiveLoop({ task: ALWAYS_FAIL_TASK, budgets: { MAX_STEPS: 1 } });
+  let s = loop.step(); // initial route
+  const afterFailure = loop.step({ ok: false });
+  check('direct loop with MAX_STEPS=1 is terminal after one failed attempt',
+    afterFailure.done === true && afterFailure.success === false && afterFailure.attempts === 1,
+    `done=${afterFailure.done} success=${afterFailure.success} attempts=${afterFailure.attempts}`);
+  check('direct loop reports the execution budget reason',
+    afterFailure.stopReason === ATTEMPT_BUDGET_REASON, JSON.stringify(afterFailure.stopReason));
+  check('direct loop does not report a strategy/deliberation stop reason',
+    !/deliberat|without new information|evidence sufficient|structured:|fast:/.test(String(afterFailure.stopReason)),
+    JSON.stringify(afterFailure.stopReason));
 }
 
 // ---- Case 4: step-wise controller works (route before any execution) ----
@@ -153,6 +260,51 @@ const check = (name, cond, detail) => {
     final.model_action === 'upgrade' && final.history.some((h) => h.model_action === 'upgrade'),
     `model=${final.model_action}`);
   check('runAsync is bounded', final.attempts <= 10, `attempts=${final.attempts}`);
+  check('runAsync success on the final permitted attempt is not cut short',
+    final.attempts === 4 && final.success === true && final.stopReason === null,
+    `attempts=${final.attempts} success=${final.success} stopReason=${JSON.stringify(final.stopReason)}`);
+
+  // ---- P1 regression, async: runAsync must obey the SAME exact attempt budget as run() ----
+
+  // Case 14: runAsync maxSteps=1, always failing -> exactly 1 attempt, terminal, budget reason
+  {
+    let calls = 0;
+    const s1 = await runAsync({
+      task: ALWAYS_FAIL_TASK,
+      maxSteps: 1,
+      execute: async () => { calls += 1; return { ok: false }; },
+    });
+    check('runAsync maxSteps=1 executes exactly once', calls === 1, `execute calls=${calls}`);
+    check('runAsync maxSteps=1 is terminal with the budget reason',
+      s1.done === true && s1.success === false && s1.attempts === 1 && s1.stopReason === ATTEMPT_BUDGET_REASON,
+      `done=${s1.done} success=${s1.success} attempts=${s1.attempts} reason=${JSON.stringify(s1.stopReason)}`);
+
+    // Case 15: runAsync maxSteps=2, always failing -> exactly 2 attempts, terminal
+    let calls2 = 0;
+    const s2 = await runAsync({
+      task: ALWAYS_FAIL_TASK,
+      maxSteps: 2,
+      execute: async () => { calls2 += 1; return { ok: false }; },
+    });
+    check('runAsync maxSteps=2 executes exactly twice', calls2 === 2, `execute calls=${calls2}`);
+    check('runAsync maxSteps=2 is terminal with the budget reason',
+      s2.done === true && s2.success === false && s2.attempts === 2 && s2.stopReason === ATTEMPT_BUDGET_REASON,
+      `done=${s2.done} attempts=${s2.attempts} reason=${JSON.stringify(s2.stopReason)}`);
+
+    // ---- Case 16: sync and async terminal semantics are IDENTICAL for the same budget/executor ----
+    for (const maxSteps of [1, 2, 3]) {
+      let sc = 0;
+      const sync = run({ task: ALWAYS_FAIL_TASK, maxSteps, execute: () => { sc += 1; return { ok: false }; } });
+      let ac = 0;
+      const async_ = await runAsync({ task: ALWAYS_FAIL_TASK, maxSteps, execute: async () => { ac += 1; return { ok: false }; } });
+      const same = sc === ac && sync.attempts === async_.attempts && sync.done === async_.done &&
+        sync.success === async_.success && sync.stopReason === async_.stopReason;
+      check(`sync/async terminal semantics identical at maxSteps=${maxSteps}`, same,
+        `sync{calls=${sc},attempts=${sync.attempts},done=${sync.done},ok=${sync.success},reason=${JSON.stringify(sync.stopReason)}} ` +
+        `async{calls=${ac},attempts=${async_.attempts},done=${async_.done},ok=${async_.success},reason=${JSON.stringify(async_.stopReason)}}`);
+    }
+  }
+
   console.log(failures === 0 ? 'ADAPTIVE TEST PASS: execution feedback loop re-routes on failure and stays bounded'
     : `ADAPTIVE TEST FAIL: ${failures}`);
   process.exit(failures === 0 ? 0 : 1);

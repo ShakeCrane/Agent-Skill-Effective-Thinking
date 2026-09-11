@@ -1,0 +1,46 @@
+# Canonical line endings for a byte-exact repository.
+#
+# Why this file exists: this repository relies on SHA-256 byte-exact artifacts —
+#   * evals/external-v2/frozen/** + freeze-manifest.json (External Eval v2 evidence), and
+#   * dsh/skill/effective-thinking.md (must equal the canonical SKILL.md body byte-for-byte).
+# Git's default `core.autocrlf` behaviour would rewrite LF to CRLF on a Windows checkout, which
+# changes those bytes and makes `verify-freeze` / `dsh:check` fail on an unmodified tree.
+#
+# `text=auto eol=lf` normalizes text files to LF in the working tree on every platform, so the
+# bytes are identical regardless of the OS doing the checkout. This does NOT rewrite history: it
+# only affects how files are checked out from now on.
+#
+# Deliberately NOT using `* -text`: that would disable normalization entirely and leave files at
+# the mercy of each machine's autocrlf setting.
+
+* text=auto eol=lf
+
+# ---- Binary: never touch these bytes ----
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+*.pdf  binary
+*.zip  binary
+*.gz   binary
+*.tgz  binary
+*.woff  binary
+*.woff2 binary
+*.ttf  binary
+
+# ---- Explicitly canonical-LF text (byte-exact contracts) ----
+# Frozen evidence: hashed by freeze-manifest.json; must never be rewritten by git.
+evals/external-v2/frozen/**    text eol=lf
+evals/external-v2/**           text eol=lf
+# Canonical skill + its packaged, byte-compared DSH twin.
+SKILL.md                       text eol=lf
+dsh/skill/effective-thinking.md text eol=lf
+dsh/cordis.patch.yml           text eol=lf
+LICENSE                        text eol=lf
+
+# ---- Windows-only scripts (if any are ever added) keep CRLF for the shell that reads them ----
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+*.ps1  text eol=crlf

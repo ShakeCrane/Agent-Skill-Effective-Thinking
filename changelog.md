@@ -1,5 +1,75 @@
 # Changelog
 
+## Repository Fix Pass — correctness bugs, release contract, convergence (no new methods)
+
+Scope: fix already-identified correctness/release-contract defects and converge the repository. No
+new Cognitive Method, no router philosophy change, no architecture redesign, no frozen-evidence edit.
+
+- **P1 adaptive-loop attempt budget (real correctness bug):** `run({maxSteps:1})` executed the task
+  **twice** and could return `done:false`; `maxSteps=2` executed three times; `runAsync()` had the
+  same defect. Cause: `adaptiveLoop()` enforced `budgets.MAX_STEPS` while `run()`/`runAsync()` kept a
+  second, independent `guard < cap + 1` counter — two budgets for one constraint. An exhausted hard
+  budget could additionally be reported with the **strategy's** stopping reason
+  ("deep: keep deliberating — …"), i.e. the opposite of a hard stop.
+  Now: `normalizeMaxSteps()` is the single source of truth (explicit `maxSteps` beats
+  `budgets.MAX_STEPS`; default 10; a non-positive/garbage budget throws `RangeError` instead of
+  silently guessing). The loop is the only enforcer and the drivers own no budget, so
+  `maxSteps=N` ⇒ `execute()` runs at most N times. Exhaustion is terminal by itself with its own
+  reason `execution: attempt budget exhausted`, never a fast/structured/deep deliberation reason.
+  Execution attempt budget and deliberation budgets stay conceptually separate.
+- **P2 extractor high-stakes shadowing (real bug):** `baseCategory()` is first-match-wins with the
+  debug/repair category ahead of the high-stakes one, so "Fix this security bug before production
+  launch." inherited the *ordinary debug* risk baseline (error_cost 0.45, reversibility 0.6) and
+  routed `structured/keep`. Fixed as a **modifier, not a category reorder** (reordering would only
+  move the shadowing to another input class): a narrow high-stakes modifier in `applyModifiers()`
+  raises `error_cost` to ≥0.85 and lowers `reversibility` to ≤0.25 when a high-stakes anchor
+  (security/release/payment/compliance/irreversibility/…) is combined with a stated exposure
+  (loss/breach/outage/incorrect/customer/money/…) and the framing is not transient-retryable
+  ("failed twice", "flaky", "intermittent"). It deliberately does **not** set `one_shot`, does not
+  force `verification_difficulty`, and does not itself cause a model upgrade — escalation stays
+  governed by the existing mismatch / one-shot / repeated-failure rules.
+- **P3 release contract:** `npm test` ran neither `dsh:check` nor `test:dsh`; `test:dsh` pointed at a
+  file absent from the npm whitelist; and with no DSH host the provider contract SKIPped and exited 0
+  with no way to demand otherwise. Now layered: `test:dsh` (ordinary — host may SKIP, static checks
+  always run), `test:dsh:host` (strict — a missing real host is a FAIL, never a mock),
+  `release:check` (`dsh:check` + `test:dsh`, host-free, reproducible), `release:verify`
+  (`test:dsh:host` + `release:check`, the pre-publish host gate). `prepack` → `npm run release:check`,
+  so a plain `npm pack` succeeds and self-verifies without a global DSH install; no external-host
+  requirement was smuggled into an ordinary npm lifecycle.
+- **Package whitelist self-consistency:** `evals/dsh-plugin-test.js` is now published (and nothing
+  else from `evals/`). `evals/package-meta-test.js` was extended from "the file exists in the repo"
+  to "every release-facing target derived from the manifest (scripts/exports/main/dsh.bundle.patch,
+  transitively through `npm run` references) is covered by the `files` whitelist", plus prepack /
+  release-script contract checks.
+- **Extraction eval strengthened:** now reports **strategy**, **model_action** and **joint**
+  (both correct on the same item) accuracy against conservative floors, because scoring only
+  `strategy` hid a whole regression class. Measured before and after this pass: strategy 44/51,
+  model_action 48/51, joint 42/51 — **unchanged**, so the P2 fix is provably regression-neutral on
+  the existing corpus. Floors sit just below those numbers (80%/88%/76%); they are regression guards,
+  not targets and not an OOD-generalization claim. High-stakes raw-text cases + two negative controls
+  are now part of the chain, and a high-stakes failure fails the build.
+- **Repo hygiene / convergence:** added `LICENSE` (MIT, matching the existing `package.json`
+  declaration), a minimal `.gitattributes` (canonical LF, protecting the SHA-256 freeze, the
+  byte-exact DSH asset, and manifest verification from Windows CRLF conversion — verified to produce
+  **no** line-ending rewrite of any existing file), a minimal GitHub Actions CI (host-free contract +
+  pack jobs on Node 18/22; deliberately **no** required-host job, since faking a host would be false
+  evidence), and the project scope hard rule in `AGENTS.md`.
+- **README convergence:** the Task Router section described the superseded
+  FAST/DELIBERATE/PROBE/ESCALATE taxonomy as Current Architecture. It now documents the real,
+  two-dimensional router (`strategy = fast|structured|deep`, `model_action = keep|upgrade|delegate`),
+  keeps the old taxonomy only as clearly labeled history, and states that probing/information
+  gathering is an execution-time action (not a router strategy) and that escalation is a model
+  action (not a deliberation strategy). `SKILL.md` was **not** modified for this pass.
+- **Evidence:** `npm test` 26/26 exit 0; `npm run audit` 26/26 "skill healthy"; `npm run dsh:check`
+  PASS; `npm run test:dsh` PASS; `npm run test:dsh:host` PASS against the real DSH `0.1.1-rc.2` host
+  (registry, catalog, `get`, `unload`, `reload`); `npm run release:check` PASS; `npm run release:verify`
+  PASS; `verify-freeze` PASS (84 artifacts). Host-free behaviour verified by simulation:
+  `test:dsh` SKIP+exit 0, `test:dsh:host` FAIL+exit 1, `release:check` exit 0, `release:verify` exit 1.
+  `npm pack` succeeded with no host (123,359 bytes, 50 entries) with `prepack → release:check`, and the
+  extracted tarball was consumed in isolation (root require, `./dsh` export, DSH asset, `dsh:check`,
+  `test:dsh` target all present). **Phase 1 and Phase 2 v2 frozen bytes: unchanged.**
+
+
 ## Release Blocker Fix (B1–B6 + F16/F17) — freeze-readiness, no new methods
 
 - **B1 adaptive stagnation (real bug):** `adaptive-loop.js` derived `roundsSinceNewInfo` as a

@@ -155,6 +155,35 @@ function applyModifiers(p, task) {
     }
   }
 
+  // ---- High-stakes MODIFIER (orthogonal to the base category) ----
+  // `baseCategory` is first-match-wins, so a task whose SURFACE is "bug"/"debug"/"repair" was
+  // classified as an ordinary debug task and silently inherited the ordinary-debug risk baseline
+  // (error_cost 0.45, reversibility 0.6), even when the text says the failure is security-, auth-
+  // or money-critical ("Fix this security bug before production launch."). Stakes are ORTHOGONAL to
+  // task surface, so they belong here as a modifier — NOT as another early-return in baseCategory
+  // (reordering the category list would only move the shadowing to a different input class).
+  //
+  // Deliberately narrow: it touches ONLY the two RISK axes. It does NOT set one_shot, does NOT
+  // raise verification_difficulty, and does NOT itself cause a model upgrade — those stay governed
+  // by the existing rules in applyModifiers/task-router (concrete capability mismatch, one-shot
+  // high-stakes, repeated failures). High stakes mean "this needs care and real verification", not
+  // "use a bigger model".
+  //
+  // Two-part guard — a bare high-stakes noun is not enough:
+  //   anchor: a genuine high-stakes context (security, release/deploy/Prod, payment, compliance,
+  //           irreversibility, ...)
+  //   hint  : a stated CONSEQUENCE / exposure (loss, breach, outage, incorrect, money, customer, ...)
+  //   minus : transient/retryable recovery framing ("failed twice", "flaky", "intermittent"). A
+  //           flaky-credential retry is a recovery task, not an irreversible release decision;
+  //           without this exclusion "flaky credentials error" would be promoted to irreversibility.
+  const highStakesAnchor = /(security|production (launch|deploy|release)|vulnerabilit|exploit|data ?breach|credential|financial (loss|penalt|harm)|financial|payment|revenue|reconcil|compliance|audit trail|irreversib|before (release|launch|deploy|production|go.?live)|in production|production system|live traffic|safety.?critical|patient|regulat)/.test(t);
+  const highStakesExposure = /(loss|penalt|harm|damage|outage|breach|incorrect|wrong|customers?|money|revenue|production|release|launch|deploy)/.test(t);
+  const transientRecovery = /(failed (once|twice|two times|\d+ times?)|flaky|intermittent|retry|retries|retrying|transient|timeout|timed out|occasionally|sometimes)/.test(t);
+  if (highStakesAnchor && highStakesExposure && !transientRecovery) {
+    p.error_cost = Math.max(p.error_cost, 0.85);
+    p.reversibility = Math.min(p.reversibility, 0.25);
+  }
+
   return p;
 }
 

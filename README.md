@@ -127,83 +127,71 @@ Agent 应根据：
 
 Agent 在开始执行任务前，判断应该采用什么模式。
 
-目前实验中的基本模式包括：
+## Current Architecture
+
+Router 输出的是**两个正交维度**，不是一套单一模式阶梯（实现见 [`router/task-router.js`](router/task-router.js)，
+与 [`SKILL.md`](SKILL.md) 一致）：
 
 ```text
-FAST
-DELIBERATE
-PROBE
-ESCALATE
+strategy      = fast | structured | deep          # 应该思考/规划多少
+model_action  = keep | upgrade | delegate         # 是否更换执行模型
 ```
 
-### FAST
+两个维度由不同的信号驱动，可以任意组合：
 
-任务：
+- **strategy** 由复杂度、验证难度、歧义、约束冲突、上下文规模等决定；
+- **model_action** 由「具体能力不匹配 / one-shot 高风险 / 反复失败 / 可并行拆分」决定。
 
-- 明确
-- 机械
-- 局部
-- 低风险
-- 容易验证
+例如一个任务可以是 `fast/keep`（机械且低风险）、`deep/upgrade`（难推理且反复失败），
+也可以是 `deep/keep`（高风险但当前模型足够，重点是认真验证）、`structured/delegate`（可并行拆分）。
 
-直接执行。
+> **升级是 mismatch 决策，不是 difficulty 决策。** 任务长、术语多、看起来陌生，都不构成升级理由。
 
----
+### Strategy
 
-### DELIBERATE
+**fast** — 直接执行。
 
-任务仍然适合当前模型，但需要更认真地：
+任务明确、机械、局部、低风险、容易验证、可逆。最小规划，直接做，做一次快速验证。
+不要为了显得思考充分而制造分析。
 
-- 理解
-- 规划
-- 比较
-- 验证
+**structured** — 轻量计划 + 验证。
 
-之后再执行。
+中等复杂度：多步骤、若干约束、需要一些规划或检查，但不需要深度取舍分析。
+开始前至少明确：**Objective · Hard Constraints · Assumptions · Plan · Verification**，保持简短。
 
----
+**deep** — 深度审议。
 
-### PROBE
+高复杂度、高风险、架构 / 根因 / 方法设计、多个相互作用的约束、难以直接验证、需求模糊。
+按需使用：任务分解、替代方案、反例搜索、最强反对意见、假设检查、外部证据、独立评审、对抗测试。
 
-当前最大问题不是推理能力，而是：
+### Model Action
 
-> **缺少信息。**
+**keep** — 当前模型继续执行（默认姿态：在足够质量下使用最低合理成本）。
 
-先：
+**upgrade** — 仅在存在**具体不匹配**时：
 
-- 阅读文件
-- 搜索资料
-- 检查项目
-- 查看日志
-- 执行小测试
+- 当前模型能力与任务要求的具体差距；
+- one-shot 且不可逆、难以事后验证的判断；
+- 反复尝试仍然失败（`failures_so_far` 达到阈值）——失败是经验证据，不是猜测；
+- 长程上下文一致性关键、复杂因果推理或大量相互作用约束。
 
-然后重新判断任务。
+**delegate** — 存在可并行的独立单元，适合拆分给多个执行者。
+one-shot 判断优先于并行委派：单个不可逆决策不应该被 fan out。
 
----
+同时支持**降级（de-escalate）**：如果一个任务已经足够明确、机械、可验证，
+可以交给更便宜的模型——**但只有在当前模型本身是强模型时才建议**（否则已经没有可降级的空间）。
 
-### ESCALATE
+### Notes on older terminology
 
-当前任务的真正瓶颈已经成为：
+历史文档中出现过一套更早的 taxonomy（`FAST` / `DELIBERATE` / `PROBE` / `ESCALATE`）。
+它与当前实现并不是同一层次的概念，保留仅用于理解演进：
 
-> **模型能力或推理质量。**
+- **DELIBERATE** ≈ 当前的 `structured` + `deep`（审议强度被拆成了两档）；
+- **PROBE**（先收集信息）是**执行过程中的动作**，不是独立的 router strategy：
+  它通常表现为 `structured` 或 `deep` 下的一个执行步骤，而不是 router 的输出；
+- **ESCALATE** 是当前的 `model_action = upgrade`，属于模型维度，不是审议策略。
 
-此时可以将困难部分交给更强或更适合的模型。
-
-升级不意味着整个任务必须全部转移。
-
-例如：
-
-```text
-Architecture / Hard Reasoning
-        ↓
-      GPTwork
-        ↓
-明确后的实现方案
-        ↓
-       dsh
-        ↓
-Coding / Tests / Batch Work
-```
+如果继续引用旧术语，必须明确标注为历史演进，不得当作 Current Architecture。
 
 ---
 
@@ -270,7 +258,8 @@ Coding / Tests / Batch Work
 
 路由不是一次性的。
 
-Agent 应在执行过程中重新判断。
+Agent 应在执行过程中重新判断。实现见 [`router/adaptive-loop.js`](router/adaptive-loop.js)：
+它把执行结果反馈回 router（`failures_so_far`、新信息），在阈值处重新路由。
 
 例如出现：
 
@@ -282,25 +271,28 @@ Agent 应在执行过程中重新判断。
 - 需要新的架构决策
 - 原本机械的问题变成复杂推理问题
 
-可以动态进行：
+两个维度都可以在执行中改变：
 
 ```text
-FAST → DELIBERATE
-
-FAST → PROBE
-
-DELIBERATE → PROBE
-
-DELIBERATE → ESCALATE
-
-PROBE → FAST
-
-PROBE → DELIBERATE
-
-PROBE → ESCALATE
+strategy:      fast → structured → deep
+model_action:  keep → upgrade
+               keep → delegate
 ```
 
-同时也允许复杂分析结束后：
+**反复失败是最强的重新路由信号**：它会同时推动 strategy 变深和 model_action 升级
+（`failures_so_far` 达到阈值时），因为连续失败本身就是「当前任务模型或当前模型不匹配」的经验证据。
+
+重路由同时受两个**互相独立**的预算约束（不要混为一谈）：
+
+- **execution attempt budget**：`execute()` 最多被调用多少次；用尽即终止，
+  stop reason 为 `execution: attempt budget exhausted`；
+- **deliberation budgets**（[`strategies/stopping.js`](strategies/stopping.js)）：deep 策略何时停止审议
+  （证据充分 / 连续多轮没有新信息 / 审议尝试上限）。
+
+execution attempt budget 用尽时，结果是 `done === true`、`success === false`——
+它表示「在允许的尝试次数内没有成功」，而不是「思考结束了」。
+
+同时也允许复杂分析结束后把明确的执行工作交回快速 Agent：
 
 ```text
 GPTwork
@@ -627,8 +619,8 @@ rejected
 - Task Difficulty Estimation
 - Model Capability Estimation
 - Adaptive Reasoning Effort
-- PROBE / Information Gathering
-- Model Escalation
+- Information Gathering / Probing（执行过程中的动作，不是独立 strategy）
+- Model Escalation（`model_action = upgrade`）
 - Dynamic Re-routing
 - Subtask Routing
 - Cost / Quality Trade-offs
@@ -701,7 +693,25 @@ npm pack && dsh plugin --profile <profile> add /absolute/path/to/cognitive-agent
 dsh --profile <profile> --dump-config   # bundle layer + exactly one loader row
 npm run dsh:check                       # packaged skill has not drifted from SKILL.md
 npm run test:dsh                        # plugin contract test (manifest, sync, provider, unload)
+npm run test:dsh:host                   # STRICT: fails if no real DSH host is installed
 ```
+
+### Release contract
+
+分层的发布契约——普通构建**不要求**机器上安装 DSH：
+
+| command | 保证什么 | 没有 DSH host 时 |
+|---|---|---|
+| `npm test` | frozen Phase 1 回归链（26 个 eval 文件） | PASS（不依赖 host） |
+| `npm run dsh:check` | 打包的 skill asset 与 `SKILL.md` 未漂移 | PASS（纯静态） |
+| `npm run test:dsh` | DSH 打包 + provider 契约；静态检查始终执行 | 静态 PASS，provider **SKIP**，exit 0 |
+| `npm run test:dsh:host` | 同上，但**必须**使用真实 DSH registry（`get`/`unload`/`reload`） | **FAIL**（exit ≠ 0） |
+| `npm run release:check` | `dsh:check` + `test:dsh`：可复现的 release 检查 | PASS |
+| `npm run release:verify` | `test:dsh:host` + `release:check`：真实 host 集成 gate | FAIL（这是发布前的最终 gate） |
+
+`prepack` 运行 `npm run release:check`，所以普通 `npm pack` 在没有 DSH 的环境也能完成并验证包内容。
+**不会**把外部全局 DSH 安装要求偷偷塞进普通 npm lifecycle；需要真实 host 的检查只在 `release:verify`
+（以及 CI release job，如果它安装了 pin 版本的 DSH）中执行。
 
 ### Use
 

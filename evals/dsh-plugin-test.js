@@ -1,17 +1,27 @@
 #!/usr/bin/env node
 // DSH plugin contract test — the packaging + provider contract for the DeepSeek Harness adapter.
 //
-// Static checks always run. The provider checks run against the REAL DSH skill registry
-// (`@deepseek-ai/dsh-skill` + `@deepseek-ai/cordis`) when a DSH installation is discoverable, so the
-// adapter is verified against the actual host contract instead of a hand-written mock. If no DSH
-// installation is found the provider section reports SKIP (and the exit stays 0 for the static
-// part) — the real-boot gates in the integration report cover that case separately.
+// TWO MODES, because "no DSH installed" and "DSH is broken" must not look the same:
 //
-// Usage: node evals/dsh-plugin-test.js   (or: npm run test:dsh)
+//   ordinary  : node evals/dsh-plugin-test.js        (npm run test:dsh)
+//               Static/package/sync checks always run. The provider contract runs against the REAL
+//               DSH skill registry when a DSH installation is discoverable; if none is found it
+//               reports SKIP and the exit stays 0, so a machine without a DSH host can still verify
+//               the packaging contract.
 //
-// Why this is not in the `npm test` chain: the chain is the frozen 26-check Phase 1 contract. This
-// suite is additive integration coverage, deliberately kept separate so the frozen count and the
-// Phase 1/2 evidence records stay untouched.
+//   strict    : node evals/dsh-plugin-test.js --require-host    (npm run test:dsh:host)
+//               Identical checks, but a missing DSH host is a FAILURE (non-zero exit). This is the
+//               real-host integration gate used by `release:verify` before publishing.
+//               `REQUIRE_DSH=1` is accepted as the environment-variable spelling.
+//
+// The provider checks run against the ACTUAL host (`@deepseek-ai/dsh-skill` + `@deepseek-ai/cordis`)
+// — registry, provider catalog, get, unload, reload — never against a hand-written mock. Nothing in
+// this file fabricates a host: if a real host is absent, strict mode fails rather than passing.
+//
+// Usage:
+//   node evals/dsh-plugin-test.js [--require-host]
+//   REQUIRE_DSH=1 node evals/dsh-plugin-test.js
+//   DSH_PACKAGES_DIR=<dir containing dsh-skill/ and cordis/> node evals/dsh-plugin-test.js
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -21,6 +31,11 @@ const ROOT = path.join(__dirname, '..');
 const ASSET = path.join(ROOT, 'dsh', 'skill', 'effective-thinking.md');
 const PATCH = path.join(ROOT, 'dsh', 'cordis.patch.yml');
 const CANONICAL = path.join(ROOT, 'SKILL.md');
+
+// Strict host mode: a missing real DSH host is a hard failure instead of a SKIP.
+const requireDsh =
+  process.argv.includes('--require-host') ||
+  process.env.REQUIRE_DSH === '1';
 
 let failures = 0;
 let skipped = 0;
@@ -82,10 +97,20 @@ async function main() {
   check('patch does not mount a second id for the same plugin', !/id:\s*effective-thinking-dsh[\s\S]*id:\s*effective-thinking-dsh/.test(patchText));
 
   // ---------- 5. provider contract against the REAL registry ----------
+  console.log(`\n-- provider contract (${requireDsh ? 'REQUIRED real host' : 'real host if available'}) --`);
   const dshDir = findDshPackagesDir();
   if (!dshDir) {
-    skip('provider contract (real DSH registry)', 'no installed DSH found (set DSH_PACKAGES_DIR to enable)');
+    const why = 'no installed DSH found (set DSH_PACKAGES_DIR, or install the DSH host)';
+    if (requireDsh) {
+      // Strict mode: absence of the real host is exactly the failure this mode exists to report.
+      // Never mock the host to fake a pass here.
+      check('provider contract (real DSH registry) is runnable', false,
+        `${why} — strict mode (--require-host / REQUIRE_DSH=1) FAILS instead of skipping`);
+    } else {
+      skip('provider contract (real DSH registry)', why);
+    }
   } else {
+    console.log(`using DSH host packages at ${dshDir}`);
     const cordisUrl = pathToFileURL(path.join(dshDir, 'cordis', 'lib', 'index.js')).href;
     const skillUrl = pathToFileURL(path.join(dshDir, 'dsh-skill', 'lib', 'index.js')).href;
     const { Context } = await import(cordisUrl);
@@ -139,6 +164,12 @@ async function main() {
   console.log('');
   if (failures === 0) {
     console.log(`DSH PLUGIN CONTRACT TEST PASS${skipped ? ` (${skipped} skipped)` : ''}`);
+    if (skipped && requireDsh) {
+      // Unreachable by construction (a skip in strict mode is a failure), kept as a tripwire so a
+      // future edit cannot make strict mode pass while silently skipping the host.
+      console.log('DSH PLUGIN CONTRACT TEST FAIL: strict mode skipped a check');
+      process.exit(1);
+    }
     process.exit(0);
   }
   console.log(`DSH PLUGIN CONTRACT TEST FAIL: ${failures} failing check(s)`);
