@@ -675,6 +675,59 @@ Did it think for longer?
 
 ---
 
+# DeepSeek Harness
+
+本仓库同时是一个 **DSH 原生插件包**：通过 DSH 自己的 Skill Registry 暴露 `effective-thinking`，
+catalog 只展示摘要，完整 Skill 正文在模型或用户真正选择时才加载。
+
+Design: one source project, one skill source of truth (`SKILL.md`), one thin adapter (`dsh/`).
+The plugin is a pure provider — no always-on prompt injection, no automatic routing, no model
+switching. See [`docs/dsh-integration.md`](docs/dsh-integration.md).
+
+### Install from local checkout
+
+```bash
+dsh plugin --profile <profile> add /absolute/path/to/Agent-Skill-Effective-Thinking
+# or from a packed tarball:
+npm pack && dsh plugin --profile <profile> add /absolute/path/to/cognitive-agent-skill-<version>.tgz
+```
+
+`dsh plugin add` reconciles `dsh.profile.bundles` automatically (the package declares
+`dsh.bundle.patch`), so no profile file needs hand-editing.
+
+### Verify
+
+```bash
+dsh --profile <profile> --dump-config   # bundle layer + exactly one loader row
+npm run dsh:check                       # packaged skill has not drifted from SKILL.md
+npm run test:dsh                        # plugin contract test (manifest, sync, provider, unload)
+```
+
+### Use
+
+The skill appears in the agent's skill catalog as `effective-thinking`; the model loads it when a
+task warrants it, and a user can invoke it explicitly:
+
+```text
+Use $effective-thinking to handle this task.
+```
+
+### Remove
+
+```bash
+dsh plugin --profile <profile> remove cognitive-agent-skill
+```
+
+### Status
+
+Experimental. Tested against DeepSeek Harness `0.1.1-rc.2` only — other DSH versions are unverified.
+Availability and packaging are verified; **behavioural benefit is not**: both External Eval v1 and v2
+met a ceiling effect on the tested agent (every condition solved every task), so no general
+improvement of the full skill over a minimal scaffold has been demonstrated
+(see [`reports/phase-2-v2-pilot.md`](reports/phase-2-v2-pilot.md)).
+
+---
+
 # Status
 
 项目处于早期实验阶段。

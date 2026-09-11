@@ -1,0 +1,16 @@
+# Bundle patch for `cognitive-agent-skill`'s DeepSeek Harness adapter.
+#
+# A profile becomes a bundle layer by listing this package in package.json's
+# `dsh.profile.bundles` (which `dsh plugin --profile <name> add <pkg>` reconciles automatically
+# once the package declares `dsh.bundle.patch`). This file then contributes the minimum the plugin
+# needs: one loader row mounting the skill provider.
+#
+# The row is host-plane, so every agent preset's scope chain merges the skill it registers. It is
+# addressed by id, so the profile's own cordis.patch.yml or a --patch overlay can still override or
+# disable it later without editing this file.
+#
+# Do NOT add a second insert for the same plugin: the bundle layer already mounts it, and a manual
+# duplicate row would load the provider twice.
+- insert:
+    - id: effective-thinking-dsh
+      name: 'cognitive-agent-skill/dsh'

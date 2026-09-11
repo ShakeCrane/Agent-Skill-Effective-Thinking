@@ -4,9 +4,21 @@
   "private": false,
   "description": "Cognitive Agent Skill — task-judgment & adaptive-execution router with capability-based model switching, verification, and deliberation controls.",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./dsh": "./dsh/index.mjs",
+    "./dsh/cordis.patch.yml": "./dsh/cordis.patch.yml",
+    "./package.json": "./package.json",
+    "./*": "./*"
+  },
   "engines": { "node": ">=18" },
   "license": "MIT",
-  "keywords": ["cognitive", "agent", "router", "adaptive", "deliberation", "llm", "task-routing"],
+  "keywords": ["cognitive", "agent", "router", "adaptive", "deliberation", "llm", "task-routing", "dsh", "deepseek-harness", "skill-plugin"],
+  "dsh": {
+    "bundle": {
+      "patch": "./dsh/cordis.patch.yml"
+    }
+  },
   "files": [
     "index.js",
     "router/",
@@ -15,6 +27,10 @@
     "bin/",
     "methods/",
     "research/",
+    "dsh/",
+    "docs/",
+    "scripts/sync-dsh-skill.js",
+    "scripts/check-dsh-skill-sync.js",
     "SKILL.md",
     "README.md",
     "AGENTS.md",
@@ -44,6 +60,9 @@
     "route": "node bin/router.js",
     "audit": "node bin/self-audit.js",
     "consume": "node bin/consume-pack.js",
+    "dsh:sync": "node scripts/sync-dsh-skill.js",
+    "dsh:check": "node scripts/check-dsh-skill-sync.js",
+    "test:dsh": "node evals/dsh-plugin-test.js",
     "prepack": "npm test",
     "cli-smoke": "node evals/cli-smoke.js",
     "protocol": "node evals/protocol-test.js",
