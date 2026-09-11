@@ -1,0 +1,86 @@
+{
+  "computedAt": "2026-09-11T01:34:04.933Z",
+  "blinded": true,
+  "statement": "This verdict was produced with conditions anonymised (condition-X/Y/Z). The condition mapping was not consulted.",
+  "validRuns": 36,
+  "tasks": 12,
+  "quality": {
+    "channel": "QUALITY SENSITIVITY",
+    "tasksAllThreeConditionsPass": 12,
+    "tasksWithAnyDisagreement": 0,
+    "threshold": "CEILING-LIMITED if all-pass >= 9 OR disagreement < 4",
+    "verdict": "CEILING-LIMITED"
+  },
+  "efficiency": {
+    "channel": "EFFICIENCY SENSITIVITY",
+    "primaryMetric": "toolCalls / externalActions",
+    "runsWithReliableActionTelemetry": 0,
+    "tasksWithMaterialActionSpread": 0,
+    "threshold": "INFORMATIVE if telemetry >= 10/12 AND material spread >= 4/12",
+    "hostNote": "This host does not expose per-agent action/tool events to the evaluating process, so action counts are unavailable. Per pre-registration, no substitute value is invented; elapsed time alone is not a gate.",
+    "verdict": "UNMEASURABLE"
+  },
+  "combinedVerdict": "PILOT SENSITIVITY FAIL — CEILING-LIMITED",
+  "perTaskAnonymous": {
+    "v2-01-redaction": [
+      "condition-X:P",
+      "condition-Y:P",
+      "condition-Z:P"
+    ],
+    "v2-02-date-only": [
+      "condition-X:P",
+      "condition-Y:P",
+      "condition-Z:P"
+    ],
+    "v2-03-config-precedence": [
+      "condition-X:P",
+      "condition-Y:P",
+      "condition-Z:P"
+    ],
+    "v2-04-idempotent-migration": [
+      "condition-X:P",
+      "condition-Y:P",
+      "condition-Z:P"
+    ],
+    "v2-05-atomic-cache": [
+      "condition-X:P",
+      "condition-Y:P",
+      "condition-Z:P"
+    ],
+    "v2-06-concurrency": [
+      "condition-X:P",
+      "condition-Y:P",
+      "condition-Z:P"
+    ],
+    "v2-07-generated-source": [
+      "condition-X:P",
+      "condition-Y:P",
+      "condition-Z:P"
+    ],
+    "v2-08-format-compat": [
+      "condition-X:P",
+      "condition-Y:P",
+      "condition-Z:P"
+    ],
+    "v2-09-offline-build": [
+      "condition-X:P",
+      "condition-Y:P",
+      "condition-Z:P"
+    ],
+    "v2-10-scope-control": [
+      "condition-X:P",
+      "condition-Y:P",
+      "condition-Z:P"
+    ],
+    "v2-11-easy-constant": [
+      "condition-X:P",
+      "condition-Y:P",
+      "condition-Z:P"
+    ],
+    "v2-12-boundary-fix": [
+      "condition-X:P",
+      "condition-Y:P",
+      "condition-Z:P"
+    ]
+  }
+}

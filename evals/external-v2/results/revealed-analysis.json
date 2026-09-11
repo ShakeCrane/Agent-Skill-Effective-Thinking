@@ -1,0 +1,448 @@
+{
+  "revealedAt": "2026-09-11T01:34:26.464Z",
+  "sealUsed": {
+    "controlA": "condition-X",
+    "controlB": "condition-Y",
+    "treatment": "condition-Z"
+  },
+  "blindVerdictLocked": {
+    "quality": "CEILING-LIMITED",
+    "efficiency": "UNMEASURABLE",
+    "combined": "PILOT SENSITIVITY FAIL — CEILING-LIMITED"
+  },
+  "byCondition": {
+    "controlA": {
+      "runs": 12,
+      "taskPass": 12,
+      "criterionPassed": 65,
+      "criterionTotal": 65,
+      "failedCriteria": [],
+      "outputBytesTotal": 53752,
+      "filesChangedTotal": 26,
+      "extraFilesCreated": 7,
+      "criterionRate": 1
+    },
+    "controlB": {
+      "runs": 12,
+      "taskPass": 12,
+      "criterionPassed": 65,
+      "criterionTotal": 65,
+      "failedCriteria": [],
+      "outputBytesTotal": 43207,
+      "filesChangedTotal": 21,
+      "extraFilesCreated": 7,
+      "criterionRate": 1
+    },
+    "treatment": {
+      "runs": 12,
+      "taskPass": 12,
+      "criterionPassed": 65,
+      "criterionTotal": 65,
+      "failedCriteria": [],
+      "outputBytesTotal": 64598,
+      "filesChangedTotal": 24,
+      "extraFilesCreated": 6,
+      "criterionRate": 1
+    }
+  },
+  "paired": {
+    "treatment_vs_controlB": {
+      "aFail_bPass": 0,
+      "aPass_bFail": 0,
+      "bothPass": 12,
+      "bothFail": 0
+    },
+    "treatment_vs_controlA": {
+      "aFail_bPass": 0,
+      "aPass_bFail": 0,
+      "bothPass": 12,
+      "bothFail": 0
+    },
+    "controlB_vs_controlA": {
+      "aFail_bPass": 0,
+      "aPass_bFail": 0,
+      "bothPass": 12,
+      "bothFail": 0
+    },
+    "detail_treatment_vs_controlB": [
+      {
+        "taskId": "v2-01-redaction",
+        "controlB": "P",
+        "treatment": "P"
+      },
+      {
+        "taskId": "v2-02-date-only",
+        "controlB": "P",
+        "treatment": "P"
+      },
+      {
+        "taskId": "v2-03-config-precedence",
+        "controlB": "P",
+        "treatment": "P"
+      },
+      {
+        "taskId": "v2-04-idempotent-migration",
+        "controlB": "P",
+        "treatment": "P"
+      },
+      {
+        "taskId": "v2-05-atomic-cache",
+        "controlB": "P",
+        "treatment": "P"
+      },
+      {
+        "taskId": "v2-06-concurrency",
+        "controlB": "P",
+        "treatment": "P"
+      },
+      {
+        "taskId": "v2-07-generated-source",
+        "controlB": "P",
+        "treatment": "P"
+      },
+      {
+        "taskId": "v2-08-format-compat",
+        "controlB": "P",
+        "treatment": "P"
+      },
+      {
+        "taskId": "v2-09-offline-build",
+        "controlB": "P",
+        "treatment": "P"
+      },
+      {
+        "taskId": "v2-10-scope-control",
+        "controlB": "P",
+        "treatment": "P"
+      },
+      {
+        "taskId": "v2-11-easy-constant",
+        "controlB": "P",
+        "treatment": "P"
+      },
+      {
+        "taskId": "v2-12-boundary-fix",
+        "controlB": "P",
+        "treatment": "P"
+      }
+    ]
+  },
+  "taskTable": [
+    {
+      "taskId": "v2-01-redaction",
+      "family": "redaction",
+      "controlA": "PASS 7/7",
+      "controlA_failed": [],
+      "controlA_bytes": 2551,
+      "controlA_changed": 1,
+      "controlB": "PASS 7/7",
+      "controlB_failed": [],
+      "controlB_bytes": 7574,
+      "controlB_changed": 2,
+      "treatment": "PASS 7/7",
+      "treatment_failed": [],
+      "treatment_bytes": 7595,
+      "treatment_changed": 2,
+      "allPass": true,
+      "anyDisagreement": false
+    },
+    {
+      "taskId": "v2-02-date-only",
+      "family": "date-only",
+      "controlA": "PASS 5/5",
+      "controlA_failed": [],
+      "controlA_bytes": 3961,
+      "controlA_changed": 1,
+      "controlB": "PASS 5/5",
+      "controlB_failed": [],
+      "controlB_bytes": 3318,
+      "controlB_changed": 1,
+      "treatment": "PASS 5/5",
+      "treatment_failed": [],
+      "treatment_bytes": 12735,
+      "treatment_changed": 3,
+      "allPass": true,
+      "anyDisagreement": false
+    },
+    {
+      "taskId": "v2-03-config-precedence",
+      "family": "config-precedence",
+      "controlA": "PASS 7/7",
+      "controlA_failed": [],
+      "controlA_bytes": 7489,
+      "controlA_changed": 3,
+      "controlB": "PASS 7/7",
+      "controlB_failed": [],
+      "controlB_bytes": 3516,
+      "controlB_changed": 4,
+      "treatment": "PASS 7/7",
+      "treatment_failed": [],
+      "treatment_bytes": 6406,
+      "treatment_changed": 2,
+      "allPass": true,
+      "anyDisagreement": false
+    },
+    {
+      "taskId": "v2-04-idempotent-migration",
+      "family": "idempotent-migration",
+      "controlA": "PASS 5/5",
+      "controlA_failed": [],
+      "controlA_bytes": 8826,
+      "controlA_changed": 4,
+      "controlB": "PASS 5/5",
+      "controlB_failed": [],
+      "controlB_bytes": 8334,
+      "controlB_changed": 3,
+      "treatment": "PASS 5/5",
+      "treatment_failed": [],
+      "treatment_bytes": 6324,
+      "treatment_changed": 2,
+      "allPass": true,
+      "anyDisagreement": false
+    },
+    {
+      "taskId": "v2-05-atomic-cache",
+      "family": "atomic-cache",
+      "controlA": "PASS 5/5",
+      "controlA_failed": [],
+      "controlA_bytes": 9088,
+      "controlA_changed": 3,
+      "controlB": "PASS 5/5",
+      "controlB_failed": [],
+      "controlB_bytes": 4138,
+      "controlB_changed": 1,
+      "treatment": "PASS 5/5",
+      "treatment_failed": [],
+      "treatment_bytes": 8841,
+      "treatment_changed": 3,
+      "allPass": true,
+      "anyDisagreement": false
+    },
+    {
+      "taskId": "v2-06-concurrency",
+      "family": "concurrency",
+      "controlA": "PASS 4/4",
+      "controlA_failed": [],
+      "controlA_bytes": 6684,
+      "controlA_changed": 4,
+      "controlB": "PASS 4/4",
+      "controlB_failed": [],
+      "controlB_bytes": 2118,
+      "controlB_changed": 1,
+      "treatment": "PASS 4/4",
+      "treatment_failed": [],
+      "treatment_bytes": 6624,
+      "treatment_changed": 3,
+      "allPass": true,
+      "anyDisagreement": false
+    },
+    {
+      "taskId": "v2-07-generated-source",
+      "family": "generated-source",
+      "controlA": "PASS 5/5",
+      "controlA_failed": [],
+      "controlA_bytes": 3588,
+      "controlA_changed": 2,
+      "controlB": "PASS 5/5",
+      "controlB_failed": [],
+      "controlB_bytes": 3588,
+      "controlB_changed": 2,
+      "treatment": "PASS 5/5",
+      "treatment_failed": [],
+      "treatment_bytes": 3588,
+      "treatment_changed": 2,
+      "allPass": true,
+      "anyDisagreement": false
+    },
+    {
+      "taskId": "v2-08-format-compat",
+      "family": "format-compat",
+      "controlA": "PASS 5/5",
+      "controlA_failed": [],
+      "controlA_bytes": 3589,
+      "controlA_changed": 2,
+      "controlB": "PASS 5/5",
+      "controlB_failed": [],
+      "controlB_bytes": 2728,
+      "controlB_changed": 1,
+      "treatment": "PASS 5/5",
+      "treatment_failed": [],
+      "treatment_bytes": 4499,
+      "treatment_changed": 2,
+      "allPass": true,
+      "anyDisagreement": false
+    },
+    {
+      "taskId": "v2-09-offline-build",
+      "family": "offline-build",
+      "controlA": "PASS 5/5",
+      "controlA_failed": [],
+      "controlA_bytes": 3243,
+      "controlA_changed": 2,
+      "controlB": "PASS 5/5",
+      "controlB_failed": [],
+      "controlB_bytes": 3243,
+      "controlB_changed": 3,
+      "treatment": "PASS 5/5",
+      "treatment_failed": [],
+      "treatment_bytes": 3243,
+      "treatment_changed": 2,
+      "allPass": true,
+      "anyDisagreement": false
+    },
+    {
+      "taskId": "v2-10-scope-control",
+      "family": "scope-control",
+      "controlA": "PASS 6/6",
+      "controlA_failed": [],
+      "controlA_bytes": 2110,
+      "controlA_changed": 2,
+      "controlB": "PASS 6/6",
+      "controlB_failed": [],
+      "controlB_bytes": 2027,
+      "controlB_changed": 1,
+      "treatment": "PASS 6/6",
+      "treatment_failed": [],
+      "treatment_bytes": 2120,
+      "treatment_changed": 1,
+      "allPass": true,
+      "anyDisagreement": false
+    },
+    {
+      "taskId": "v2-11-easy-constant",
+      "family": "easy-constant",
+      "controlA": "PASS 5/5",
+      "controlA_failed": [],
+      "controlA_bytes": 1251,
+      "controlA_changed": 1,
+      "controlB": "PASS 5/5",
+      "controlB_failed": [],
+      "controlB_bytes": 1251,
+      "controlB_changed": 1,
+      "treatment": "PASS 5/5",
+      "treatment_failed": [],
+      "treatment_bytes": 1251,
+      "treatment_changed": 1,
+      "allPass": true,
+      "anyDisagreement": false
+    },
+    {
+      "taskId": "v2-12-boundary-fix",
+      "family": "boundary-fix",
+      "controlA": "PASS 6/6",
+      "controlA_failed": [],
+      "controlA_bytes": 1372,
+      "controlA_changed": 1,
+      "controlB": "PASS 6/6",
+      "controlB_failed": [],
+      "controlB_bytes": 1372,
+      "controlB_changed": 1,
+      "treatment": "PASS 6/6",
+      "treatment_failed": [],
+      "treatment_bytes": 1372,
+      "treatment_changed": 1,
+      "allPass": true,
+      "anyDisagreement": false
+    }
+  ],
+  "negativeControls": [
+    {
+      "taskId": "v2-10-scope-control",
+      "per": {
+        "controlA": {
+          "taskPass": true,
+          "changedPaths": [
+            "src/slugify.js",
+            "test/slugify.test.js"
+          ],
+          "filesCreated": 0,
+          "outputBytes": 2110
+        },
+        "controlB": {
+          "taskPass": true,
+          "changedPaths": [
+            "src/slugify.js"
+          ],
+          "filesCreated": 0,
+          "outputBytes": 2027
+        },
+        "treatment": {
+          "taskPass": true,
+          "changedPaths": [
+            "src/slugify.js"
+          ],
+          "filesCreated": 0,
+          "outputBytes": 2120
+        }
+      }
+    },
+    {
+      "taskId": "v2-11-easy-constant",
+      "per": {
+        "controlA": {
+          "taskPass": true,
+          "changedPaths": [
+            "src/defaults.js"
+          ],
+          "filesCreated": 0,
+          "outputBytes": 1251
+        },
+        "controlB": {
+          "taskPass": true,
+          "changedPaths": [
+            "src/defaults.js"
+          ],
+          "filesCreated": 0,
+          "outputBytes": 1251
+        },
+        "treatment": {
+          "taskPass": true,
+          "changedPaths": [
+            "src/defaults.js"
+          ],
+          "filesCreated": 0,
+          "outputBytes": 1251
+        }
+      }
+    },
+    {
+      "taskId": "v2-12-boundary-fix",
+      "per": {
+        "controlA": {
+          "taskPass": true,
+          "changedPaths": [
+            "src/range.js"
+          ],
+          "filesCreated": 0,
+          "outputBytes": 1372
+        },
+        "controlB": {
+          "taskPass": true,
+          "changedPaths": [
+            "src/range.js"
+          ],
+          "filesCreated": 0,
+          "outputBytes": 1372
+        },
+        "treatment": {
+          "taskPass": true,
+          "changedPaths": [
+            "src/range.js"
+          ],
+          "filesCreated": 0,
+          "outputBytes": 1372
+        }
+      }
+    }
+  ],
+  "telemetryLimits": {
+    "actionCounts": "unavailable from this host (recorded as null, never fabricated)",
+    "elapsedMs": "recorded as null — dominated by orchestrator turn latency",
+    "availableProxies": [
+      "outputBytesExcludingConditionInputs",
+      "filesChanged",
+      "filesCreated",
+      "checker criterion detail"
+    ]
+  }
+}

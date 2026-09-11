@@ -1,0 +1,9 @@
+{
+  "sealedAt": "2026-09-11T01:34:04.932Z",
+  "note": "Anonymous condition mapping. Written for the reveal step only; the blind verdicts were computed without reading it.",
+  "mapping": {
+    "controlA": "condition-X",
+    "controlB": "condition-Y",
+    "treatment": "condition-Z"
+  }
+}
