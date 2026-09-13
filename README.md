@@ -706,7 +706,7 @@ npm run test:dsh:host                   # STRICT: fails if no real DSH host is i
 | `npm run dsh:check` | 打包的 skill asset 与 `SKILL.md` 未漂移 | PASS（纯静态） |
 | `npm run test:dsh` | DSH 打包 + provider 契约；静态检查始终执行 | 静态 PASS，provider **SKIP**，exit 0 |
 | `npm run test:dsh:host` | 同上，但**必须**使用真实 DSH registry（`get`/`unload`/`reload`） | **FAIL**（exit ≠ 0） |
-| `npm run release:check` | `dsh:check` + `test:dsh`：可复现的 release 检查 | PASS |
+| `npm run release:check` | `npm test` + `dsh:check` + `test:dsh`：可复现的 release 检查 | PASS |
 | `npm run release:verify` | `test:dsh:host` + `release:check`：真实 host 集成 gate | FAIL（这是发布前的最终 gate） |
 
 `prepack` 运行 `npm run release:check`，所以普通 `npm pack` 在没有 DSH 的环境也能完成并验证包内容。

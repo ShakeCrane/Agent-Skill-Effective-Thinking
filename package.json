@@ -65,7 +65,7 @@
     "dsh:check": "node scripts/check-dsh-skill-sync.js",
     "test:dsh": "node evals/dsh-plugin-test.js",
     "test:dsh:host": "node evals/dsh-plugin-test.js --require-host",
-    "release:check": "npm run dsh:check && npm run test:dsh",
+    "release:check": "npm test && npm run dsh:check && npm run test:dsh",
     "release:verify": "npm run test:dsh:host && npm run release:check",
     "prepack": "npm run release:check",
     "cli-smoke": "node evals/cli-smoke.js",

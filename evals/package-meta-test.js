@@ -163,7 +163,8 @@ check('package main points to an existing file', !!pkg.main && exists(pkg.main),
   check('prepack runs the reproducible release gate',
     prepack === 'npm run release:check', `prepack=${prepack}`);
   const releaseCheck = (pkg.scripts && pkg.scripts['release:check']) || '';
-  check('release:check covers dsh:check and test:dsh',
+  check('release:check covers npm test, dsh:check and test:dsh',
+    /(^|&&\s*)npm test\b/.test(releaseCheck) &&
     /dsh:check/.test(releaseCheck) && /test:dsh(?!:host)/.test(releaseCheck),
     `release:check=${releaseCheck}`);
   check('release:check does NOT require a real DSH host',
