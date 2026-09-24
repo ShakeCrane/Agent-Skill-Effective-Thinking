@@ -26,7 +26,7 @@ Each rule carries a **class** and a **check**:
 
 | Class | Meaning |
 |---|---|
-| `HARD` | Not traded away for convenience, tidiness, or time. Every `HARD` rule is justified, and the justification is recorded. It still yields to tiers 1–3 of the precedence order below: *never* means "never traded away silently", not "outranks an explicit instruction". |
+| `HARD` | Not traded away for convenience, tidiness, or time. Every `HARD` rule is justified, and the justification is recorded. A `HARD` rule *outside* the safety tier yields to tiers 1–3 below; the rules tier 1 names do not yield to a user instruction. *Never* means "never traded away silently", not "always outranks an explicit instruction". |
 | `DEFAULT` | Do this unless you can state a reason not to. |
 | `WHEN` | Applies only when its condition holds. |
 | `PREFERENCE` | The project owner's declared choice. Beats `DEFAULT`/`WHEN`, never `HARD`. |
@@ -44,11 +44,12 @@ convention, is in [`references/evidence.md`](references/evidence.md).
 
 **Precedence when rules collide.** Highest wins:
 
-1. **Safety** — never destroy something you cannot restore. This tier includes every `HARD` rule whose
-   justification is irreversibility, so those rules outrank a user instruction: "clean up the repo,
-   delete anything unused" is an instruction, and it still loses to PC-4. A user can authorise a
-   deletion, but the ambiguity has to be resolved first — not waved through by the instruction that
-   created it.
+1. **Safety** — never destroy something you cannot restore. This tier is `PC-4`, `PC-15` and `PC-16`:
+   the `HARD` rules whose subject is destruction or irreversibility. They outrank a user instruction —
+   "clean up the repo, delete anything unused" is an instruction, and it still loses to PC-4. A user can
+   authorise a deletion, but the ambiguity has to be resolved first — not waved through by the
+   instruction that created it. No other rule is in this tier: `PC-19` is `HARD` about *claims*, not
+   about destruction, and it yields like the rest.
 2. The target project's own documented rules (`AGENTS.md`, `CONTRIBUTING`, release policy, CI).
 3. An explicit instruction from the user in this conversation — for everything outside tier 1.
 4. This skill's remaining `HARD` rules, then `PREFERENCE`, then `DEFAULT`, then `WHEN`.

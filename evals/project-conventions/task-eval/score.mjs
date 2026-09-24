@@ -11,7 +11,9 @@
 
 import { readdirSync, existsSync, writeFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { getCase } from './fixtures.mjs';
+import { CASES, getCase } from './fixtures.mjs';
+
+const HELD_OUT = new Set(CASES.filter((c) => c.heldOut).map((c) => c.id));
 
 const runsDir = process.argv[2];
 const outIdx = process.argv.indexOf('--out');
@@ -88,14 +90,26 @@ for (const [k, s] of summarise((r) => r.tier)) {
   console.log(`tier ${k.padEnd(4)} runs solved ${s.pass}/${s.total}   assertions ${s.assertions}/${s.assertionTotal}`);
 }
 if (rows.length && new Set(rows.map((r) => r.condition)).size > 1) {
+  const conds = [...new Set(rows.map((r) => r.condition))].sort();
   console.log('');
   for (const tier of ['L1', 'L2', 'L3']) {
     const line = [];
-    for (const cond of [...new Set(rows.map((r) => r.condition))].sort()) {
+    for (const cond of conds) {
       const s = summarise((r) => (r.tier === tier ? r.condition : null)).get(cond);
       if (s) line.push(`${cond} ${s.assertions}/${s.assertionTotal}`);
     }
     if (line.length) console.log(`tier ${tier}: ${line.join('   ')}`);
+  }
+  // Split by whether a case was ever available for rule tuning. A difference that lives only in the
+  // tuning set is a different claim from one that also shows up in cases no rule was fitted to.
+  console.log('');
+  for (const [label, wanted] of [['held out ', true], ['tuning set', false]]) {
+    const line = [];
+    for (const cond of conds) {
+      const s = summarise((r) => (HELD_OUT.has(r.case) === wanted ? r.condition : null)).get(cond);
+      if (s) line.push(`${cond} ${s.assertions}/${s.assertionTotal} (${s.total} runs)`);
+    }
+    if (line.length) console.log(`${label}: ${line.join('   ')}`);
   }
 }
 

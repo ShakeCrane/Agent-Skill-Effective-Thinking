@@ -53,8 +53,9 @@ own behavioural evaluation hit a ceiling and could not test it (see `evidence.md
 and reduce adherence". `SKILL.md` sits well inside both.
 
 **Class vocabulary** — `HARD` (not traded away for convenience, tidiness, or time; every `HARD` rule is
-justified and the justification is recorded, but it still yields to tiers 1–3 of the precedence order —
-*never* means "never traded away silently", not "outranks an explicit instruction") · `DEFAULT` (do it
+justified and the justification is recorded. A `HARD` rule *outside* the safety tier yields to tiers 1–3
+of the precedence order; the rules tier 1 names do not yield to a user instruction — *never* means
+"never traded away silently", not "always outranks an explicit instruction") · `DEFAULT` (do it
 unless you can state a reason not to) · `WHEN` (only under its condition) · `PREFERENCE` (the owner's
 declared choice; beats `DEFAULT`/`WHEN`, never `HARD`) · `HYPOTHESIS` (recorded for observation, **not
 enforced**).
@@ -67,6 +68,13 @@ same defect, in the same skill, that the `PC-4` fix had already corrected once e
 agent applying it overrode a "change nothing else in this repository" instruction to fix a comment,
 which is defensible but is not what "never violated" plus the precedence order jointly imply. The class
 now says what the precedence order does.
+
+**Why it changed a second time.** The replacement said a `HARD` rule "still yields to tiers 1–3" — which
+is the same defect one level down, because tier 1 *is* a set of `HARD` rules and it explicitly outranks a
+user instruction. Read literally, the new sentence released `PC-4` from the exception the old sentence had
+been written to protect. Both texts now name the exception instead of gesturing at it: the safety tier is
+`PC-4`, `PC-15` and `PC-16`, and everything else in `HARD` yields. Found by the round-2 adversarial review
+of the evaluation that had prompted the first change, not by a run.
 
 **Evidence vocabulary** — `strong` (normative or measured, reproduced across sources) · `moderate`
 (a primary source on point, or one measured effect with caveats) · `weak` (inferential or framing
@@ -410,10 +418,12 @@ which is why step 8 is a step and not a hope.
 | PC-18 | PREFERENCE | none | Handoff | unit of work finishes / significant tool call |
 | PC-19 | HARD | strong | Handoff | stating project state / reporting completion |
 
-Precedence across gates, when they fire at once: **safety first, and that tier contains every `HARD`
-rule justified by irreversibility** — PC-4 above all, then PC-15, PC-16 and PC-19, all of which outrank
-an explicit user instruction for the reason given in `SKILL.md`. After that: the project's own rules,
-then the user's instruction, then this skill's remaining `HARD` rules, then `PREFERENCE`, then
+Precedence across gates, when they fire at once: **safety first, and that tier holds the `HARD` rules
+whose subject is destruction or irreversibility** — PC-4 above all, and with it PC-15 and PC-16, which
+outrank an explicit user instruction for the reason given in `SKILL.md`. PC-19 is `HARD` on a different
+ground — a claim about project state that carries neither a label nor a named check cannot be repaired
+afterwards — so it is not in the safety tier and yields with the rest. After tier 1: the project's own
+rules, then the user's instruction, then this skill's remaining `HARD` rules, then `PREFERENCE`, then
 `DEFAULT`, then `WHEN`.
 
 This ordering was wrong in the first draft, and the fix is worth recording. The draft listed "user

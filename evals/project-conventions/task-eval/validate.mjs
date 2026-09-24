@@ -30,6 +30,15 @@ async function main() {
   check('every case has a reference solution', CASES.every((c) => REFERENCED.includes(c.id)),
     CASES.filter((c) => !REFERENCED.includes(c.id)).map((c) => c.id).join(', ') || `${REFERENCED.length} solutions`);
 
+  // `heldOut` is the flag the analysis leans on when it says four cases were never used to tune a rule.
+  // A claim nothing reads is not a record, so it is checked and printed here rather than trusted.
+  const undeclared = CASES.filter((c) => typeof c.heldOut !== 'boolean').map((c) => c.id);
+  const held = CASES.filter((c) => c.heldOut).map((c) => c.id);
+  check('every case declares whether it is held out', undeclared.length === 0,
+    undeclared.length ? `undeclared: ${undeclared.join(', ')}` : `${held.length}/${CASES.length} held out`);
+  check('the held-out set is a non-empty proper subset of the cases', held.length > 0 && held.length < CASES.length,
+    `held out: ${held.join(', ')}`);
+
   rmSync(SCRATCH, { recursive: true, force: true });
   mkdirSync(SCRATCH, { recursive: true });
 
@@ -38,8 +47,11 @@ async function main() {
     await materialise(c.id, pristine);
     const before = await getCase(c.id).check(pristine, c);
     const beforePassed = before.filter((r) => r.ok).length;
-    check(`${c.id}: fails before any work`, beforePassed < before.length,
-      `${beforePassed}/${before.length} assertions already pass — a case must demand something`);
+    // The failing ids are printed, not just counted: a case carried by a single assertion looks the
+    // same as a case carried by all of them unless the load-bearing ones are named.
+    const loadBearing = before.filter((r) => !r.ok).map((r) => r.id);
+    check(`${c.id}: fails before any work`, loadBearing.length > 0,
+      `${beforePassed}/${before.length} assertions already pass; load-bearing: ${loadBearing.join(', ') || '(none — the case demands nothing)'}`);
 
     const solved = join(SCRATCH, `${c.id}__reference`);
     await materialise(c.id, solved);

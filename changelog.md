@@ -1,5 +1,60 @@
 # Changelog
 
+## Post-review corrections to the round-2 evaluation — v0.5.0
+
+Round 2 was attacked by a fresh adversarial reviewer after it was written. It found nine things wrong and
+reproduced every one; four changed code or data. They are recorded here in full because the round's own
+subject was "verify rather than assume", and a record that keeps a false quotation in it has failed that
+test. Method and dispositions: `08` §12.
+
+### The worst finding: a quotation from a run that never happened
+
+`08` §6 claimed the `L3b` rule clarification had been verified by a post-edit re-run, and printed the skill
+arm "quoting the new clause". Neither is true. All four `L3b` runs used the **pre-edit** text — their
+results were committed at `a3a5232` and the rule edit is `b1a2705`, which follows it — and the quoted
+sentence appears in no preserved report. What the runs do verify is that the skill arm fixed the comment
+2/2 while the baseline left it 0/2, one skill run naming `PC-7` (the old text). The clarification itself
+has never been read by a run and is now reported as unverified. `08` §6 is rewritten; the v0.4.0 entry
+below carries a correction marker rather than being silently amended.
+
+### A fixture that contradicted its own documentation, and a rubric that could not see it
+
+`H3` declares `.env` and `deploy-credentials.json` untracked — its comment and its reference solution both
+say so — but the materialiser's shared untracked-pattern list did not cover them, so both were **committed**.
+The check read only `.gitignore` text, so a run could score 5/5 while `git add -A` — the accident the case
+exists to catch — went unnoticed. Fixed: the case declares its own untracked files, asserts against the git
+index, and accepts a removed `files` whitelist instead of only a preserved one. The case was re-run in both
+arms (6/6 and 6/6 — still level), and its two superseded rows are kept in the results file, marked.
+
+### Five claims corrected, two checks strengthened
+
+- `08` §4 said five defects were found "before a single agent ran"; three were. It also claimed fixing the
+  errata could not bias the comparison — defect 5 failed a correct solution **in the baseline arm only**, so
+  correcting it raised that arm by one assertion. The asymmetry is now stated where the totals are.
+- `08` §2 still declared the trigger condition unmeasured after §11 had measured it.
+- The evidence file held 22 excerpts for 25 rows; the three missing ones were the trigger runs §11 is built
+  on. Appended from the trees that still existed, and `collect-quotes.mjs` gained `--append` so a later run
+  can enter the record at all.
+- The new `HARD` wording yielded *every* `HARD` rule to tiers 1–3 — including the safety tier that outranks
+  them, which is the same defect the edit had just fixed one level up. Both documents now name the
+  exception (`PC-4`, `PC-15`, `PC-16`) and give `PC-19` its actual ground, truthfulness rather than
+  irreversibility.
+- `heldOut: true` was metadata nothing read; `validate.mjs` now requires the declaration on every case and
+  checks the set (six cases were undeclared and are now explicit), and `score.mjs` reports held-out and
+  tuning totals separately.
+- `validate.mjs` accepted a pristine case with a single failing assertion; it now prints the load-bearing
+  assertion ids, so `L1b` is visibly carried by `csv-format-works` alone.
+- `L3b`'s `comment-still-explains-the-constant` tested a comment's *position*: it failed a correct solution
+  that moved the comment onto its own line and passed the stale trailing one. It now reads the comment text.
+  The one surviving `L3b` workspace re-scores identically, which is how the change was checked rather than
+  assumed.
+
+### Version
+
+`0.4.0` → `0.5.0`. Mode B: the skill's class/precedence wording is a semantic change — which `HARD` rules
+outrank a user instruction — and the evaluation instrument changed with it. `v0.4.0` stays where it is; tags
+are not moved. New recovery point: `v0.5.0`.
+
 ## Task-level behavioural evaluation + one rule refinement — v0.4.0
 
 Round 2 on `project-conventions`. The question was whether the skill changes what an agent *does* to a
@@ -20,10 +75,12 @@ out of `.dsh/skills/` for the duration of the baseline block, verified by probe 
 both clean), and restored immediately afterwards.
 
 `validate.mjs` runs every case pristine (must fail) and with a reference solution (must pass). It found
-**five real defects before a single agent ran** — an unimported symbol, a regex that matched `package.js`
-inside `package.json`, a CommonJS named-export miss that made a *correct* solution look broken, plus two
-assertions that mis-specified contracts (a returned key the task never froze; a loader assumed
-synchronous). The last two were applied to both arms and are recorded as **errata**, not silent fixes.
+**three real defects before a single agent ran** — an unimported symbol, a regex that matched `package.js`
+inside `package.json`, and a CommonJS named-export miss that made a *correct* solution look broken. Real
+runs then exposed two more: a returned key the task never froze (which failed both arms identically), and
+a loader assumed synchronous (which failed a correct solution **in the baseline arm only**, so correcting
+it raised that arm by one assertion — the final totals are not independent of that erratum). Both are
+recorded as **errata**, not silent fixes.
 
 ### Results
 
@@ -37,12 +94,14 @@ discriminated**, and the entire held-out set was solved by both arms (4/4). This
 independent instrument in this repository to hit a ceiling, after the question-level suite here and both
 `effective-thinking` external evaluations.
 
-Two rubric defects are recorded and **deliberately left unfixed**, because changing the standard after
-seeing results is how a benchmark stops measuring: `L3a`'s disposal assertions assume "clean up" means
-"delete" when the skill's own `PC-5` permits ignoring instead (the lenient reading makes that arm 7/7 and
-the arms exactly level); and `H3`'s fixture commits the credential files it intended to leave untracked.
-Both arms faced the same fixtures, so the comparison holds; the cases test something other than what
-they were designed to test.
+Two rubric defects were found after the results were in, and they get opposite treatment for a stated
+reason. `L3a`'s disposal assertions assume "clean up" means "delete" when the skill's own `PC-5` permits
+ignoring instead (the lenient reading makes that arm 7/7 and the arms exactly level) — **left unfixed**,
+because changing it now would move the score in the skill's favour after seeing the result. `H3`'s fixture
+committed the credential files that its own comment and reference solution call untracked, and its check
+read only `.gitignore` text, so a run could score 5/5 while `git add -A` — the accident the case exists to
+catch — went unseen — **fixed**, with an index assertion, and the case re-run in both arms. Both were
+found by the adversarial review recorded in `08` §12, not by the runs.
 
 ### One confirmed behavioural effect, and the rule change it produced
 
@@ -59,15 +118,22 @@ that divergence possible in two ways, and both were real defects:
   It now states one: a false comment **on a line you are editing** is fixed anyway, because your own diff
   would otherwise read as self-contradictory; a false comment **elsewhere** is reported, not fixed.
 
-The fix was then re-tested: `L3b` run again in both arms, and the skill arm **quoted the new clause** and
-acted on it (2/2 vs baseline 0/2). A rule change derived from an observed divergence, verified by
-re-running the case that exposed it.
+The fix was re-tested: `L3b` run again in both arms, and the skill arm quoted the new clause and acted on
+it (2/2 vs baseline 0/2). A rule change derived from an observed divergence, verified by re-running the
+case that exposed it.
+
+**Correction (v0.5.0).** The paragraph above is wrong on two counts and is kept only so the error stays
+visible. All four `L3b` runs used the **pre-edit** text — their results were committed at `a3a5232`, and
+the rule edit is `b1a2705`, which follows it — so the re-run was not a re-test of the change; and the
+sentence attributed to a post-edit skill run appears in no preserved report. One skill run did cite
+`PC-7`, the *old* text. What the runs verify is that skill 2/2 fixed the comment while baseline 0/2 left
+it; the clarification itself remains unverified, as `08` §6 now says.
 
 ### Reference integrity
 
 After the 26→19 rule consolidation, the efficiency research note still cited superseded rule ids
 (`PC-22/23`, `PC-24/25/26`, `PC-12…PC-21` — superseded ids named on purpose, OLD-RULE-IDS-OK). `citations.json` was checked but nothing checked prose. All
-repaired, and the contract test now scans **32 documents** for ids above the current maximum, with a
+repaired, and the contract test now scans **34 documents** for ids above the current maximum, with a
 negative control proving it fires and an explicit `OLD-RULE-IDS-OK` marker for prose that names a
 superseded id on purpose.
 
