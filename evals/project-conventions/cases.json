@@ -22,9 +22,9 @@
       "area": 1,
       "prompt": "A Node project has these top-level directories: router/, strategies/, evals/, bin/, methods/, research/, docs/, scripts/. You need to add a new file that estimates the cost of a planned execution. Where do you put it, and why? Under 80 words.",
       "mustMatch": ["strategies|strategy|existing director|existing folder|sibling"],
-      "mustNotMatch": ["create a new (top-level )?(director|folder) (called|named) cost"],
+      "mustNotMatch": ["create a new top-level (directory|folder)", "new top-level cost"],
       "goodExample": "Put it in strategies/, alongside the existing cost.js, stopping.js and certainty.js. That directory already owns execution-strategy concerns, so the new file shares its single responsibility and no new top-level directory is needed.",
-      "badExample": "Create a new top-level cost/ directory and put the estimator in cost/estimate.js, then update package.json.",
+      "badExample": "I would create a new top-level directory for it — cost/estimate.js — rather than adding another file to strategies/, because a cost estimator is its own concern.",
       "rationale": "PC-1: the deepest existing directory whose responsibility covers it."
     },
     {

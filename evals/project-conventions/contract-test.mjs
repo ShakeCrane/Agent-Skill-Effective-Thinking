@@ -182,13 +182,95 @@ check('every record has Trigger, Action and Check', incomplete.length === 0,
   incomplete.join(', ') || `${records.size} records complete`);
 
 // A rule whose check is not `none` should look like something a reader could run or observe.
-const vagueCheck = [...records]
-  .filter(([, r]) => {
-    const m = /\*\*Check\*\*\s*—\s*([\s\S]*?)(?:\n- \*\*|\n###|$)/.exec(r.body);
-    return m && /\bnone\b/i.test(m[1]) === false && m[1].trim().length < 20;
-  })
-  .map(([id]) => id);
-check('no rule carries a placeholder-length check', vagueCheck.length === 0, vagueCheck.join(', ') || 'ok');
+//
+// An earlier version of this check tested only `m[1].trim().length < 20`, and the adversarial review
+// broke it in one move: a long, entirely vague sentence passed. A length test cannot detect vagueness —
+// the honest response was to delete the fake check rather than keep a green light that means nothing.
+// What replaces it: every Check must be non-empty, and the split between mechanical checks (which name
+// a command or artefact) and judgement checks is *reported*. The reporting is the point — a reader can
+// see how much of this ruleset is mechanically checkable, and nobody is told a heuristic is a proof.
+const emptyChecks = [...records].filter(([, r]) => !/\*\*Check\*\*\s*—\s*\S/.test(r.body)).map(([id]) => id);
+check('every rule has a non-empty Check', emptyChecks.length === 0, emptyChecks.join(', ') || `${records.size} checks`);
+
+const mechanical = [...records].filter(([, r]) => {
+  const m = /\*\*Check\*\*\s*—\s*([\s\S]*?)(?:\n- \*\*|\n###|$)/.exec(r.body);
+  return m && /`[^`]+`/.test(m[1]);
+}).map(([id]) => id);
+console.log(
+  `[NOTE] checks naming a command or artefact (mechanical): ${mechanical.length}/${records.size} — ${mechanical.join(', ')}`,
+);
+console.log('[NOTE] the remainder are judgement checks: a yes/no question put to the agent itself.');
+
+// ---------------------------------------------------------------- evidence levels agree with evidence.md
+
+// This check was added after the review found PC-7 claimed at both `strong` and `moderate` in the same
+// file. The convention it enforces: a bullet claims a level for a rule only when it writes `-> PC-n`;
+// a bullet that merely relates a finding to a rule says so in words instead. Without this, the honesty
+// layer can contradict the records and nothing notices.
+const LEVEL_BY_SECTION = {
+  'What is strong': 'strong',
+  'What is moderate': 'moderate',
+  'What is weak': 'weak',
+  'What has no evidence at all': 'none',
+};
+const evidenceMd = join(SKILL_DIR, 'references', 'evidence.md');
+const claims = new Map();
+if (existsSync(evidenceMd)) {
+  const text = readFileSync(evidenceMd, 'utf8');
+  for (const part of text.split(/^## /m).slice(1)) {
+    const heading = part.slice(0, part.indexOf('\n')).trim().replace(/^#+\s*/, '');
+    const level = LEVEL_BY_SECTION[heading];
+    if (!level) continue;
+    for (const m of part.matchAll(/\u2192\s*(PC-\d+(?:\s*,\s*PC-\d+)*)/g)) {
+      for (const id of m[1].split(',').map((s) => s.trim())) {
+        if (!claims.has(id)) claims.set(id, new Set());
+        claims.get(id).add(level);
+      }
+    }
+  }
+}
+const contradictory = [...claims]
+  .filter(([, levels]) => levels.size > 1)
+  .map(([id, levels]) => `${id}: ${[...levels].join(' + ')}`);
+check('no rule is claimed at two different evidence levels', contradictory.length === 0,
+  contradictory.join('; ') || `${claims.size} rule(s) claimed once each`);
+
+const mismatched = [...claims]
+  .filter(([id, levels]) => records.has(id) && !levels.has(records.get(id).evidence))
+  .map(([id, levels]) => `${id}: evidence.md says ${[...levels].join('/')}, record says ${records.get(id).evidence}`);
+check('evidence.md agrees with the per-rule records', mismatched.length === 0,
+  mismatched.join('; ') || 'agree');
+
+// ---------------------------------------------------------------- citations point at real rules
+
+// Also added after review: 14 of 22 citations referenced rule ids from a numbering that no longer
+// existed, and setting every id to `PC-999` left both tests green. A citation that names a rule which
+// does not exist is worse than an uncited rule, because it looks like support.
+const citationsPath = join(REPO, 'evals', 'project-conventions', 'citations.json');
+if (existsSync(citationsPath)) {
+  const corpus = JSON.parse(readFileSync(citationsPath, 'utf8'));
+  const badRefs = [];
+  const citedRules = new Set();
+  for (const c of corpus.checks) {
+    for (const id of String(c.rule ?? '').split(',').map((s) => s.trim())) {
+      if (id === '' || id === '\u2014') continue;
+      if (!records.has(id)) badRefs.push(`${c.id} -> ${id}`);
+      else citedRules.add(id);
+    }
+  }
+  check('every citation names a rule that exists', badRefs.length === 0, badRefs.join(', ') || 'all resolve');
+
+  const unsupported = [...records]
+    .filter(([id, r]) => ['strong', 'moderate'].includes(r.evidence) && !citedRules.has(id))
+    .map(([id]) => id);
+  check('every strong or moderate rule has at least one citation', unsupported.length === 0,
+    unsupported.join(', ') || `${citedRules.size} rule(s) cited`);
+
+  const uncited = [...records].filter(([id]) => !citedRules.has(id)).map(([id]) => id);
+  console.log(`[NOTE] rules with no machine-checked citation (expected for weak/none): ${uncited.join(', ') || 'none'}`);
+} else {
+  check('citations.json exists', false, citationsPath);
+}
 
 // ---------------------------------------------------------------- ledger agreement
 

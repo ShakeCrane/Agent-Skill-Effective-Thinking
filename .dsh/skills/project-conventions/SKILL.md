@@ -32,9 +32,11 @@ Each rule carries a **class** and a **check**:
 | `PREFERENCE` | The project owner's declared choice. Beats `DEFAULT`/`WHEN`, never `HARD`. |
 | `HYPOTHESIS` | Recorded for observation. **Not enforced.** |
 
-A check that names a command or an artefact is worth ten that name an intention. Where nothing can be
-checked the record says `none`, so an unverifiable rule is visibly unverifiable. Never report a check
-you did not run.
+There are two kinds of check, and the difference is visible in the record. A **mechanical** check names
+a command or an artefact you can run or open — those are the strongest and there are fewer of them than
+one would like. A **judgement** check is a question with a yes/no answer that you put to yourself; it is
+weaker, and it is honest about being weaker. Where nothing can be checked at all, the record says
+`none`. Never report a check you did not run.
 
 The full records — trigger, action, check, what each rule yields to, and its evidence level — are in
 [`references/rules.md`](references/rules.md). What is actually evidenced, and what is only the owner's
@@ -73,12 +75,14 @@ users today. Line count is never the reason.
 ## Gate 2 — Cleanup — before you delete anything, and before you finish
 
 **PC-4** `HARD` — Delete what you created in this task, and what the project's own documentation
-declares disposable. Everything else you report and leave in place.
-*Check:* for each removal you can point either to its creation in this task or to the document that
-calls it disposable. If you cannot, it stays. This rule has no trade-off available: three primary
-postmortems destroyed production data with no destructive intent — a wipe aimed at a secondary
-database hit the primary, a playbook command had one mistyped input, and an unpublish took out 272
-packages. Ambiguity is a report, not a deletion.
+declares disposable. Everything else you report and leave in place. The one narrow addition: an
+artefact that is **empty** and that the project's own records already identify as an accidental
+by-product may be removed, with the removal stated.
+*Check:* for each removal you can point to its creation in this task, to the document that calls it
+disposable, or to both emptiness and a record naming it an accident. If you cannot, it stays. The
+ambiguity is resolved in advance, in favour of the file: three primary postmortems destroyed
+production data with no destructive intent — a wipe aimed at a secondary database hit the primary, a
+playbook command had one mistyped input, and an unpublish took out 272 packages.
 
 **PC-5** `DEFAULT` — Write scratch — temp scripts, debug dumps, one-off reports, logs — outside the
 repository or under a path the project already ignores. Before you finish, classify every untracked
@@ -157,12 +161,17 @@ rollback is a property of the repository, never of the numbering scheme.
 ## Gate 5 — Handoff — decide, ask, or report
 
 **PC-17** `DEFAULT` — Look for the project's existing answer first — docs, config, tests, sibling code,
-git history. Then ask only when all three hold: the answer changes the **deliverable**; the repository
-and a cheap check cannot settle it; and guessing wrong is expensive or hard to undo. Otherwise decide
-and flag the assumption in one line.
-*Check:* you can name which deliverable output changes, and where you looked. The measured default
-failure is **under-asking**, so this rule makes the question targeted, not rare; "important" is not one
-of the conditions — it is the word they replace.
+git history. If the project cannot settle it, go and find a reliable external answer — the tool's own
+documentation, its `--help`, its source — before asking or guessing. Ask only when all three hold: the
+answer changes the **deliverable**; neither the repository nor a reliable source settles it; and
+guessing wrong is expensive or hard to undo. Otherwise decide and flag the assumption in one line.
+*Check:* you can name which deliverable output changes, and where you looked. A name, label, or
+user-visible string the repository does **not** settle falls between the two: follow the project's
+vocabulary where it has one, and where it does not, decide **and say which name you chose and why** —
+never silently. It becomes a question when the name is externally visible or expensive to change later.
+*On the direction of the known failure:* the measured default is **under-asking**, so this rule exists
+to make the question targeted, not rare. "Important" is not one of the three conditions; it is the word
+they replace.
 
 **PC-18** `PREFERENCE` — When a meaningful unit of work finishes, or you call a tool whose effect the
 user must know about, say what happened, the evidence, and any risk, in plain language.

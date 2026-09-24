@@ -4,7 +4,7 @@
   "checks": [
     {
       "id": "B1",
-      "rule": "PC-12, PC-13, PC-15, PC-16",
+      "rule": "PC-8, PC-9, PC-11, PC-12",
       "claim": "SemVer defines the digits by compatibility, and 0.y.z promises nothing",
       "url": "https://semver.org/",
       "needles": [
@@ -16,7 +16,7 @@
     },
     {
       "id": "B2",
-      "rule": "PC-16, PC-18",
+      "rule": "PC-12, PC-14",
       "claim": "Annotated tags are the release tag; re-pointing a published tag is a trust failure",
       "url": "https://git-scm.com/docs/git-tag",
       "needles": [
@@ -26,7 +26,7 @@
     },
     {
       "id": "B3",
-      "rule": "PC-17",
+      "rule": "PC-13",
       "claim": "Conventional Commits derives the bump from the type, and the type is an unverified assertion",
       "url": "https://www.conventionalcommits.org/en/v1.0.0/",
       "needles": [
@@ -36,7 +36,7 @@
     },
     {
       "id": "B4",
-      "rule": "PC-17",
+      "rule": "PC-13",
       "claim": "A changelog is curated per release, not a commit log",
       "url": "https://keepachangelog.com/en/1.1.0/",
       "needles": [
@@ -46,7 +46,7 @@
     },
     {
       "id": "B5",
-      "rule": "PC-18, PC-21",
+      "rule": "PC-14, PC-16",
       "claim": "A reproducible release pins the toolchain and enumerates its contents",
       "url": "https://sre.google/sre-book/release-engineering/",
       "needles": [
@@ -57,7 +57,7 @@
     },
     {
       "id": "B6",
-      "rule": "PC-19, PC-20",
+      "rule": "PC-15",
       "claim": "git revert requires a clean tree, and reverting a merge has permanent effects",
       "url": "https://git-scm.com/docs/git-revert",
       "needles": [
@@ -68,7 +68,7 @@
     },
     {
       "id": "B7",
-      "rule": "PC-21",
+      "rule": "PC-16",
       "claim": "Feature flags roll back behaviour, at a documented combinatorial cost, and do not roll back data",
       "url": "https://martinfowler.com/articles/feature-toggles.html",
       "needles": [
@@ -78,7 +78,7 @@
     },
     {
       "id": "B8",
-      "rule": "PC-21",
+      "rule": "PC-16",
       "claim": "Provenance binds a built artifact to a source digest, not to a branch name",
       "url": "https://slsa.dev/provenance/v1",
       "needles": [
@@ -88,7 +88,7 @@
     },
     {
       "id": "C1",
-      "rule": "PC-22, PC-23",
+      "rule": "PC-17",
       "claim": "Clarify-then-code is measured positive, but only behind an ambiguity gate",
       "url": "https://arxiv.org/abs/2310.10996",
       "needles": [
@@ -98,7 +98,7 @@
     },
     {
       "id": "C2",
-      "rule": "PC-22",
+      "rule": "PC-17",
       "claim": "The default failure is under-asking, not over-asking",
       "url": "https://arxiv.org/abs/2212.07769",
       "needles": [
@@ -108,7 +108,7 @@
     },
     {
       "id": "C3",
-      "rule": "PC-26",
+      "rule": "PC-19",
       "claim": "Intrinsic self-correction without external feedback fails and can degrade",
       "url": "https://arxiv.org/abs/2310.01798",
       "needles": [
@@ -117,7 +117,7 @@
     },
     {
       "id": "C4",
-      "rule": "PC-26",
+      "rule": "PC-19",
       "claim": "Tool-grounded critique improves results, which is where the external signal comes from",
       "url": "https://arxiv.org/abs/2305.11738",
       "needles": [
@@ -126,7 +126,7 @@
     },
     {
       "id": "C5",
-      "rule": "PC-25",
+      "rule": "PC-19",
       "claim": "Calibration exists but does not transfer cleanly to new tasks",
       "url": "https://arxiv.org/abs/2207.05221",
       "needles": [
@@ -135,7 +135,7 @@
     },
     {
       "id": "C6",
-      "rule": "PC-25",
+      "rule": "PC-19",
       "claim": "Verbalized confidence can be calibrated at all",
       "url": "https://arxiv.org/abs/2205.14334",
       "needles": [
@@ -144,7 +144,7 @@
     },
     {
       "id": "C7",
-      "rule": "PC-24",
+      "rule": "PC-18",
       "claim": "Model judges are usable but biased toward verbosity, length and their own output",
       "url": "https://arxiv.org/abs/2306.05685",
       "needles": [
@@ -153,7 +153,7 @@
     },
     {
       "id": "E1",
-      "rule": "PC-24",
+      "rule": "PC-18",
       "claim": "Multi-agent failures cluster into a small, named taxonomy rather than random breakage",
       "url": "https://arxiv.org/abs/2503.13657",
       "needles": [
@@ -163,7 +163,7 @@
     },
     {
       "id": "E2",
-      "rule": "PC-24",
+      "rule": "PC-18",
       "claim": "Task-length reliability is a measured, bounded property of an agent",
       "url": "https://metr.org/blog/2025-03-19-measuring-ai-ability-to-complete-long-tasks/",
       "needles": [
@@ -175,32 +175,40 @@
       "rule": "PC-1, PC-3",
       "claim": "The work exists with this title (existence check via Crossref; the claim itself rests on the abstract)",
       "url": "https://api.crossref.org/works/10.1109/TSE.2012.89",
-      "needles": ["Quantifying the Effect of Code Smells on Maintenance Effort"]
+      "needles": [
+        "Quantifying the Effect of Code Smells on Maintenance Effort"
+      ]
     },
     {
       "id": "A2",
       "rule": "PC-7",
       "claim": "The work exists and is titled as cited (existence check via Crossref)",
       "url": "https://api.crossref.org/works/10.1007/s10664-023-10397-6",
-      "needles": ["outdated code element references"]
+      "needles": [
+        "outdated code element references"
+      ]
     },
     {
       "id": "A3",
       "rule": "PC-6",
       "claim": "Well-commented modules were measured as MORE fault-prone, so comment volume is not a quality signal",
       "url": "https://api.crossref.org/works/10.1109/IWESEP.2012.12",
-      "needles": ["Fault-Proneness of Well-Commented Modules"]
+      "needles": [
+        "Fault-Proneness of Well-Commented Modules"
+      ]
     },
     {
       "id": "A4",
       "rule": "PC-7",
       "claim": "Most outdated comments are machine-detectable, which is what makes the check enforceable",
       "url": "https://api.crossref.org/works/10.1109/COMPSAC.2018.00028",
-      "needles": ["Outdated Comments"]
+      "needles": [
+        "Outdated Comments"
+      ]
     },
     {
       "id": "E3",
-      "rule": "—",
+      "rule": "PC-4",
       "claim": "A documented database outage whose postmortem names the exact command that destroyed the data",
       "url": "https://about.gitlab.com/blog/2017/02/10/postmortem-of-database-outage-of-january-31/",
       "needles": [

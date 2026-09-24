@@ -26,7 +26,7 @@ PC-n · class · evidence · status
 |---|---|---|
 | **T** Trigger | **keep — the strongest field** | Every official agent-instruction format is built on triggers: a skill loads on its description, `CLAUDE.md` path-scoped rules load on a matching path. Requirements engineering reached the same shape decades earlier — EARS' five patterns are trigger classes. A rule with no trigger is applied everywhere or nowhere. |
 | **A** Action | **keep, and state it positively** | Steering by prohibition drags the forbidden behaviour into context and makes it more available. Every rule below says what to do; the prohibitions that survive are the ones that cannot be phrased positively, and they live in the action's own words. |
-| **V** Verification | **keep, renamed to Check** | The only field that lets a rule fail. "Verification" invites a prose verdict; "Check" forces a question. A check that names a real command or artefact is worth ten that name an intention — prose is context, not enforcement. Where nothing can be checked, write `none` so that the rule is *visibly* unverifiable rather than quietly unfalsifiable. |
+| **V** Verification | **keep, renamed to Check** | The only field that lets a rule fail. "Verification" invites a prose verdict; "Check" forces a question. Be honest about which kind each one is: a **mechanical** check names a command or an artefact, and a **judgement** check is a yes/no question put to yourself. The mechanical kind is stronger and there are fewer of them here than one would like — most rules in this set are judgement checks, and saying so is more useful than implying otherwise. Where nothing can be checked at all, write `none`, so the rule is *visibly* unfalsifiable rather than quietly so. |
 | **C** Context | **fold into T** | No official instruction format has a context field, and on this ruleset it never said anything the trigger did not. Scope is either the trigger restated or a document-wide constant. It cost a line per rule and bought nothing. |
 | **K** Constraint | **fold into `class`** | The strength of a prohibition is what matters, and that is one tag, not a paragraph. The *number* of hard constraints is the axis along which compliance is measured to fall, so constraint prose is a cost, not a feature. |
 | **E** Exception | **fold into T** | An exception is a narrower trigger, not a caveat: "when X, do Y — except when Z" is "when X and not Z, do Y". The three rules below that genuinely yield say so inside their trigger, which removes a field and removes the chance of reading the exception without the rule. |
@@ -45,7 +45,8 @@ constraint to 61.9% at five for GPT-4, and the paper puts the practical ceiling 
 constraints for closed models and two for open ones. A 19-rule document is far past that if it is
 read as one instruction — which is why the rules are **gate-triggered**: at any moment a working
 agent is inside one gate and attending to two to four rules, not nineteen. The gate structure is
-load-bearing, not decoration.
+load-bearing, not decoration. **That claim is a design argument, not a measurement** — this skill's
+own behavioural evaluation hit a ceiling and could not test it (see `evidence.md`, open question 4).
 
 **Budgets this document respects** (`official docs`): a skill body should stay under 500 lines /
 5k tokens; a `CLAUDE.md` should target under 200 lines, because "longer files consume more context
@@ -122,18 +123,23 @@ in review, it is scratch.
 - **Trigger** — you are about to delete or overwrite any file.
 - **Action** — delete what you created in this task, and what the project's own documentation declares
   disposable (build output, caches, generated artifacts). Everything else you report and leave in
-  place.
-- **Check** — for each removal, point either to its creation in this task or to the document that
-  calls it disposable. If you cannot, it stays.
-- **Yields to** — nothing. This is the one rule with no trade-off available, and the evidence is not
-  about carelessness: three primary postmortems — GitLab 2017 (a wipe aimed at a secondary database
-  hit the primary: ~300 GB in one to two seconds, ~18 hours of outage, and the backups had been
-  failing silently), AWS S3 2017 (a playbook command with one mistyped input), npm 2016 (272 packages
-  unpublished, "hundreds of failures per minute") — all destroyed production data with no destructive
-  intent behind them. The catastrophic form of `git clean` is also one keystroke from the aggressive
-  form: nested repositories need a *second* `-f`.
-- **In this repository** — 27 nested `.git` directories sit inside the untracked run archive, so the
-  second `-f` is live here.
+  place. One narrow third limb: an artefact that is **empty** and that the project's own records
+  already identify as an accidental by-product may be removed — and the removal is stated.
+- **Check** — for each removal, point to its creation in this task, or to the document that calls it
+  disposable, or to both its emptiness and a record naming it an accident. If none of the three holds,
+  it stays.
+- **Yields to** — the ambiguity is resolved in advance, in favour of the file, and that is the whole
+  point: the rule trades a small amount of tidiness for the guarantee that nothing irreplaceable is
+  destroyed by an agent that was being helpful. The evidence is not about carelessness — three primary
+  postmortems destroyed production data with no destructive intent (see `evidence.md`).
+- **Margin note — an earlier draft of this rule overclaimed.** It said "no trade-off available" while
+  the same session deleted a zero-byte `nul` file that a *different* run had created and that no
+  project document declares disposable: neither of the two original limbs covered it. Rather than
+  pretend the exception did not exist, the third limb was added and the "no trade-off" claim was
+  dropped. A rule whose justification does not cover its own first application is not a rule; it is an
+  aspiration with a citation.
+- **In this repository** — 27 nested `.git` directories sat inside the untracked run archive, so
+  `git clean`'s second `-f` was live here.
 
 ### PC-5 · DEFAULT · evidence: weak · status: active
 - **Trigger** — you are about to create a temporary, generated, or debug file; again when a unit of
@@ -271,20 +277,32 @@ in review, it is scratch.
 ## Gate 5 — Handoff
 
 ### PC-17 · DEFAULT · evidence: moderate · status: active
-- **Trigger** — you are unsure whether to ask the user or proceed; and again before asking about a
-  name, a convention, or a preference.
+- **Trigger** — you are unsure whether to ask the user or proceed; before asking about a name, a
+  convention, or a preference; and when you are stuck on a technical question the project does not
+  answer.
 - **Action** — look for the project's existing answer first: `AGENTS.md`/`CONTRIBUTING`, config, tests,
-  sibling code, git history. Then ask only when all three hold: the answer changes the **deliverable**;
-  the repository, its documents and a cheap check cannot settle it; and guessing wrong is expensive or
-  hard to undo. Otherwise decide, and flag the assumption in one line.
+  sibling code, git history. If the project cannot settle it, **find a reliable external answer** — the
+  tool's own documentation, its `--help`, its source — before asking or guessing. Then ask only when
+  all three hold: the answer changes the **deliverable**; neither the repository nor a reliable source
+  settles it; and guessing wrong is expensive or hard to undo. Otherwise decide, and flag the
+  assumption in one line.
 - **Check** — can you name which deliverable output changes depending on the answer, why the repository
-  could not answer it, and where you looked?
+  and the external sources could not answer it, and where you looked?
 - **Yields to** — irreversible, safety-relevant, or externally visible choices, which are always asked.
   Read the direction of the known failure carefully: the measured default is **under-asking**, not
   over-asking — models "rarely ask users to clarify ambiguous questions and instead provide incorrect
   answers", and in a 1,642-trace multi-agent taxonomy the "failed to ask for clarification" mode
   appears while no over-asking mode does. This rule exists to make the question *targeted*, not rare.
   "Important" is not one of the three conditions; it is the word they replace.
+- **Names, labels, and user-visible strings — a deliberate carve-out.** The owner's requirement was
+  "do not presume to guess on naming, preference, or detail; check the existing convention first".
+  Read against the three conditions, a name the repository does not settle would otherwise be decided
+  silently, which is the exact behaviour the requirement forbids. The resolution is: follow the
+  project's vocabulary where it has one; where it does not, **decide and state which name you chose and
+  why** — the opposite of a silent guess. It escalates to a question when the name is externally
+  visible or expensive to change later. This is a documented narrowing of the requirement, not an
+  accidental one: the raw requirement ("ask on important, unresolvable matters") has no operational
+  test for "important", and a rule with no test is the failure this whole file exists to prevent.
 
 ### PC-18 · PREFERENCE · evidence: none · status: active
 - **Trigger** — a meaningful unit of work finishes, or you call a tool whose effect the user must know

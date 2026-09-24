@@ -59,21 +59,65 @@ check('every pattern is a real, non-vacuous regex', badPatterns.length === 0, ba
 
 // ---------------------------------------------------------------- discrimination
 
-// The core check. A case whose good example fails is mis-specified; a case whose bad example passes
-// is measuring nothing and is rejected outright.
+// The core check. A case whose good example fails is mis-specified; a case whose bad example passes is
+// measuring nothing and is rejected outright.
+//
+// An adversarial review broke the original pair of checks with three mutations, each of which left the
+// suite green: badExample = "no"; badExample = an unrelated sentence; and a rubric whose mustMatch was
+// the single token "\bthe\b". All three failed the rubric by *missing a required token*, which proves
+// nothing about whether the rubric detects the failure mode.
+//
+// The obvious repair — require badExample to satisfy every mustMatch so only a mustNotMatch hit can
+// fail it — was tried and is unsatisfiable here: on decision-forcing cases the required token IS the
+// correct decision ("1.5.0", "delete"), so no wrong answer can contain it. The invariant that is both
+// achievable and meaningful is: **the bad example must commit the forbidden act**. It must violate at
+// least one mustNotMatch pattern, and it must be a substantive answer rather than a degenerate string.
+// That is what makes the failure attributable to the forbidden decision, and it is what the mutations
+// above cannot survive.
 const notDiscriminating = [];
 const goodFails = [];
+const badUnfocused = [];
+function badExampleProblem(c) {
+  const badText = c.badExample ?? '';
+  const words = badText.trim().split(/\s+/).filter(Boolean).length;
+  if (!(c.mustNotMatch ?? []).some((p) => new RegExp(p, 'i').test(badText))) return 'commits no forbidden act';
+  if (words < 6) return `bad example is ${words} words`;
+  return null;
+}
 for (const c of SUITE.cases) {
   const good = scoreCase(c.id, c.goodExample ?? '');
   const bad = scoreCase(c.id, c.badExample ?? '');
   if (!good.pass) {
     goodFails.push(`${c.id} (${[...good.missing.map((m) => `missing ${m}`), ...good.violated.map((v) => `violated ${v}`)].join(', ')})`);
   }
+  const problem = badExampleProblem(c);
+  if (problem) badUnfocused.push(`${c.id} (${problem})`);
   if (bad.pass) notDiscriminating.push(c.id);
 }
 check('every good example passes its own rubric', goodFails.length === 0, goodFails.join('; ') || 'ok');
+check('every bad example commits a forbidden act, at substance', badUnfocused.length === 0,
+  badUnfocused.join('; ') || `${SUITE.cases.length} bad examples demonstrate their case's failure mode`);
 check('every bad example fails its rubric (no vacuous case)', notDiscriminating.length === 0,
   notDiscriminating.join(', ') || `${SUITE.cases.length} rubrics discriminate`);
+
+// The three mutations an adversarial review used to break the previous version of the checks above.
+// They are kept as permanent controls: a guard nobody has tried to defeat is a guard nobody knows
+// works, and this suite's whole job is to not be the thing that quietly passes.
+{
+  const base = SUITE.cases[0];
+  const mutations = [
+    { name: 'badExample replaced by a degenerate word', c: { ...base, badExample: 'no' } },
+    { name: 'badExample replaced by an unrelated sentence', c: { ...base, badExample: 'The weather was pleasant and the meeting ran long this afternoon.' } },
+    { name: 'rubric reduced to a token that matches anything', c: { ...base, mustMatch: ['\\bthe\\b'], mustNotMatch: ['zzqq-never-appears'], badExample: 'nope' } },
+  ];
+  const undetected = mutations.filter((m) => badExampleProblem(m.c) === null);
+  check('the strengthened check rejects the three mutations that broke it before', undetected.length === 0,
+    undetected.length ? undetected.map((m) => m.name).join('; ') : `${mutations.length} mutations rejected`);
+}
+
+console.log('[NOTE] residual limit, stated rather than hidden: this proves the bad example commits the');
+console.log('       forbidden act, not that it is the most likely wrong answer. A rubric can still be');
+console.log('       vacuous with respect to a wrong answer nobody wrote down.');
 
 // A good and a bad example that score identically mean the case is testing wording, not a decision.
 const identical = SUITE.cases.filter((c) => (c.goodExample ?? '') === (c.badExample ?? '')).map((c) => c.id);

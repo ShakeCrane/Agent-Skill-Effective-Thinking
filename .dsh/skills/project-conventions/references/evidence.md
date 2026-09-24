@@ -61,20 +61,24 @@ Two things this taught, both recorded rather than smoothed over:
 - **`git revert` has documented preconditions and a documented trap.** It requires a clean working
   tree; reverting a merge commit "declares that you will never want the tree changes brought in by the
   merge"; the docs require a recorded reason. → PC-15.
-- **Deletion destroys production data without destructive intent.** Three primary postmortems, all
-  fetched in full: GitLab 2017 (a wipe aimed at a secondary database hit the primary — roughly 300 GB
-  in one to two seconds, about 18 hours of outage, backups that had been failing silently); AWS S3
-  2017 (a playbook command with one mistyped input); npm 2016 (272 packages unpublished, "hundreds of
-  failures per minute", ~2.5 hours). `git clean` documentation shows that nested repositories —
-  27 of which exist in this repository's untracked archive — require a *second* `-f`, so the
-  catastrophic form is one keystroke from the routine one. → PC-4.
+- **Deletion destroys production data without destructive intent.** Three primary postmortems: GitLab
+  2017 (a wipe aimed at a secondary database hit the primary — roughly 300 GB in one to two seconds,
+  about 18 hours of outage, backups that had been failing silently); AWS S3 2017 (a playbook command
+  with one mistyped input); npm 2016 (272 packages unpublished, "hundreds of failures per minute",
+  ~2.5 hours). **Only the GitLab postmortem is machine-checked in `citations.json`**; the other two are
+  cited from the efficiency cluster's source table and are one level weaker here for that reason.
+  `git clean` documentation shows that nested repositories — 27 of which existed in this repository's
+  untracked archive — require a *second* `-f`, so the catastrophic form is one keystroke from the
+  routine one. → PC-4.
 - **External checks beat self-review, and self-correction without one can hurt.** Peer-reviewed:
   intrinsic self-correction without external feedback fails on reasoning tasks, and "at times, their
   performance even degrades", while tool-grounded critique is where the measured improvement comes
   from. → PC-19.
 - **Model judges carry a length bias.** The same judge family that agrees with humans about 80% of the
-  time exhibits position, verbosity, and self-enhancement bias. A skill that rewards narration and
-  then grades itself with a model judge builds in a pull toward more words. → PC-18's constraint.
+  time exhibits position, verbosity, and self-enhancement bias. A skill that rewards narration and then
+  grades itself with a model judge builds in a pull toward more words. This is evidence about *judges*,
+  not about the rule it constrains: **PC-18 remains `evidence: none`** — it is the owner's preference,
+  and the finding above only tells you which way to lean when writing to them.
 - **Stale comments and stale references are the best-evidenced failure mode in the whole ruleset.**
   74.6% of outdated comments are machine-detectable; across more than 3,000 sampled GitHub projects,
   most contain at least one outdated code-element reference at some point in their history; and
@@ -91,10 +95,13 @@ Two things this taught, both recorded rather than smoothed over:
   quantifies a "failed to ask for clarification" mode and contains **no** over-asking mode. → PC-17.
   The caveat is real: half of ClarifyGPT's evidence uses a *simulated* user, and no retrieved source
   measures what a clarifying question costs.
-- **Comment truth is a maintenance defect, not a style question.** The evidence here is indirect but
-  consistent: documentation that drifts from code is a recognised defect class, and a false comment is
-  worse than a missing one because it is trusted. → PC-7. Kept at `moderate`, not `strong`: no
-  retrieved study isolates the cost of a single stale comment.
+- **Comment quality is a matter of category, not of count.** A comment model built on categories,
+  validated against a survey of developers, supports the claim that a comment should answer the
+  question its category claims — a why, a contract, or a detail — rather than the claim that more
+  comments are better. This is the strength of the *comment* half only. **PC-6 stays `weak`**, because
+  its other half — that stating a module's responsibility improves anything — has no measured support
+  at all, and a rule is only as strong as its weakest load-bearing claim. Staleness, a different and
+  much better-evidenced claim, is recorded under "What is strong" above.
 - **Annotated tags are the release tag and lightweight tags are not.** Vendor documentation states the
   distinction and notes that tooling such as `git describe` ignores lightweight tags. → PC-14.
 - **One logical change per commit is prescribed with a mechanical reason**: a commit has one type, and
@@ -196,6 +203,35 @@ number of constraints is the axis along which compliance is measured to fall.
   project, and none are claimed to.
 - **The behavioural result is a ceiling, not a benefit.** See `research/project-conventions/07`: both
   conditions solved 19 of 20 cases, so the skill's behavioural effect is **NOT VERIFIED**.
+- **An adversarial review is only as good as the revision it reviewed.** The independent review of this
+  skill ran while the artefact was still moving: three commits landed and four files were rewritten
+  mid-review, so three of its first reads were of revisions that no longer existed and had to be redone.
+  Freeze the review set — tag it, or hand over a commit hash — before commissioning the review. The
+  findings it did produce were real and are the reason this file no longer contradicts the rule records.
+
+## What the independent review changed
+
+Recorded because a review whose findings are not traceable is indistinguishable from no review. Seven
+findings were accepted and fixed; the two that mattered most were in the *verification* layer, not the
+rules:
+
+1. `evidence.md` claimed PC-7 at two different levels in two sections. The contract test could not see
+   it, because nothing parsed that file. → contradiction removed, **and** a check added that no rule is
+   claimed at two levels. Doing that surfaced two more of the same class (PC-18, PC-6) that the review
+   had not found.
+2. Fourteen of twenty-two citations named rule ids from a numbering that no longer existed — including
+   the sole citation backing PC-4, which was labelled `—`. Setting every id to a non-existent value left
+   both tests green. → ids remapped, **and** checks added that every citation resolves and every
+   `strong`/`moderate` rule has at least one.
+3. The suite's discrimination check was defeatable in one move: a bad example of `"no"` passed it,
+   because failing by *missing a required token* proves nothing about detecting the failure mode.
+   → the bad example must now commit the forbidden act, at substance, with the three defeating
+   mutations kept as permanent controls.
+
+Three further findings were requirement-coverage gaps rather than defects: help-seeking had no rule text
+behind its test case; the owner's "do not guess on naming" was being inverted without an explicit
+carve-out; and `AGENTS.md` kept a second, stale structure map after the audit decided there should be
+one. All three are fixed in the rules and the files above.
 
 ## Open questions that would change a rule
 
