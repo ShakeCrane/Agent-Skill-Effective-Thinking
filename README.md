@@ -700,7 +700,7 @@ git ls-tree -r --name-only v0.3.0 | cut -d/ -f1 | sort -u | wc -l      # 23 个�
   补跑的触发条件还显示：**在 catalog 中但不被点名时，它不会自己触发**——三个有区分度的用例上行为与
   baseline 一致，11 次 skill 报告中有 3 次引用规则编号，baseline 0/11、trigger 0/3。因此目前的结论
   只适用于「被点名遵循时的 skill」，而不是「已安装的 skill」；要用它，必须由 `AGENTS.md`、包装层或
-  用户点名。该臂只有 3 次运行，且「引用编号」只测是否点名规则、不测是否加载，结论按这个强度读。
+  用户点名（本轮实测的「点名」只有**提示词**这一种，`AGENTS.md` 指路这条路径尚未实测）。该臂只有 3 次运行，且「引用编号」只测是否点名规则、不测是否加载，结论按这个强度读。
   轮末对抗性复核又发现 9 处问题（含一处引用了并不存在的运行记录），其中一处修改了评分标准并迫使
   `H3` 用例在两条臂上重跑；全部处置与负面结果见
   [`research/project-conventions/08-task-level-evaluation.md`](research/project-conventions/08-task-level-evaluation.md)，
