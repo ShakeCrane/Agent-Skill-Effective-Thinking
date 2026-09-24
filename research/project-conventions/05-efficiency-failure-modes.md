@@ -336,7 +336,7 @@ change failure rate percentages, year-over-year deltas). The report PDF failed t
 Reading for the Skill: a version/release rule may legitimately require **recoverability** (a
 rollback point, immutable tags, one logical change per commit). It must **not** require a
 **deployment cadence**, because DORA's own text flags exactly that as Goodhart-gaming, and its own
-scope limit is one service at a time. `[L10]` PC-12…PC-21 already follow this shape — they govern
+scope limit is one service at a time. `[L10]` PC-8…PC-16 already follow this shape — they govern
 *what a version number may claim* and *how to reverse it*, not how often to ship.
 
 ---
@@ -629,9 +629,9 @@ What the first-hand corpus does support:
 | **Update the structure diagram in the project-understanding doc** (`PC-3`) | readers/agents navigating a stale map | a doc edit on every structural change; the doc can outlive its accuracy | **weak–moderate** — the *negative* case is first-hand and concrete: `[L10]` `evidence.md` is referenced 4× and **does not exist**; `[L1]` §15 misstates where `failures.jsonl` lives (`[L9]`: 0 bytes) | the map becomes a **claim** that is wrong, which is worse than no map; `[L4]` `KI-40` shows docs are already load-bearing for 44/65 criteria |
 | **Periodic temp-file cleanup** (`PC-5/6/7`) | unbounded artifact growth — measured here at **3653 files / 14.77 MB / 2178 untracked** (`[L9]`) | deletion is the single most dangerous act documented in this cluster: GitLab **300 GB / 18 h / ~5000 projects** (`[E6]`), npm **272 packages / 2.5 h** (`[E11]`), S3 **~4 h 17 m** (`[E12]`) | **strong** for the risk; **strong** for the danger | deleting the **only copy** — the repo's artifacts are orphaned from their declared root (`[L9]`); residue is invisible to scoring (`[L4]` `KI-36`) |
 | **Keep comments** (`PC-9/10`) | loss of non-obvious constraints; comments contradicting code | comment volume; **stale comments are a defect generator** | **none** for "keep comments" as a volume rule — `UNANSWERED` (E4) | the rule is unfalsifiable as written; only the **contradiction** half (`PC-10`) is checkable |
-| **Version management with reliable rollback** (`PC-12…21`) | unrecoverable history; immutability loss; SemVer mis-claims | commit/tag ceremony; rollback needs a clean worktree | **moderate** — DORA's correlation findings (`[E5]`) support recoverability and small batches; the *specific* numbers are `UNANSWERED` | a frequency/cadence mandate becomes **Goodhart-gamed**, which DORA names as a pitfall (`[E5]`); `PC-26` warns that "written, saved, generated, commanded are not done" |
-| **Report to the user** (`PC-24/25/26`) | silent failures; unverifiable completion claims | output volume; interruption of the user's attention | **moderate** — the counter-evidence is strong and first-hand: two token figures disagreeing **12.6×** (`[L2]`,`[L6]`,`[L7]`), non-monotonic counters (`[L5]`), **14 instances of evidence-precision overstatement across ≥9 runs** (`[L3]`) | **reporting more does not make reporting truer**; `PATTERN-EVIDENCE-PRECISION` is the documented weak tail (`[L1]` §6) |
-| **Ask the user rather than guess** (`PC-22/23`) | expensive irreversible guesses | interruption cost; `UNVERIFIED` magnitude | **weak for the risk, inverted for the direction** — MAST's quantified mode is *under*-asking, **FM-2.2 6.80%** (`[E7]`); no over-asking mode exists | asking at the wrong moment; `[L4]` `KI-20` shows a 3-line reminder reproduces the effect, so the rule must be a **gate**, not a disposition |
+| **Version management with reliable rollback** (`PC-8…PC-16`) | unrecoverable history; immutability loss; SemVer mis-claims | commit/tag ceremony; rollback needs a clean worktree | **moderate** — DORA's correlation findings (`[E5]`) support recoverability and small batches; the *specific* numbers are `UNANSWERED` | a frequency/cadence mandate becomes **Goodhart-gamed**, which DORA names as a pitfall (`[E5]`); `PC-19` warns that "written, saved, generated, commanded are not done" |
+| **Report to the user** (`PC-18/19`) | silent failures; unverifiable completion claims | output volume; interruption of the user's attention | **moderate** — the counter-evidence is strong and first-hand: two token figures disagreeing **12.6×** (`[L2]`,`[L6]`,`[L7]`), non-monotonic counters (`[L5]`), **14 instances of evidence-precision overstatement across ≥9 runs** (`[L3]`) | **reporting more does not make reporting truer**; `PATTERN-EVIDENCE-PRECISION` is the documented weak tail (`[L1]` §6) |
+| **Ask the user rather than guess** (`PC-17`) | expensive irreversible guesses | interruption cost; `UNVERIFIED` magnitude | **weak for the risk, inverted for the direction** — MAST's quantified mode is *under*-asking, **FM-2.2 6.80%** (`[E7]`); no over-asking mode exists | asking at the wrong moment; `[L4]` `KI-20` shows a 3-line reminder reproduces the effect, so the rule must be a **gate**, not a disposition |
 | **Deep modules / name the second caller** (`PC-4/11`) | premature abstraction; hard-to-test seams | a deliberate pause before extracting; duplication retained | **weak** — strongest support is `[E10]` `practitioner opinion`, explicitly labelled | sinking cost into a wrong abstraction (`[E10]`); conversely, no evidence retrieved that duplication is actually cheaper |
 
 ---
@@ -651,7 +651,7 @@ Each is labelled with what actually backs it.
    declared root turned out not to exist (`[L9]`). **Strong.** This is `PC-5` and it should be
    `HARD`.
 4. **Forbid: claiming a version bump by magnitude instead of by compatibility.** Evidence: DORA's
-   own Goodhart pitfall (`[E5]`) plus `PC-12/13/15` (`[L10]`). **Moderate** (design choice on a
+   own Goodhart pitfall (`[E5]`) plus `PC-8…PC-16` (`[L10]`). **Moderate** (design choice on a
    documented-by-DORA hazard).
 5. **Forbid: mandating a deployment/release cadence.** Evidence: "Setting metrics as a goal.
    Ignoring Goodhart's law … 'Every application must deploy multiple times per day by year's end'"

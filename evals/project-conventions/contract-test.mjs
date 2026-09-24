@@ -244,8 +244,8 @@ check('evidence.md agrees with the per-rule records', mismatched.length === 0,
 // ---------------------------------------------------------------- citations point at real rules
 
 // Also added after review: 14 of 22 citations referenced rule ids from a numbering that no longer
-// existed, and setting every id to `PC-999` left both tests green. A citation that names a rule which
-// does not exist is worse than an uncited rule, because it looks like support.
+// existed, and setting every id to an impossible value left both tests green. (OLD-RULE-IDS-OK) A
+// citation that names a rule which does not exist is worse than an uncited rule: it looks like support.
 const citationsPath = join(REPO, 'evals', 'project-conventions', 'citations.json');
 if (existsSync(citationsPath)) {
   const corpus = JSON.parse(readFileSync(citationsPath, 'utf8'));
@@ -271,6 +271,44 @@ if (existsSync(citationsPath)) {
 } else {
   check('citations.json exists', false, citationsPath);
 }
+
+// ---------------------------------------------------------------- no dangling rule references anywhere
+
+// Added after the 26-rule set was consolidated to 19: the efficiency-cluster research note kept citing
+// the superseded ids for weeks (OLD-RULE-IDS-OK), because the only thing checking rule ids was
+// citations.json. A reference to a rule that no longer exists is worse than no reference — it looks
+// like the rule is still there. Prose that deliberately names a superseded id (a review finding, a
+// changelog entry) says so on the line, with the marker below.
+const HISTORY_MARKER = 'OLD-RULE-IDS-OK';
+const maxRule = Math.max(...[...records.keys()].map((id) => Number(id.slice(3))));
+const SCAN_DIRS = [SKILL_DIR, join(REPO, 'research', 'project-conventions'), join(REPO, 'reports'), join(REPO, 'evals', 'project-conventions')];
+const scanFiles = [];
+const walkMd = (dir) => {
+  if (!existsSync(dir)) return;
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const abs = join(dir, entry.name);
+    if (entry.isDirectory()) walkMd(abs);
+    else if (/\.(md|json|mjs)$/.test(entry.name)) scanFiles.push(abs);
+  }
+};
+for (const d of SCAN_DIRS) walkMd(d);
+for (const f of [join(REPO, 'README.md'), join(REPO, 'changelog.md')]) if (existsSync(f)) scanFiles.push(f);
+
+const dangling = [];
+for (const file of scanFiles) {
+  const lines = readFileSync(file, 'utf8').split(/\r?\n/);
+  lines.forEach((line, i) => {
+    if (line.includes(HISTORY_MARKER)) return;
+    for (const m of line.matchAll(/\bPC-(\d+)\b/g)) {
+      if (Number(m[1]) > maxRule) {
+        dangling.push(`${relative(REPO, file).split(sep).join('/')}:${i + 1} -> PC-${m[1]}`);
+      }
+    }
+  });
+}
+check('no document references a rule id that does not exist', dangling.length === 0,
+  dangling.slice(0, 6).join('; ') + (dangling.length > 6 ? ` (+${dangling.length - 6} more)` : '') ||
+    `${scanFiles.length} file(s) scanned, ids up to PC-${maxRule}`);
 
 // ---------------------------------------------------------------- ledger agreement
 

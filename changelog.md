@@ -1,5 +1,90 @@
 # Changelog
 
+## Task-level behavioural evaluation + one rule refinement — v0.4.0
+
+Round 2 on `project-conventions`. The question was whether the skill changes what an agent *does* to a
+real repository. The answer is: **measurably yes in one place, and no net benefit overall.** Full record
+in [`research/project-conventions/08-task-level-evaluation.md`](research/project-conventions/08-task-level-evaluation.md).
+
+### A task-level harness, and the control it needed
+
+`evals/project-conventions/task-eval/` — 10 cases (6 development, 4 held out), each a self-contained git
+repository plus a real job plus its own `check(dir)`. Scoring reads the repository the run left behind,
+never the agent's chat, and never asks the agent how it did. Child processes cannot capture output in
+this sandbox, so checks `import()` the agent's modules and call them — which asserts behaviour rather
+than the exit code of a script the agent may have rewritten.
+
+The first attempt at a baseline was invalid before it ran: a probe showed **subagents inherit the full
+skill catalog**, so a "control" agent could already see the skill. The fix was to relocate the bundle
+out of `.dsh/skills/` for the duration of the baseline block, verified by probe (catalog and context
+both clean), and restored immediately afterwards.
+
+`validate.mjs` runs every case pristine (must fail) and with a reference solution (must pass). It found
+**five real defects before a single agent ran** — an unimported symbol, a regex that matched `package.js`
+inside `package.json`, a CommonJS named-export miss that made a *correct* solution look broken, plus two
+assertions that mis-specified contracts (a returned key the task never froze; a loader assumed
+synchronous). The last two were applied to both arms and are recorded as **errata**, not silent fixes.
+
+### Results
+
+| | runs solved | assertions |
+|---|---|---|
+| baseline (skill relocated) | 9 / 11 | **59 / 61** |
+| skill | 10 / 11 | **59 / 61** |
+
+Identical totals, diverging on two cases in opposite directions. **Eight of ten cases never
+discriminated**, and the entire held-out set was solved by both arms (4/4). This is the third
+independent instrument in this repository to hit a ceiling, after the question-level suite here and both
+`effective-thinking` external evaluations.
+
+Two rubric defects are recorded and **deliberately left unfixed**, because changing the standard after
+seeing results is how a benchmark stops measuring: `L3a`'s disposal assertions assume "clean up" means
+"delete" when the skill's own `PC-5` permits ignoring instead (the lenient reading makes that arm 7/7 and
+the arms exactly level); and `H3`'s fixture commits the credential files it intended to leave untracked.
+Both arms faced the same fixtures, so the comparison holds; the cases test something other than what
+they were designed to test.
+
+### One confirmed behavioural effect, and the rule change it produced
+
+On `L3b` — raise a constant under "change nothing else", on a line whose comment was *already* false —
+baseline left the comment in both runs and the skill fixed it in both. The skill's own documents made
+that divergence possible in two ways, and both were real defects:
+
+- **The class table contradicted the precedence order.** `HARD` said "Never violated. Only safety and
+  irreversibility justify these", while the precedence list ranked non-safety `HARD` rules *below* an
+  explicit user instruction. An agent reading "never violated" does not consult the precedence order.
+  `HARD` now means "not traded away for convenience; still yields to tiers 1–3". This is the same defect,
+  in the same document, that had already been corrected once for `PC-4`.
+- **`PC-7` gave no tie-break** between "your change falsified the comment" and "it was already false".
+  It now states one: a false comment **on a line you are editing** is fixed anyway, because your own diff
+  would otherwise read as self-contradictory; a false comment **elsewhere** is reported, not fixed.
+
+The fix was then re-tested: `L3b` run again in both arms, and the skill arm **quoted the new clause** and
+acted on it (2/2 vs baseline 0/2). A rule change derived from an observed divergence, verified by
+re-running the case that exposed it.
+
+### Reference integrity
+
+After the 26→19 rule consolidation, the efficiency research note still cited superseded rule ids
+(`PC-22/23`, `PC-24/25/26`, `PC-12…PC-21`). `citations.json` was checked but nothing checked prose. All
+repaired, and the contract test now scans **32 documents** for ids above the current maximum, with a
+negative control proving it fires and an explicit `OLD-RULE-IDS-OK` marker for prose that names a
+superseded id on purpose.
+
+### Left-over investigation
+
+The 14.8 MB untracked archive is **kept** and was inspected read-only. `cases.jsonl` is intact (38 rows,
+0 malformed — an earlier "22 malformed" was a PowerShell parser artifact, corrected by re-checking with
+Node). `failures.jsonl` is genuinely 0 bytes while the report says the failures live in it; `metrics.csv`
+counts are non-monotonic (83 → 67); the two token estimators disagree **12.6×**; and the declared artifact
+root `D:\AI-Runs\...` does not exist. Nine tracked files now reference the archive, so it is documented
+rather than orphaned. Its value is as a first-hand case study, not as measurement.
+
+### Version
+
+`0.3.0` → `0.4.0`. Mode B: the evaluation harness and the rule refinement are functional changes. `v0.3.0`
+stays where it is — tags are not moved. New recovery point: `v0.4.0`.
+
 ## Second Skill (`project-conventions`) + repository governance pass — v0.3.0
 
 Adds a second, **independent** agent Skill and applies it to this repository. The pre-existing
