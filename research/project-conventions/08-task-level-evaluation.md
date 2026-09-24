@@ -21,7 +21,8 @@ missed, in opposite directions.
 | `run.mjs` | `list` / `materialise <case> <dir>` / `check <case> <dir>` |
 | `validate.mjs` | Proves each case fails pristine **and** passes with its reference |
 | `score.mjs` | Aggregates a runs directory; reads the repository, never the agent's chat |
-| `results-2026-09-24.jsonl` | The preserved run results (22 rows) |
+| `results-2026-09-24.jsonl` | The preserved run results (25 rows: 11 baseline, 11 skill, 3 trigger) |
+| `collect-quotes.mjs` → `evidence-quotes-2026-09-24.md` | One bounded excerpt per run's `REPORT.md`, taken by line count rather than by selection, so nothing was edited to fit a conclusion. This is where every quotation below comes from; the raw run trees were deleted as process artifacts, and are reproducible from `fixtures.mjs`. |
 
 **How a run is scored.** No child process is spawned and no test runner is invoked: this sandbox blocks
 piped stdio (`EPERM`), so the checker `import()`s the agent's modules and calls them. That turned out to
