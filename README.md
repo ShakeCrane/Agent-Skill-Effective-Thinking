@@ -600,13 +600,13 @@ git ls-tree -r --name-only v0.3.0 | cut -d/ -f1 | sort -u | wc -l      # 23 个�
 │   ├── *.js                   26 个测试链脚本 + 3 个链外脚本
 │   ├── external/              External Eval v1 冻结语料
 │   ├── external-v2/           External Eval v2 冻结语料（84 个哈希冻结产物）
-│   └── project-conventions/   契约测试、引用核验、行为用例与保留的行为评测运行
+│   └── project-conventions/   契约测试、引用核验、问答用例、task-eval/ 任务级评测与保留结果
 ├── failures/                  失败日志（F1–F17）
 ├── methods/                   方法状态卡：core/ 与 experimental/
 ├── multi-agent/               编排：fan-out / 独立评审 / 收敛
 ├── reports/                   阶段性报告（session-01 为当前状态报告）
 ├── research/                  研究记录
-│   └── project-conventions/   01–07：五个证据簇、仓库审计、行为评测
+│   └── project-conventions/   01–08：五个证据簇、仓库审计、两轮行为评测
 ├── router/                    路由核心：extract / task-router / capabilities / calibrate / adaptive-loop
 ├── scripts/                   DSH 资产同步与漂移检查
 └── strategies/                执行策略：protocol / stopping / cost / certainty / verify
@@ -684,14 +684,19 @@ git ls-tree -r --name-only v0.3.0 | cut -d/ -f1 | sort -u | wc -l      # 23 个�
 - **怎么验证**：
 
   ```bash
-  npm run test:project-conventions        # 契约测试：规则集一致、词表、预算、链接、编码
+  npm run test:project-conventions        # 契约测试：规则集一致、词表、预算、链接、编码、失效规则引用
   npm run test:project-conventions:cite   # 重新抓取每条引用并核对其原始语句（需要网络）
+  npm run task-eval:validate              # 任务级用例自校验：原始状态必失败、参考解必通过
+  npm run task-eval:score -- <runsDir>    # 对一批真实运行留下的仓库状态评分
   ```
 
-  这两条**不在** `npm test` 链内：`npm test` 是 `effective-thinking` 的冻结发布契约，把第二个
+  这几条**不在** `npm test` 链内：`npm test` 是 `effective-thinking` 的冻结发布契约，把第二个
   Skill 的检查塞进去会改变它的含义。两个 Skill 各自拥有独立的验证命令。
-- **状态**：`experimental`。契约（结构、规则集一致性、引用可核验性）已机器验证；**行为收益未验证**，
-  见 `research/project-conventions/`。
+- **状态**：`experimental`。契约（结构、规则集一致性、引用可核验性）已机器验证；**行为收益未验证**。
+  两轮独立评测都撞上天花板：问答式套件 20 题几乎全对；任务级评测 baseline 与 skill 均为
+  **59/61 断言**，十个用例里八个无差异。唯一确认的效应是一条规则澄清带来的可复现一致性
+  （L3b：baseline 0/2、skill 2/2）。完整方法与负面结果见
+  [`research/project-conventions/08-task-level-evaluation.md`](research/project-conventions/08-task-level-evaluation.md)。
 
 ---
 
