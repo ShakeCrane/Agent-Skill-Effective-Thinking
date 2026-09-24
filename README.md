@@ -566,8 +566,16 @@ rejected
 ## 当前结构（以真实仓库为准）
 
 这是**实际存在**的目录及其职责。修改目录后必须同步更新本节（`project-conventions` skill 的
-PC-2）。每一行都可以用 `git ls-files` 复核；截至 v0.3.0 为 **323 个受版本控制的文件、23 个顶层条目**。
-复核命令：`git ls-files | wc -l` 与 `git ls-files | cut -d/ -f1 | sort -u | wc -l`。
+PC-2）。**条目以 `v0.3.0` 标签为准**（该标签不变，因此这个数字可长期复核）：
+
+```bash
+git ls-tree -r --name-only v0.3.0 | wc -l                              # 323 个文件
+git ls-tree -r --name-only v0.3.0 | cut -d/ -f1 | sort -u | wc -l      # 23 个顶层条目
+```
+
+当前工作树的文件数会随提交增长（本节首次写就后已增长两次），所以**不要引用工作树的数字** ——
+引用标签。这正是"计数必须写明口径"的意义：审计时 `reports/session-01.md` 的数字之所以被判为
+过期，不是因为它错了，而是因为它没有写口径，因此没有人能复核它。
 
 ```text
 .

@@ -15,10 +15,12 @@ right effort per task, not one rigid template for everything.
 ## Changes (final converged tree — see the current-structure map in `README.md`)
 
 The earlier heading here read "69 files". That number was not reproducible: it recorded a count whose
-rule was never written down, and the tree has since grown. Measured `git ls-files` at v0.3.0:
-**323 tracked files across 23 top-level entries**, of which 214 are the two frozen evaluation corpora
-(`evals/external-v2` 139, `evals/external` 75). Directory-level inventory and responsibilities are kept
-in `README.md` → 项目结构, which is the single place that map lives.
+rule was never written down, and the tree has since grown. **Pinned to the `v0.3.0` tag**, whose tree
+does not change: **323 tracked files across 23 top-level entries**, of which 214 are the two frozen
+evaluation corpora (`evals/external-v2` 139, `evals/external` 75). Re-derive with
+`git ls-tree -r --name-only v0.3.0 | wc -l`. Directory-level inventory and responsibilities are kept in
+`README.md` → 项目结构, which is the single place that map lives; the working tree moves on, which is
+why the count is quoted against a tag rather than against today.
 
 - **Skill & docs:** `SKILL.md` (agent-facing contract), `AGENTS.md`, `README.md`, `changelog.md`,
   `reports/session-01.md` (this), `methods/core/task-router.md`.
