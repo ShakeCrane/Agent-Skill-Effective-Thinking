@@ -244,3 +244,41 @@ documents for ids above the current maximum — with a negative control proving 
 **D — research materials.** No action. Cross-cluster source overlap is real but intentional (the same
 foundational paper supports two rule groups); nothing is stale after the `C` repair; the owner's decision
 was to keep long-term material uncompressed.
+
+## 11. The trigger arm — run after the main analysis
+
+§2 records that the *trigger* condition was designed and cut for budget. It was then run anyway, on the
+three cases that discriminate, because the answer changes how the main result should be read. The
+condition is: **skill present in the catalog, no instruction to use it, task prompt identical to
+baseline.**
+
+| condition | runs solved | assertions |
+|---|---|---|
+| trigger (skill available, unnamed) | 2 / 3 | 17 / 18 |
+
+Its `L3b` run is the informative one: **it left the stale comment**, for the same stated reason as both
+baseline runs, and produced the same one-assertion shortfall. On `L3a` it deleted the disposable files
+like baseline, and on `H4` it left the README alone like both arms.
+
+Measured a second way, over the preserved excerpts:
+
+| arm | runs citing a rule id |
+|---|---|
+| skill (explicitly followed) | **3 / 11** — `PC-7`, `PC-2` |
+| baseline (skill absent) | 0 / 11 |
+| trigger (skill available, unnamed) | 0 / 3 |
+
+**Conclusion: on these tasks the skill does not fire on its own.** The behaviour change measured in §5
+comes from the harness *naming* the skill, not from its catalog description attracting an agent. That
+qualifies the whole comparison: the skill-arm result is "what the skill does when adopted", not "what
+the skill does as deployed". As deployed, over three discriminating cases, it changed nothing measurable.
+
+Two readings are possible and this experiment cannot separate them: the description is too weak to fire
+on ordinary-looking work, or agents in this harness do not routinely consult the skill catalog
+mid-task. Distinguishing them needs a host-level trace of skill loads, which this protocol does not
+have. Recorded as an open question rather than assumed either way.
+
+This also makes the practical case for the version that *did* work: an explicit instruction to follow a
+named skill produced a reproducible, cited behaviour change, while merely being installed produced none.
+If the skill is to matter, it has to be named — by a project's `AGENTS.md`, by a wrapper, or by the
+user — not left to a catalogue description.

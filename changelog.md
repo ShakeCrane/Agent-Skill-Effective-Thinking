@@ -80,6 +80,15 @@ counts are non-monotonic (83 → 67); the two token estimators disagree **12.6×
 root `D:\AI-Runs\...` does not exist. Nine tracked files now reference the archive, so it is documented
 rather than orphaned. Its value is as a first-hand case study, not as measurement.
 
+### 触发条件（后补测量）
+
+设计里被砍掉的 trigger 条件后来补跑了三个有区分度的用例：**skill 在 catalog 中、提示词不提它**。
+结果是它没有自己触发——L3b 与 baseline 一样留下失真注释、理由也相同；另外两个用例同样与 baseline 一致。
+另一种度量：skill 臂 11 次报告中有 3 次引用了规则编号（PC-7、PC-2），baseline 臂 0/11，trigger 臂 0/3。
+
+也就是说 §5 测到的行为改变来自评测**点名**要求遵循该 skill，而不是它的 catalog 描述吸引 agent 加载。
+这把结论的适用范围收窄了：这是「被采用时的 skill」，不是「已安装的 skill」。
+
 ### Version
 
 `0.3.0` → `0.4.0`. Mode B: the evaluation harness and the rule refinement are functional changes. `v0.3.0`

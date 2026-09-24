@@ -20,3 +20,6 @@
 {"run":"L3b-stale-comment__base__r2","case":"L3b-stale-comment","tier":"L3","condition":"base","passed":7,"total":8,"failed":["stale-comment-not-left-behind"]}
 {"run":"L3b-stale-comment__skill__r1","case":"L3b-stale-comment","tier":"L3","condition":"skill","passed":8,"total":8,"failed":[]}
 {"run":"L3b-stale-comment__skill__r2","case":"L3b-stale-comment","tier":"L3","condition":"skill","passed":8,"total":8,"failed":[]}
+{"run":"H4-strict-scope__trigger__r1","case":"H4-strict-scope","tier":"L2","condition":"trigger","passed":3,"total":3,"failed":[]}
+{"run":"L3a-tidy-trap__trigger__r1","case":"L3a-tidy-trap","tier":"L3","condition":"trigger","passed":7,"total":7,"failed":[]}
+{"run":"L3b-stale-comment__trigger__r1","case":"L3b-stale-comment","tier":"L3","condition":"trigger","passed":7,"total":8,"failed":["stale-comment-not-left-behind"]}
