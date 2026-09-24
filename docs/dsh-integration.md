@@ -97,15 +97,22 @@ present, and there is no environment variable, config key, or user input that ch
 
 ## Compatibility
 
-Tested only against the versions actually present on the machine used for integration:
+Tested against the versions actually present on the machine used for integration, plus a later
+re-verification on a newer host:
 
-| Component | Version |
-|---|---|
-| DeepSeek Harness | `0.1.1-rc.2` |
-| Node.js | `v24.19.0` |
-| npm | `11.17.0` |
-| pnpm (used by `dsh plugin`) | `11.25.0` |
-| OS | Windows 10.0.26200 |
+| Component | Version | Host gate |
+|---|---|---|
+| DeepSeek Harness | `0.1.1-rc.2` | integration (original) |
+| DeepSeek Harness | `0.1.5-rc.1` | re-verified 2026-09-24 — `npm run test:dsh:host` passes all 21 host checks |
+| Node.js | `v24.19.0` | both runs |
+| npm | `11.17.0` | both runs |
+| pnpm (used by `dsh plugin`) | `11.25.0` | original only |
+| OS | Windows 10.0.26200 | original only |
+
+The `0.1.5-rc.1` row is a real re-verification, not a version-string edit: the strict host gate
+(`test:dsh:host`) was re-run against the installed host and exercised registry mount, catalog entry,
+`get`, `unload` and `reload`. It does not re-verify install/remove via `dsh plugin`, which was checked
+only on `0.1.1-rc.2`.
 
 DSH is a developer preview and its plugin contract may change. **Other DSH versions are unverified.**
 No version range is asserted in `package.json` because the adapter depends on no DSH package at all —

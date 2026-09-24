@@ -563,6 +563,50 @@ rejected
 
 # 项目结构
 
+## 当前结构（以真实仓库为准）
+
+这是**实际存在**的目录及其职责。修改目录后必须同步更新本节（`project-conventions` skill 的
+PC-2）。每一行都可以用 `git ls-files` 复核；截至 v0.3.0 为 **323 个受版本控制的文件、23 个顶层条目**。
+复核命令：`git ls-files | wc -l` 与 `git ls-files | cut -d/ -f1 | sort -u | wc -l`。
+
+```text
+.
+├── AGENTS.md                  agent 工作规则、方法准入流程、上下文管理
+├── SKILL.md                   effective-thinking 的规范正文（唯一真源）
+├── README.md                  项目说明；本结构图所在处（项目理解文件）
+├── changelog.md               按轮次记录的变更历史
+├── package.json               npm 清单：测试链、发布契约、DSH 打包声明
+├── index.js                   公开库 API（require('./') 即整个 skill）
+├── .gitignore                 忽略策略：agent 运行产物、缓存、打包产物、临时目录
+│
+├── .dsh/skills/               宿主自动发现的项目内 Skill（每个子目录一个独立 Skill）
+│   └── project-conventions/   项目开发行为规范 Skill（与本包相互独立，见下节）
+│
+├── .github/workflows/         CI：无宿主契约门禁 + 打包校验
+├── bin/                       CLI：router / self-audit / consume-pack
+├── dsh/                       effective-thinking 的 DSH 插件适配层（provider + 打包资产）
+├── docs/                      子系统文档（dsh-integration）
+├── evals/                     验证与回归
+│   ├── *.js                   26 个测试链脚本 + 3 个链外脚本
+│   ├── external/              External Eval v1 冻结语料
+│   ├── external-v2/           External Eval v2 冻结语料（84 个哈希冻结产物）
+│   └── project-conventions/   契约测试、引用核验、行为用例与保留的行为评测运行
+├── failures/                  失败日志（F1–F17）
+├── methods/                   方法状态卡：core/ 与 experimental/
+├── multi-agent/               编排：fan-out / 独立评审 / 收敛
+├── reports/                   阶段性报告（session-01 为当前状态报告）
+├── research/                  研究记录
+│   └── project-conventions/   01–07：五个证据簇、仓库审计、行为评测
+├── router/                    路由核心：extract / task-router / capabilities / calibrate / adaptive-loop
+├── scripts/                   DSH 资产同步与漂移检查
+└── strategies/                执行策略：protocol / stopping / cost / certainty / verify
+```
+
+被忽略、不在版本控制内：`AI-Runs/`（前次自主运行的原始工件，14.8 MB，保留为证据而非项目内容）、
+`node_modules/`、`*.tgz`、`__pycache__/`。忽略策略见 `.gitignore`。
+
+## 目标结构（尚未实现，仅为方向）
+
 项目预计逐步发展为：
 
 ```text
@@ -605,6 +649,39 @@ rejected
 > 不应为了架构完整而创建没有实际用途的目录和文件。
 
 仓库结构应随着真实需求逐步形成。
+
+---
+
+# 第二个 Skill：`project-conventions`
+
+本仓库同时承载第二个、**相互独立**的 Skill：项目开发行为规范。它与 `effective-thinking` 没有
+依赖关系，也不修改后者的任何文件。
+
+```text
+.dsh/skills/project-conventions/
+├── SKILL.md                    规范正文（19 条规则，5 个触发闸门）
+└── references/
+    ├── rules.md                每条规则的完整记录 + 新增规则的准入流程
+    └── evidence.md             证据强度、未证实清单、复核方法
+```
+
+- **它是什么**：在「放文件、清临时文件、写代码与注释、提交/版本/打标签/回滚、对用户提问或汇报」
+  这五个时刻约束 agent 行为的规则集。每条规则带 `class`（HARD/DEFAULT/WHEN/PREFERENCE/HYPOTHESIS）
+  与 `evidence`（strong/moderate/weak/none）；未证实的偏好不会被写成已验证的规则。
+- **怎么被发现**：DSH 的文件系统 skill provider 在 rank 100 扫描 `<项目根>/.dsh/skills`，识别
+  `<name>/SKILL.md` 目录包。无需改动 `dsh/` 适配层，也无需重启——本会话已实测（写入后出现在
+  catalog 中，删除后立即消失）。
+- **怎么验证**：
+
+  ```bash
+  npm run test:project-conventions        # 契约测试：规则集一致、词表、预算、链接、编码
+  npm run test:project-conventions:cite   # 重新抓取每条引用并核对其原始语句（需要网络）
+  ```
+
+  这两条**不在** `npm test` 链内：`npm test` 是 `effective-thinking` 的冻结发布契约，把第二个
+  Skill 的检查塞进去会改变它的含义。两个 Skill 各自拥有独立的验证命令。
+- **状态**：`experimental`。契约（结构、规则集一致性、引用可核验性）已机器验证；**行为收益未验证**，
+  见 `research/project-conventions/`。
 
 ---
 
@@ -730,11 +807,47 @@ dsh plugin --profile <profile> remove cognitive-agent-skill
 
 ### Status
 
-Experimental. Tested against DeepSeek Harness `0.1.1-rc.2` only — other DSH versions are unverified.
+Experimental. Verified against DeepSeek Harness `0.1.1-rc.2` and, on 2026-09-24,
+`0.1.5-rc.1` — `npm run test:dsh:host` passes all 21 host checks on the latter (registry mount,
+catalog entry, `get`, `unload`, `reload`). Other DSH versions remain unverified.
 Availability and packaging are verified; **behavioural benefit is not**: both External Eval v1 and v2
 met a ceiling effect on the tested agent (every condition solved every task), so no general
 improvement of the full skill over a minimal scaffold has been demonstrated
 (see [`reports/phase-2-v2-pilot.md`](reports/phase-2-v2-pilot.md)).
+
+---
+
+# 版本与发布
+
+## 版本模式
+
+本仓库采用 **(B) house scheme**，并在此明确声明——这不是 SemVer 兼容性承诺。
+
+`package.json` 的 `exports` 确实构成一个公开 API，但版本一直是 `0.y.z`。SemVer 2.0.0 对 `0.y.z` 的
+规定是 "Major version zero (0.y.z) is for initial development. Anything MAY change at any time. The
+public API SHOULD NOT be considered stable." —— 即此阶段不承诺任何兼容性。在此之前本仓库从未声明过
+自己属于哪种模式，因此每一个版本号含义都是任意的。
+
+- 数字按**规模**语义递增（项目所有者约定）：重大功能与重大重构 → MAJOR；功能性或结构性调整 → MINOR；
+  文档与小任务 → PATCH。
+- **数字不构成兼容性承诺。** 依赖本包时请假定任何升级都可能包含破坏性变更；需要稳定接口时固定到具体
+  commit 或 tarball，而不是版本区间。
+- 有两条底线不受上述约定影响：**破坏性变更不得以 MINOR/PATCH 发布**；已发布的版本与标签不可改写。
+- 若将来要真正声称 SemVer 兼容，必须先声明公开 API、改由兼容性（而非规模）决定数字，并同时改写本节。
+
+## 恢复点
+
+版本号不是恢复点；恢复点是有名字的标签。
+
+- 发布 = 在通过 `npm run release:check`（有真实 DSH 宿主时再加 `release:verify`）的提交上打
+  **annotated tag**。
+- 已发布的标签不可移动、已发布版本的内容不可修改，只能前向修复。
+- 回滚使用 `git revert`（不是 `git reset`），在组成提交层面进行，并在提交信息中记录原因。
+
+## 历史
+
+`0.2.0` 自首次提交起从未变动，且此前**没有任何标签**——也就是说在本节写入之前，本仓库无法回答
+"`0.2.0` 对应的究竟是哪一棵树"。首个真实恢复点是 `v0.3.0`。详见 `changelog.md`。
 
 ---
 

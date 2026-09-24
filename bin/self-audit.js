@@ -2,7 +2,8 @@
 // Self-audit: ONE command that verifies and reports the health of the whole skill.
 // Runs every check in the npm test chain, prints a concise PASS/FAIL ledger, and exits non-zero if
 // anything failed. Purpose: "可验证 / 更高效" — an operator or agent sees the entire status in a
-// single run instead of inspecting 22 reports.
+// single run instead of inspecting each check's report separately. The count is read from the
+// manifest at run time and printed below; it is deliberately not restated here, where it went stale.
 //
 // Usage: node bin/self-audit.js   (or `npm run audit`)
 //

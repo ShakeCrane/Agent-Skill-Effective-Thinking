@@ -1,5 +1,108 @@
 # Changelog
 
+## Second Skill (`project-conventions`) + repository governance pass — v0.3.0
+
+Adds a second, **independent** agent Skill and applies it to this repository. The pre-existing
+`effective-thinking` contract is untouched: root `SKILL.md`, `dsh/**`, the `npm test` chain, and the
+frozen corpora under `evals/external*` are all unmodified, and the strict host gate still passes.
+
+### The Skill
+
+- **`.dsh/skills/project-conventions/SKILL.md`** — 19 rules in five triggered gates (placement,
+  cleanup, code, release, handoff). Every rule carries a class
+  (`HARD`/`DEFAULT`/`WHEN`/`PREFERENCE`/`HYPOTHESIS`) and one check.
+- **`references/rules.md`** — per-rule records plus the admission gate for new rules.
+- **`references/evidence.md`** — the honesty layer: what is `strong`, what is `moderate`, what is
+  `weak`, and a list of widely-repeated claims that are **deliberately not encoded**.
+- **Rule schema reduced on measured grounds.** The proposed `R = (T, C, A, K, V, E)` was applied and
+  cut to **T + A + Check**, with `class`, `status` and `evidence` promoted to tags: no official
+  instruction format has a context field, an exception is a narrower trigger, and the *count* of
+  constraints is the axis along which compliance is measured to fall (FollowBench: GPT-4 hard
+  satisfaction 84.7% at one constraint → 61.9% at five; practical ceiling ~3). The schema's benefit is
+  claimed as reviewability and budgeting, **not** as a measured compliance gain.
+- **Delivery verified end-to-end.** DSH's filesystem skill provider scans `<projectRoot>/.dsh/skills`
+  at rank 100. Confirmed experimentally, not just documented: writing the bundle made the skill appear
+  in the live session catalog with no restart, and removing it removed the entry.
+- **The owner's version preference is honoured where it is safe and labelled where it is not.** The
+  magnitude scheme conflicts with SemVer 2.0.0 rather than merely lacking support — a large *additive*
+  feature is a MINOR, so MAJOR-for-big-features is a false breaking-change alarm. Resolved by forcing a
+  declared mode: `PREFERENCE · evidence: none` in a labelled house scheme, with breaking changes never
+  permitted to ship as MINOR/PATCH.
+
+### Verification
+
+- `evals/project-conventions/contract-test.mjs` — cross-checks SKILL.md against rules.md (id set,
+  class, ledger), the class/evidence/status vocabularies, record completeness, frontmatter, body
+  budgets, link resolution, and **file encoding**. Validated by four negative controls, each of which
+  makes it fail.
+- `evals/project-conventions/suite-test.mjs` — 20 behavioural cases across all 12 required areas, plus
+  the check that makes the suite trustworthy: every case's asserted-good answer must pass its rubric
+  and its asserted-bad answer must fail.
+- `evals/project-conventions/verify-citations.mjs` + `citations.json` — re-fetches each source and
+  matches the quoted sentence. Last run: **20 of 22 reconfirmed, 0 claims missing, 2 hosts not
+  reached** (reported as not-verified, never as passing).
+- `npm run test:project-conventions` and `npm run test:project-conventions:cite`. **Not** added to
+  `npm test`, which is `effective-thinking`'s frozen release contract; putting a second skill's checks
+  in it would change what that contract means.
+
+### Behavioural evaluation — a ceiling, reported as such
+
+20 cases × 2 conditions × 3 replicates = 120 answers, scored by **two blind independent judges** on a
+shuffled, condition-free pack. Inter-judge agreement 118/120 (98.3%). Result: `skill` 60/60,
+`baseline` 58/60 — **19 of 20 cases were solved by all six runs**, and the nominal 3.3-point gap sits
+on two rows of one case where the judges disagreed. **No behavioural benefit is demonstrated and the
+skill's effect is NOT VERIFIED.**
+
+The first two measurements of that same data were *invalid instruments* and are recorded as such: a
+regex scorer produced "75% vs 83%", then "88% vs 88%", because a pattern cannot tell an endorsed
+behaviour from a mentioned one ("I would not delete it", "this is not a MAJOR"). Those numbers are
+withdrawn. This mirrors the ceiling already recorded twice for `effective-thinking`
+(`reports/phase-2-v2-pilot.md`), which is itself the finding: asking a strong model to decide well is
+not a hard test, whether or not a document told it how.
+
+### Repository governance (audit findings, all with re-runnable evidence)
+
+- **P1 — untracked agent artifacts inside the repository.** 3,653 files / 1,919 directories / 14.8 MB,
+  including 27 nested `.git` repositories and 104 `__pycache__` directories, with no `.gitignore`. The
+  generating run's own report places its artifact root at `D:\AI-Runs\...`, **a path that does not
+  exist** — the only copy is in the tree. Fixed structurally with a `.gitignore`: untracked entries went
+  **2,179 → 13**, all intentional. The archive itself is **kept**: it is another run's primary
+  evidence, and deleting it is irreversible. Its disposition is raised for the owner instead.
+- **P1 — no reliable recovery point.** `package.json` version was `0.2.0` in **every** commit that
+  touched it, including the DSH integration, and `git tag` was empty: the repository could not answer
+  which tree `0.2.0` was. Version → `0.3.0` (mode B, functional/structural change), version mode
+  declared in the README for the first time, and `v0.3.0` tagged as the first real recovery point.
+- **P2 — the structure map described a repository that does not exist.** README and AGENTS.md listed
+  `profiles/`, `routing/`, `context/`, `changelog/`, `methods/{candidate,validated,rejected}` and
+  `evals/{tasks,baselines,regressions,results}` — none of which exist — while omitting seven real
+  directories. README now carries a **current-structure map with per-directory responsibilities**,
+  cross-checked against `git ls-files` (299 tracked files, 21 top-level entries), with the aspirational
+  tree retained and still labelled as a target.
+- **P2 — stale current-state numbers.** `reports/session-01.md` claimed a "69 files, 9 dirs" converged
+  tree whose counting rule was never written down. Replaced with the stated rule and the measured
+  figure. Historical session records were **not** rewritten.
+- **P2 — the DSH compatibility claim understated the package.** README and `docs/dsh-integration.md`
+  said DSH `0.1.1-rc.2` only; the installed host is `0.1.5-rc.1`, and `npm run test:dsh:host` passes
+  all 21 host checks against it. Recorded as a re-verification, with the parts it does *not* re-verify
+  (install/remove via `dsh plugin`) named.
+- **P3 — a 0-byte `nul` file** (Windows reserved device name) created by an agent's redirect typo and
+  alive for eleven days: deleted via the `\\?\` path.
+- **P3 — a stale count in a source comment** (`bin/self-audit.js`: "22 reports", chain is 26): the
+  number removed rather than re-hard-coded, since it will drift again.
+
+### Research record
+
+`research/project-conventions/01`–`07`: five evidence clusters (software engineering, version
+management, agent engineering, skill/rule systems, efficiency & failure modes) with per-source tables
+and explicit unanswered questions; the repository audit; and the behavioural evaluation. Cluster A
+also caught three mis-attributed citations in the research brief itself and refused to propagate them.
+
+### Known limits
+
+Behavioural benefit NOT VERIFIED (§above). The behavioural runs and the regex-failure record live in
+ignored `.scratch/` and are reproducible from `evals/project-conventions/`. Rollback of *data* (as
+opposed to code) is not covered by any rule, because no retrieved source addresses it.
+
 ## Repository Fix Pass — correctness bugs, release contract, convergence (no new methods)
 
 Scope: fix already-identified correctness/release-contract defects and converge the repository. No

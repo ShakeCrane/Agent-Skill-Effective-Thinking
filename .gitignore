@@ -1,0 +1,38 @@
+# Ignore policy.
+#
+# Written after an audit found 14.8 MB of agent run artifacts sitting untracked inside this
+# repository: 3,653 files, 1,919 directories, 27 nested `.git` repositories and 104 `__pycache__`
+# directories, none of them referenced by any tracked file. It is not only untidiness. The repository
+# states the opposite policy about itself in AGENTS.md and README.md ("exploration may branch, the
+# repository must converge"), and the run that produced the archive declared its artifact root as
+# `D:\AI-Runs\overnight-20260913\` — a path that does not exist. The only copy is inside this tree.
+#
+# This file is the structural fix: agent scratch can now never be staged by accident, and the
+# accident cannot recur silently. It does NOT delete anything. The archive is kept in place because it
+# is another run's primary evidence, and `git status` going quiet is not the same as the evidence
+# being worthless.
+
+# --- Agent run artifacts -------------------------------------------------------------------------
+# Untracked working area for autonomous runs. A run that needs to leave evidence should write a
+# curated summary into reports/ or research/ and keep its raw sandboxes here.
+/AI-Runs/
+
+# A 0-byte file named `nul` — a Windows reserved device name — was created in the repository root by
+# an agent's `>nul` redirect typo and survived for eleven days. Listed so the name is never staged
+# even if a tool recreates it.
+/nul
+
+# --- Regenerable output --------------------------------------------------------------------------
+# Compiled Python caches appeared 104 times inside the archive above and inside evaluation sandboxes.
+__pycache__/
+*.py[cod]
+
+# `npm pack` output and installed dependencies.
+*.tgz
+node_modules/
+
+# --- Scratch conventions -------------------------------------------------------------------------
+# The paths PC-5 of the project-conventions skill points at. A scratch file belongs here or outside
+# the repository — never loose in the tree.
+/.scratch/
+/tmp/

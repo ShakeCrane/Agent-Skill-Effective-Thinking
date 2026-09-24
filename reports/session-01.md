@@ -12,7 +12,13 @@ plan first, which strategy to use (Fast/Structured/Deep), whether to escalate/de
 (based on a real capability mismatch), how to verify, and when to stop deliberating — spending the
 right effort per task, not one rigid template for everything.
 
-## Changes (final converged tree — 69 files, see CONVERGENCE PASS)
+## Changes (final converged tree — see the current-structure map in `README.md`)
+
+The earlier heading here read "69 files". That number was not reproducible: it recorded a count whose
+rule was never written down, and the tree has since grown. Measured `git ls-files` at v0.3.0:
+**323 tracked files across 23 top-level entries**, of which 214 are the two frozen evaluation corpora
+(`evals/external-v2` 139, `evals/external` 75). Directory-level inventory and responsibilities are kept
+in `README.md` → 项目结构, which is the single place that map lives.
 
 - **Skill & docs:** `SKILL.md` (agent-facing contract), `AGENTS.md`, `README.md`, `changelog.md`,
   `reports/session-01.md` (this), `methods/core/task-router.md`.
