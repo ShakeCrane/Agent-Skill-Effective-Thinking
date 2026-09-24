@@ -577,6 +577,8 @@ PC-2）。每一行都可以用 `git ls-files` 复核；截至 v0.3.0 为 **323 
 ├── changelog.md               按轮次记录的变更历史
 ├── package.json               npm 清单：测试链、发布契约、DSH 打包声明
 ├── index.js                   公开库 API（require('./') 即整个 skill）
+├── LICENSE                    MIT（与 package.json 声明一致）
+├── .gitattributes             规范换行；保护哈希冻结与字节级资产
 ├── .gitignore                 忽略策略：agent 运行产物、缓存、打包产物、临时目录
 │
 ├── .dsh/skills/               宿主自动发现的项目内 Skill（每个子目录一个独立 Skill）
