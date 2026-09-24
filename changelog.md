@@ -66,7 +66,7 @@ re-running the case that exposed it.
 ### Reference integrity
 
 After the 26→19 rule consolidation, the efficiency research note still cited superseded rule ids
-(`PC-22/23`, `PC-24/25/26`, `PC-12…PC-21`). `citations.json` was checked but nothing checked prose. All
+(`PC-22/23`, `PC-24/25/26`, `PC-12…PC-21` — superseded ids named on purpose, OLD-RULE-IDS-OK). `citations.json` was checked but nothing checked prose. All
 repaired, and the contract test now scans **32 documents** for ids above the current maximum, with a
 negative control proving it fires and an explicit `OLD-RULE-IDS-OK` marker for prose that names a
 superseded id on purpose.
