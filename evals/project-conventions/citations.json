@@ -1,0 +1,211 @@
+{
+  "note": "Load-bearing citations behind the project-conventions rules. Each needle is a sentence the rule actually rests on; verify-citations.mjs re-reads the source and fails if it is gone. Add a check here whenever a rule's evidence level is raised. Keep needles short and literal.",
+  "version": 1,
+  "checks": [
+    {
+      "id": "B1",
+      "rule": "PC-12, PC-13, PC-15, PC-16",
+      "claim": "SemVer defines the digits by compatibility, and 0.y.z promises nothing",
+      "url": "https://semver.org/",
+      "needles": [
+        "MAJOR version when you make incompatible API changes",
+        "MINOR version when you add functionality in a backward compatible manner",
+        "PATCH version when you make backward compatible bug fixes",
+        "Major version zero (0.y.z) is for initial development"
+      ]
+    },
+    {
+      "id": "B2",
+      "rule": "PC-16, PC-18",
+      "claim": "Annotated tags are the release tag; re-pointing a published tag is a trust failure",
+      "url": "https://git-scm.com/docs/git-tag",
+      "needles": [
+        "Annotated tags are meant for release while lightweight tags are meant for private or temporary object labels",
+        "people MUST be able to trust their tag-names"
+      ]
+    },
+    {
+      "id": "B3",
+      "rule": "PC-17",
+      "claim": "Conventional Commits derives the bump from the type, and the type is an unverified assertion",
+      "url": "https://www.conventionalcommits.org/en/v1.0.0/",
+      "needles": [
+        "BREAKING CHANGE",
+        "will be missed by tools that are based on the spec"
+      ]
+    },
+    {
+      "id": "B4",
+      "rule": "PC-17",
+      "claim": "A changelog is curated per release, not a commit log",
+      "url": "https://keepachangelog.com/en/1.1.0/",
+      "needles": [
+        "let your friends dump git logs into changelogs",
+        "Deprecated"
+      ]
+    },
+    {
+      "id": "B5",
+      "rule": "PC-18, PC-21",
+      "claim": "A reproducible release pins the toolchain and enumerates its contents",
+      "url": "https://sre.google/sre-book/release-engineering/",
+      "needles": [
+        "Our builds are hermetic",
+        "Our build tools are themselves versioned",
+        "rolling back features that demonstrate problems"
+      ]
+    },
+    {
+      "id": "B6",
+      "rule": "PC-19, PC-20",
+      "claim": "git revert requires a clean tree, and reverting a merge has permanent effects",
+      "url": "https://git-scm.com/docs/git-revert",
+      "needles": [
+        "This requires your working tree to be clean",
+        "Reverting a merge commit declares that you will never want the tree changes brought in by the merge",
+        "increasingly unwieldy subject lines"
+      ]
+    },
+    {
+      "id": "B7",
+      "rule": "PC-21",
+      "claim": "Feature flags roll back behaviour, at a documented combinatorial cost, and do not roll back data",
+      "url": "https://martinfowler.com/articles/feature-toggles.html",
+      "needles": [
+        "Kill Switches",
+        "combinatoric explosion"
+      ]
+    },
+    {
+      "id": "B8",
+      "rule": "PC-21",
+      "claim": "Provenance binds a built artifact to a source digest, not to a branch name",
+      "url": "https://slsa.dev/provenance/v1",
+      "needles": [
+        "resolvedDependencies",
+        "gitCommit"
+      ]
+    },
+    {
+      "id": "C1",
+      "rule": "PC-22, PC-23",
+      "claim": "Clarify-then-code is measured positive, but only behind an ambiguity gate",
+      "url": "https://arxiv.org/abs/2310.10996",
+      "needles": [
+        "identify ambiguous requirements and ask targeted clarifying questions",
+        "elevates the performance (Pass@1) of GPT-4 from 70.96% to 80.80% on MBPP-sanitized"
+      ]
+    },
+    {
+      "id": "C2",
+      "rule": "PC-22",
+      "claim": "The default failure is under-asking, not over-asking",
+      "url": "https://arxiv.org/abs/2212.07769",
+      "needles": [
+        "rarely ask users to clarify ambiguous questions and instead provide incorrect answers",
+        "simulate users by providing language models with privileged information"
+      ]
+    },
+    {
+      "id": "C3",
+      "rule": "PC-26",
+      "claim": "Intrinsic self-correction without external feedback fails and can degrade",
+      "url": "https://arxiv.org/abs/2310.01798",
+      "needles": [
+        "struggle to self-correct their responses without external feedback, and at times, their performance even degrades"
+      ]
+    },
+    {
+      "id": "C4",
+      "rule": "PC-26",
+      "claim": "Tool-grounded critique improves results, which is where the external signal comes from",
+      "url": "https://arxiv.org/abs/2305.11738",
+      "needles": [
+        "CRITIC"
+      ]
+    },
+    {
+      "id": "C5",
+      "rule": "PC-25",
+      "claim": "Calibration exists but does not transfer cleanly to new tasks",
+      "url": "https://arxiv.org/abs/2207.05221",
+      "needles": [
+        "Language Models (Mostly) Know What They Know"
+      ]
+    },
+    {
+      "id": "C6",
+      "rule": "PC-25",
+      "claim": "Verbalized confidence can be calibrated at all",
+      "url": "https://arxiv.org/abs/2205.14334",
+      "needles": [
+        "Teaching models to express their uncertainty in words"
+      ]
+    },
+    {
+      "id": "C7",
+      "rule": "PC-24",
+      "claim": "Model judges are usable but biased toward verbosity, length and their own output",
+      "url": "https://arxiv.org/abs/2306.05685",
+      "needles": [
+        "Judging LLM-as-a-Judge"
+      ]
+    },
+    {
+      "id": "E1",
+      "rule": "PC-24",
+      "claim": "Multi-agent failures cluster into a small, named taxonomy rather than random breakage",
+      "url": "https://arxiv.org/abs/2503.13657",
+      "needles": [
+        "Multi-Agent System Failure Taxonomy",
+        "14 unique modes"
+      ]
+    },
+    {
+      "id": "E2",
+      "rule": "PC-24",
+      "claim": "Task-length reliability is a measured, bounded property of an agent",
+      "url": "https://metr.org/blog/2025-03-19-measuring-ai-ability-to-complete-long-tasks/",
+      "needles": [
+        "long tasks"
+      ]
+    },
+    {
+      "id": "A1",
+      "rule": "PC-1, PC-3",
+      "claim": "The work exists with this title (existence check via Crossref; the claim itself rests on the abstract)",
+      "url": "https://api.crossref.org/works/10.1109/TSE.2012.89",
+      "needles": ["Quantifying the Effect of Code Smells on Maintenance Effort"]
+    },
+    {
+      "id": "A2",
+      "rule": "PC-7",
+      "claim": "The work exists and is titled as cited (existence check via Crossref)",
+      "url": "https://api.crossref.org/works/10.1007/s10664-023-10397-6",
+      "needles": ["outdated code element references"]
+    },
+    {
+      "id": "A3",
+      "rule": "PC-6",
+      "claim": "Well-commented modules were measured as MORE fault-prone, so comment volume is not a quality signal",
+      "url": "https://api.crossref.org/works/10.1109/IWESEP.2012.12",
+      "needles": ["Fault-Proneness of Well-Commented Modules"]
+    },
+    {
+      "id": "A4",
+      "rule": "PC-7",
+      "claim": "Most outdated comments are machine-detectable, which is what makes the check enforceable",
+      "url": "https://api.crossref.org/works/10.1109/COMPSAC.2018.00028",
+      "needles": ["Outdated Comments"]
+    },
+    {
+      "id": "E3",
+      "rule": "—",
+      "claim": "A documented database outage whose postmortem names the exact command that destroyed the data",
+      "url": "https://about.gitlab.com/blog/2017/02/10/postmortem-of-database-outage-of-january-31/",
+      "needles": [
+        "rm -rf"
+      ]
+    }
+  ]
+}

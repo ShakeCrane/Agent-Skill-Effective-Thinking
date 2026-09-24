@@ -1,0 +1,120 @@
+{"code":"A001","verdict":"PASS","reason":"MAJOR 2.0.0 because the rename breaks callers, with diff size explicitly rejected as the compatibility test."}
+{"code":"A002","verdict":"PASS","reason":"Deletes the probe it created and checks the tree is clean, matching PC-4 and PC-5."}
+{"code":"A003","verdict":"PASS","reason":"Checks that nothing consumes it and no API is claimed, then commits to stating which versioning rule applies before any number."}
+{"code":"A004","verdict":"PASS","reason":"Takes the repository's own term and location rather than asking; asking only if the deliverable truly needs the other word."}
+{"code":"A005","verdict":"PASS","reason":"Refuses deletion of the untracked, unreferenced tree as probably the only copy; tidy grants no authority to destroy it."}
+{"code":"A006","verdict":"PASS","reason":"Fixes the stale comment to match the code in the same change; non-authorship is no excuse."}
+{"code":"A007","verdict":"PASS","reason":"Separates fix, rename and reformat into distinct commits so each can be reviewed and reverted alone."}
+{"code":"A008","verdict":"PASS","reason":"Uses preferences.ts and the existing preference location; a settings rename would be a deliberate separate change."}
+{"code":"A009","verdict":"PASS","reason":"Leaves and reports the sole-copy untracked file; safety outranks the delete-unused instruction."}
+{"code":"A010","verdict":"PASS","reason":"Three commits with one type each, and git add -A explicitly rejected."}
+{"code":"A011","verdict":"PASS","reason":"Repo first, then the tool's official docs, then a cheap local experiment, before guessing the flag."}
+{"code":"A012","verdict":"PASS","reason":"Version-pinned official docs first, then cheap verification instead of guessing build behaviour."}
+{"code":"A013","verdict":"PASS","reason":"Places it in an existing directory by responsibility and rejects a new bucket, scripts/ and bin/."}
+{"code":"A014","verdict":"PASS","reason":"Outcome, test evidence and the staleness/hit-rate risk at the boundary, in an actionable message."}
+{"code":"A015","verdict":"PASS","reason":"Rejects length as the reason, names the tokenising/import seam and splits there only if it is real."}
+{"code":"A016","verdict":"PASS","reason":"Follows the codebase term for the module and treats settings as user-facing copy only."}
+{"code":"A017","verdict":"PASS","reason":"Says 2.3.1 is not a release point and that the missing tag is itself the finding."}
+{"code":"A018","verdict":"PASS","reason":"No new directory and no shared helper module for a six-line helper with one caller."}
+{"code":"A019","verdict":"PASS","reason":"Reports rather than deletes the untracked sole copy and offers preservation paths."}
+{"code":"A020","verdict":"PASS","reason":"Outcome, tests-pass evidence and boundary risks (per-process keys, no eviction) without a transcript."}
+{"code":"A021","verdict":"PASS","reason":"Corrects the now-false comment in the same change."}
+{"code":"A022","verdict":"PASS","reason":"Deletes its own scratch file and verifies with git status --porcelain."}
+{"code":"A023","verdict":"PASS","reason":"Outcome, local test evidence, untested areas flagged as risk, clear next question."}
+{"code":"A024","verdict":"PASS","reason":"Adopts the established concept rather than inventing a parallel settings module; only a genuinely distinct concept would need asking."}
+{"code":"A025","verdict":"PASS","reason":"Removes the throwaway probe after capturing any finding."}
+{"code":"A026","verdict":"PASS","reason":"Updates the comment to match the code in the same change."}
+{"code":"A027","verdict":"PASS","reason":"Outcome, evidence and the unmeasured hit-rate risk flagged at the handoff boundary."}
+{"code":"A028","verdict":"PASS","reason":"Tool docs and pinned source, then a cheap isolated experiment, asking only if still ambiguous."}
+{"code":"A029","verdict":"PASS","reason":"Calls a single-implementation interface speculative indirection and requires a real second implementation, otherwise LocalStorage directly."}
+{"code":"A030","verdict":"PASS","reason":"Rejects length and splits along the two named responsibilities as a behaviour-preserving change."}
+{"code":"A031","verdict":"PASS","reason":"Clean tree first, revert instead of rewriting pushed history, colleagues pull; reset/force-push only by rare explicit agreement."}
+{"code":"A032","verdict":"PASS","reason":"MAJOR because every caller passing timeout breaks, regardless of the two-character diff."}
+{"code":"A033","verdict":"PASS","reason":"Notes the nested repositories make deletion irreversible and reports instead of deleting."}
+{"code":"A034","verdict":"PASS","reason":"Why not what, skipping what the code already states; no blanket rule."}
+{"code":"A035","verdict":"PASS","reason":"Establishes and records mode B with no compatibility promise before applying the owner's convention."}
+{"code":"A036","verdict":"PASS","reason":"Refuses deletion because it was not created here and nothing declares it disposable; reports and asks."}
+{"code":"A037","verdict":"PASS","reason":"Places it in strategies/ by responsibility and rules out a new top-level directory."}
+{"code":"A038","verdict":"PASS","reason":"Deletes what it created, re-homing any durable finding first."}
+{"code":"A039","verdict":"PASS","reason":"Length is not the goal; extracts import resolution along the seam only if the responsibilities are separable."}
+{"code":"A040","verdict":"PASS","reason":"Not his, not declared disposable: deletion off the table, contents reported, question asked."}
+{"code":"A041","verdict":"PASS","reason":"No tags means no marked release, so it points at a known-good commit instead of the version number."}
+{"code":"A042","verdict":"PASS","reason":"Classifies all eleven entries, keeping or deleting each on stated grounds, then re-checks status."}
+{"code":"A043","verdict":"PASS","reason":"Uses an existing directory by responsibility (scripts/, or methods/ if it is a reusable method) and updates the map."}
+{"code":"A044","verdict":"PASS","reason":"Safety outranks the delete-unused instruction; leaves, reports and asks."}
+{"code":"A045","verdict":"PASS","reason":"MAJOR because consumers break, with the PC-9 deprecate-in-MINOR path offered as the alternative."}
+{"code":"A046","verdict":"PASS","reason":"Classifies every untracked entry before adding or removing anything."}
+{"code":"A047","verdict":"PASS","reason":"Comments the reason and constraint, not the mechanics."}
+{"code":"A048","verdict":"PASS","reason":"Uses preferences.ts and existing placement, with settings confined to user-facing text."}
+{"code":"A049","verdict":"PASS","reason":"README structure map updated in the same change."}
+{"code":"A050","verdict":"PASS","reason":"One caller, six lines: keep it local, extract only when a second caller appears."}
+{"code":"A051","verdict":"PASS","reason":"Tests the seam and splits only if each side stands alone; length is not the reason."}
+{"code":"A052","verdict":"PASS","reason":"Fixes the stale comment in the same change; ownership does not matter."}
+{"code":"A053","verdict":"PASS","reason":"Directory and structure map land together in one change."}
+{"code":"A054","verdict":"PASS","reason":"Stays beside its caller in bin/router.js; no new directory or utils dumping ground."}
+{"code":"A055","verdict":"PASS","reason":"Stash or commit first, then revert rather than rebase/reset published history, and tell colleagues."}
+{"code":"A056","verdict":"PASS","reason":"Same-change update of the directory map plus related layout docs."}
+{"code":"A057","verdict":"PASS","reason":"Outcome, test-suite evidence and the staleness risk in a short boundary message."}
+{"code":"A058","verdict":"PASS","reason":"Gets the tool's own answer by help output and an observed experiment before asking."}
+{"code":"A059","verdict":"PASS","reason":"The repository's own vocabulary wins; only a genuinely distinct concept would change the deliverable."}
+{"code":"A060","verdict":"PASS","reason":"Separates and justifies all eleven entries, then verifies status and re-runs tests."}
+{"code":"A061","verdict":"PASS","reason":"Directory and map line are one change, and both directions of the map check hold."}
+{"code":"A062","verdict":"PASS","reason":"States the version number is not a recovery point and no tag means no named restore state."}
+{"code":"A063","verdict":"PASS","reason":"Requires two concrete users today; otherwise inject LocalStorage directly."}
+{"code":"A064","verdict":"PASS","reason":"Three typed commits via git add -p; mixing fix with churn explicitly rejected."}
+{"code":"A065","verdict":"PASS","reason":"Defers to the existing module that already owns execution planning and forbids inventing a new home."}
+{"code":"A066","verdict":"PASS","reason":"No second caller, so the helper stays beside it in bin/ and is extracted later."}
+{"code":"A067","verdict":"PASS","reason":"Empty tag list is the finding and recovery must name a commit, not the version string."}
+{"code":"A068","verdict":"PASS","reason":"Establishes and records the mode first and asks only if the repository stays silent."}
+{"code":"A069","verdict":"PASS","reason":"Interface only with a concrete second implementation, otherwise LocalStorage now and extract later."}
+{"code":"A070","verdict":"PASS","reason":"Uses a removal test and comments the why rather than the what."}
+{"code":"A071","verdict":"PASS","reason":"Comments only the non-obvious why and deletes restatements."}
+{"code":"A072","verdict":"PASS","reason":"No tags means no marked release; rolls back to a commit and creates the missing tag."}
+{"code":"A073","verdict":"PASS","reason":"Three commits, each with a single type and revertable without collateral damage."}
+{"code":"A074","verdict":"PASS","reason":"Clean tree, revert with the why recorded, run real checks, never reset pushed history."}
+{"code":"A075","verdict":"PASS","reason":"MAJOR because the exported option is public API; diff size irrelevant."}
+{"code":"A076","verdict":"PASS","reason":"Pinned official docs first, then a cheap proof; asks only if the flag is destructive or irreversible."}
+{"code":"A077","verdict":"PASS","reason":"Keeps it inside router.js; creating src/utils would invent an unnecessary directory."}
+{"code":"A078","verdict":"PASS","reason":"MINOR 1.5.0 and explicitly names MAJOR here as a false breaking-change alarm."}
+{"code":"A079","verdict":"PASS","reason":"Mode established and recorded as a house scheme with no compatibility promise before applying the convention."}
+{"code":"A080","verdict":"PASS","reason":"Same-change README map update so every listed and every real directory agree."}
+{"code":"A081","verdict":"PASS","reason":"Compatible additive change is 1.5.0; the digit follows compatibility, not size."}
+{"code":"A082","verdict":"PASS","reason":"Puts the mode question ahead of the number at 0.x and records the reasoning behind the choice."}
+{"code":"A083","verdict":"PASS","reason":"Separates the fix from all mechanical churn and never mixes behaviour with formatting."}
+{"code":"A084","verdict":"PASS","reason":"Interface only with a second implementation or a test swap; otherwise not added."}
+{"code":"A085","verdict":"PASS","reason":"Classifies each of the eleven and reports keep/ignore/remove so nothing is unaccounted for."}
+{"code":"A086","verdict":"PASS","reason":"Fixes the false comment in the same change, noting git preserves the old text."}
+{"code":"A087","verdict":"PASS","reason":"Corrects or deletes the stale comment now rather than silently editing or leaving it."}
+{"code":"A088","verdict":"PASS","reason":"MINOR 1.5.0 because pure addition; size irrelevant, MAJOR reserved for breaking changes."}
+{"code":"A089","verdict":"PASS","reason":"MINOR 1.5.0 regardless of size; not patch, not major."}
+{"code":"A090","verdict":"PASS","reason":"Three commits, each revertable without dragging the others along."}
+{"code":"A091","verdict":"PASS","reason":"Untracked and claimed sole copy: reports with the comment quoted and asks before any removal."}
+{"code":"A092","verdict":"PASS","reason":"Nothing destructive; deletion is irreversible and tidy does not authorise it."}
+{"code":"A093","verdict":"PASS","reason":"Why-only commenting with the removal test; no blanket rule."}
+{"code":"A094","verdict":"PASS","reason":"Clean tree, revert rather than reset, run checks afterwards, no force-push."}
+{"code":"A095","verdict":"PASS","reason":"Never rewrite pushed history; clean tree, revert, push, notify colleagues."}
+{"code":"A096","verdict":"PASS","reason":"Refuses deletion, reports the irreversibility and asks before acting."}
+{"code":"A097","verdict":"PASS","reason":"Splits on the named seam and states line count alone is never the reason."}
+{"code":"A098","verdict":"PASS","reason":"MAJOR because the public option renames break callers; size is not compatibility."}
+{"code":"A099","verdict":"PASS","reason":"MINOR 1.5.0 since SemVer keys on compatibility rather than size."}
+{"code":"A100","verdict":"PASS","reason":"Settles what the number means for this tool (promise versus bookkeeping) with the owner before any bump."}
+{"code":"A101","verdict":"PASS","reason":"Directory map updated in the same change; an omission would be as wrong as naming a nonexistent directory."}
+{"code":"A102","verdict":"PASS","reason":"Refuses deletion of the labelled sole copy, preserves it and asks before removal."}
+{"code":"A103","verdict":"PASS","reason":"Applies the deepest-existing-directory-by-responsibility rule, picks methods/, and adds no top-level directory."}
+{"code":"A104","verdict":"PASS","reason":"One caller: stays in router.js; no fake shared module or new directory."}
+{"code":"A105","verdict":"PASS","reason":"Preserves the untracked sole copy first and reports; cleanup stops at the point of no return."}
+{"code":"A106","verdict":"PASS","reason":"Deletes the throwaway probe, converting it to a real test only if it earns permanence."}
+{"code":"A107","verdict":"PASS","reason":"No second user today, so no interface; introduce it when concrete."}
+{"code":"A108","verdict":"PASS","reason":"Deletes the scratch file it created and confirms status will not list it."}
+{"code":"A109","verdict":"PASS","reason":"Classifies all eleven and finishes only when nothing is left unclassified."}
+{"code":"A110","verdict":"PASS","reason":"Comments the why and omits anything the code already states."}
+{"code":"A111","verdict":"PASS","reason":"strategies/ by responsibility, with an existing-home-or-ask fallback instead of a new top-level directory."}
+{"code":"A112","verdict":"PASS","reason":"Length is not the problem; extracts along the responsibility seam with tests passing before and after."}
+{"code":"A113","verdict":"PASS","reason":"Mode A, 1.5.0, and MAJOR named as a false breaking-change alarm."}
+{"code":"A114","verdict":"PASS","reason":"Outcome, evidence, an explicitly untested risk and a clear question."}
+{"code":"A115","verdict":"PASS","reason":"MAJOR because the exported option rename breaks consumers, never because the change felt small."}
+{"code":"A116","verdict":"PASS","reason":"Would not add the interface without a second concrete user today; a test double is named as that user."}
+{"code":"A117","verdict":"PASS","reason":"Classifies the churn, keeps only justified files and verifies status at the end."}
+{"code":"A118","verdict":"PASS","reason":"Clean tree, revert with the why recorded, push, restore stash, no shared-history rewrite."}
+{"code":"A119","verdict":"PASS","reason":"States the version number is not a recovery point and the empty tag list is itself the finding."}
+{"code":"A120","verdict":"PASS","reason":"Version-matched help and official docs, confirmed by a scratch run instead of memory."}
