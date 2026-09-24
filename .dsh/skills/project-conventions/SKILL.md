@@ -26,7 +26,7 @@ Each rule carries a **class** and a **check**:
 
 | Class | Meaning |
 |---|---|
-| `HARD` | Never violated. Only safety and irreversibility justify these. |
+| `HARD` | Not traded away for convenience, tidiness, or time. Every `HARD` rule is justified, and the justification is recorded. It still yields to tiers 1–3 of the precedence order below: *never* means "never traded away silently", not "outranks an explicit instruction". |
 | `DEFAULT` | Do this unless you can state a reason not to. |
 | `WHEN` | Applies only when its condition holds. |
 | `PREFERENCE` | The project owner's declared choice. Beats `DEFAULT`/`WHEN`, never `HARD`. |
@@ -103,6 +103,9 @@ each comment, removing it would leave that reader worse off.
 **PC-7** `HARD` — When your change makes a nearby comment, docstring, or structure-map line untrue,
 correct it in the same change.
 *Check:* every comment your diff touches or travels past is still true of the code beneath it.
+*Tie-break under a "change nothing else" instruction:* a false comment **on a line you are editing** is
+fixed anyway — your own diff would otherwise read as a self-contradiction, and the edit is what keeps it
+live. A false comment **elsewhere** is reported, not fixed, because there the instruction wins.
 *Yields to:* a frozen historical record — a changelog entry or a dated report describes the state at
 its date and must not be rewritten to match today.
 

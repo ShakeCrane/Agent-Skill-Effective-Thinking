@@ -52,10 +52,21 @@ own behavioural evaluation hit a ceiling and could not test it (see `evidence.md
 5k tokens; a `CLAUDE.md` should target under 200 lines, because "longer files consume more context
 and reduce adherence". `SKILL.md` sits well inside both.
 
-**Class vocabulary** — `HARD` (never violated; safety and irreversibility only) · `DEFAULT` (do it
+**Class vocabulary** — `HARD` (not traded away for convenience, tidiness, or time; every `HARD` rule is
+justified and the justification is recorded, but it still yields to tiers 1–3 of the precedence order —
+*never* means "never traded away silently", not "outranks an explicit instruction") · `DEFAULT` (do it
 unless you can state a reason not to) · `WHEN` (only under its condition) · `PREFERENCE` (the owner's
 declared choice; beats `DEFAULT`/`WHEN`, never `HARD`) · `HYPOTHESIS` (recorded for observation, **not
 enforced**).
+
+**Why the `HARD` wording changed.** The first version said "Never violated. Only safety and
+irreversibility justify these." Two things were wrong with it, and both were found in controlled runs
+rather than by reading it. First, the precedence list already ranked non-safety `HARD` rules *below* an
+explicit user instruction, so the class table and the precedence order contradicted each other — the
+same defect, in the same skill, that the `PC-4` fix had already corrected once elsewhere. Second, an
+agent applying it overrode a "change nothing else in this repository" instruction to fix a comment,
+which is defensible but is not what "never violated" plus the precedence order jointly imply. The class
+now says what the precedence order does.
 
 **Evidence vocabulary** — `strong` (normative or measured, reproduced across sources) · `moderate`
 (a primary source on point, or one measured effect with caveats) · `weak` (inferential or framing
@@ -179,6 +190,15 @@ in review, it is scratch.
   at its date and must **not** be rewritten to match today. This exemption is narrow: it covers records
   whose date is part of their meaning, not "a document I would rather not update". Softening a comment
   into vagueness is not a correction.
+- **Tie-break under a "change nothing else" instruction** — added after a controlled run showed two
+  agents, with and without this skill, resolving the same situation in opposite directions, both
+  defensibly. The task was "raise the retry count to 8 and leave everything else exactly as it is", and
+  the constant's own line carried the comment `// retries 3 times`, already false before the edit. The
+  rule now says which way to resolve it: a false comment **on a line you are editing** is fixed anyway,
+  because your diff would otherwise read as a self-contradiction and your edit is what keeps the comment
+  live; a false comment **elsewhere** is reported rather than fixed, because there the instruction wins.
+  This is the one place where "the comment was already wrong" and "you made it wrong" lead to the same
+  action, and it is stated rather than left to judgement because judgement diverged.
 - **Why strong** — staleness is the best-evidenced failure mode in this whole ruleset: 74.6% of
   outdated comments are machine-detectable, most of more than 3,000 sampled GitHub projects contain at
   least one outdated code-element reference at some point in their history, and comment-code
