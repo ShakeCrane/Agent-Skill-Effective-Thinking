@@ -11,9 +11,22 @@
     "./package.json": "./package.json",
     "./*": "./*"
   },
-  "engines": { "node": ">=18" },
+  "engines": {
+    "node": ">=18"
+  },
   "license": "MIT",
-  "keywords": ["cognitive", "agent", "router", "adaptive", "deliberation", "llm", "task-routing", "dsh", "deepseek-harness", "skill-plugin"],
+  "keywords": [
+    "cognitive",
+    "agent",
+    "router",
+    "adaptive",
+    "deliberation",
+    "llm",
+    "task-routing",
+    "dsh",
+    "deepseek-harness",
+    "skill-plugin"
+  ],
   "dsh": {
     "bundle": {
       "patch": "./dsh/cordis.patch.yml"
@@ -76,6 +89,8 @@
     "orchestrate": "node evals/orchestrate-test.js",
     "test:project-conventions": "node evals/project-conventions/contract-test.mjs && node evals/project-conventions/suite-test.mjs",
     "test:project-conventions:cite": "node evals/project-conventions/verify-citations.mjs",
+    "task-eval:validate": "node evals/project-conventions/task-eval/validate.mjs",
+    "task-eval:score": "node evals/project-conventions/task-eval/score.mjs",
     "test": "node evals/probe.js && node evals/validation.js && node evals/extraction.js && node evals/coverage.js && node evals/capability-test.js && node evals/calibrate-test.js && node evals/robustness-test.js && node evals/skill-consistency.js && node evals/cost-test.js && node evals/library-test.js && node evals/dogfood-test.js && node evals/package-meta-test.js && node evals/principles-test.js && node evals/certainty-test.js && node evals/cli-batch-test.js && node evals/verify-test.js && node evals/verify-field-test.js && node evals/llm-profile-test.js && node evals/fuzz-test.js && node evals/protocol-test.js && node evals/stopping-test.js && node evals/adaptive-test.js && node evals/orchestrate-test.js && node evals/deliverables.js && node evals/cli-smoke.js && node evals/benchmark.js"
   }
 }
