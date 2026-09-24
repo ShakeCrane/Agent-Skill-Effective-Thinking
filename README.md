@@ -703,7 +703,8 @@ git ls-tree -r --name-only v0.3.0 | cut -d/ -f1 | sort -u | wc -l      # 23 个�
   用户点名。该臂只有 3 次运行，且「引用编号」只测是否点名规则、不测是否加载，结论按这个强度读。
   轮末对抗性复核又发现 9 处问题（含一处引用了并不存在的运行记录），其中一处修改了评分标准并迫使
   `H3` 用例在两条臂上重跑；全部处置与负面结果见
-  [`research/project-conventions/08-task-level-evaluation.md`](research/project-conventions/08-task-level-evaluation.md)。
+  [`research/project-conventions/08-task-level-evaluation.md`](research/project-conventions/08-task-level-evaluation.md)，
+  中文交付报告见 [`reports/project-conventions-round2.md`](reports/project-conventions-round2.md)。
 
 ---
 
