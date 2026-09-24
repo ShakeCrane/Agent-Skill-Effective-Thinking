@@ -42,10 +42,14 @@ convention, is in [`references/evidence.md`](references/evidence.md).
 
 **Precedence when rules collide.** Highest wins:
 
-1. Safety — never destroy something you cannot restore.
+1. **Safety** — never destroy something you cannot restore. This tier includes every `HARD` rule whose
+   justification is irreversibility, so those rules outrank a user instruction: "clean up the repo,
+   delete anything unused" is an instruction, and it still loses to PC-4. A user can authorise a
+   deletion, but the ambiguity has to be resolved first — not waved through by the instruction that
+   created it.
 2. The target project's own documented rules (`AGENTS.md`, `CONTRIBUTING`, release policy, CI).
-3. An explicit instruction from the user in this conversation.
-4. This skill's `HARD` rules, then `PREFERENCE`, then `DEFAULT`, then `WHEN`.
+3. An explicit instruction from the user in this conversation — for everything outside tier 1.
+4. This skill's remaining `HARD` rules, then `PREFERENCE`, then `DEFAULT`, then `WHEN`.
 5. Your own taste.
 
 ---
@@ -78,7 +82,9 @@ packages. Ambiguity is a report, not a deletion.
 
 **PC-5** `DEFAULT` — Write scratch — temp scripts, debug dumps, one-off reports, logs — outside the
 repository or under a path the project already ignores. Before you finish, classify every untracked
-file as keep, ignore, or remove, and say which.
+file as keep, ignore, or remove, and say which. The same pass applies when you notice accumulation you
+did not create, or when the owner asks for a tidy-up — the outcome there is a classification to
+report, not a deletion (PC-4).
 *Check:* `git status --porcelain --untracked-files=all` lists only files you can name and justify.
 `git add -A` is never a substitute for that classification.
 

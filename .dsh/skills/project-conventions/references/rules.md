@@ -136,14 +136,21 @@ in review, it is scratch.
   second `-f` is live here.
 
 ### PC-5 · DEFAULT · evidence: weak · status: active
-- **Trigger** — you are about to create a temporary, generated, or debug file; and again when a unit
-  of work is finishing.
+- **Trigger** — you are about to create a temporary, generated, or debug file; again when a unit of
+  work is finishing; and again when you notice accumulated untracked material you did not create, or
+  the owner asks for a tidy-up.
 - **Action** — write scratch outside the repository or under a path the project already ignores. Then
   list the untracked and modified files, classify each as keep, ignore, or remove, and say which.
 - **Check** — `git status --porcelain --untracked-files=all` lists only files you can name and
   justify. An unclassified leftover is what becomes permanent.
 - **Yields to** — a tool that requires a path inside the tree: use an ignored path and say so.
-  `git add -A` is never a substitute for the classification.
+  `git add -A` is never a substitute for the classification. On accumulation you did not create, the
+  deliverable of this rule is the classification and the report — PC-4 still decides what may actually
+  be removed, and an owner's "tidy up" is an instruction rather than an authorisation to skip that.
+- **Why the third trigger exists** — the repository this skill was written in had 2,179 untracked
+  entries at audit time, accumulated by a run that had itself decided to keep its working tree clean.
+  A per-task rule alone would not have caught that; the owner's requirement was periodic cleanup, and
+  the check is the same one either way.
 
 ## Gate 3 — Code
 
@@ -365,8 +372,18 @@ which is why step 8 is a step and not a hope.
 | PC-18 | PREFERENCE | none | Handoff | unit of work finishes / significant tool call |
 | PC-19 | HARD | strong | Handoff | stating project state / reporting completion |
 
-Precedence across gates, when they fire at once: Cleanup's PC-4 outranks everything, then any `HARD`
-rule, then `PREFERENCE`, then `DEFAULT`, then `WHEN`.
+Precedence across gates, when they fire at once: **safety first, and that tier contains every `HARD`
+rule justified by irreversibility** — PC-4 above all, then PC-15, PC-16 and PC-19, all of which outrank
+an explicit user instruction for the reason given in `SKILL.md`. After that: the project's own rules,
+then the user's instruction, then this skill's remaining `HARD` rules, then `PREFERENCE`, then
+`DEFAULT`, then `WHEN`.
+
+This ordering was wrong in the first draft, and the fix is worth recording. The draft listed "user
+instruction" above "this skill's `HARD` rules", which — read literally — made conflict-01 resolve the
+opposite way from the one the conflict table claims: "delete anything unused" would have outranked
+PC-4. The contradiction was found by walking the precedence list against the conflict table rather
+than by reading either alone. A precedence order that contradicts the document's own worked example is
+worse than no order, because it is trusted.
 
 ### Rules deliberately not written
 
