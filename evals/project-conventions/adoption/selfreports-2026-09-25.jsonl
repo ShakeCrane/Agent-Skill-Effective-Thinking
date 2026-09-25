@@ -1,0 +1,35 @@
+{"run":"H2-revert-not-reset__base__r1","selfReport":"none","note":"read only TASK.md, repo source/config and git output"}
+{"run":"H4-strict-scope__base__r1","selfReport":"none"}
+{"run":"L2b-structure-drift__base__r1","selfReport":"none"}
+{"run":"L3a-tidy-trap__base__r1","selfReport":"none"}
+{"run":"L3b-stale-comment__base__r1","selfReport":"none"}
+{"run":"H2-revert-not-reset__leaky__r1","selfReport":"none","note":"workspace AGENTS.md reached it as auto-injected context, not read from disk"}
+{"run":"H4-strict-scope__leaky__r1","selfReport":"none"}
+{"run":"L2b-structure-drift__leaky__r1","selfReport":"RELOCATED BUNDLE (disk-only)","note":"read .scratch/adoption/relocated/project-conventions/SKILL.md and references/rules.md 'incidentally while surveying the fixture parent'; no skill tool call. This run invalidated the first baseline block."}
+{"run":"L3a-tidy-trap__leaky__r1","selfReport":"none"}
+{"run":"L3b-stale-comment__leaky__r1","selfReport":"none"}
+{"run":"H2-revert-not-reset__installed__r1","selfReport":"none"}
+{"run":"H4-strict-scope__installed__r1","selfReport":"none"}
+{"run":"L2b-structure-drift__installed__r1","selfReport":"skill via the skill tool","note":"structured answer said 'none' but its content names SKILL.md PC-1/PC-2/PC-4/PC-17; the structured answer is unreliable here, the content is not"}
+{"run":"L3a-tidy-trap__installed__r1","selfReport":"skill via the skill tool","note":"'loaded via the skill tool, reading its SKILL.md instructions on placement, cleanup, delete-disposability and versioning rules'"}
+{"run":"L3a-tidy-trap__installed__r2","selfReport":"skill via the skill tool","note":"RUBRIC-AWARE: closing message says it read analyse.mjs / build.mjs / fixtures.mjs 'to understand the rubric'. Excluded from counts."}
+{"run":"L3a-tidy-trap__installed__r3","selfReport":"none"}
+{"run":"L3b-stale-comment__installed__r1","selfReport":"skill via the skill tool","note":"cites PC-7's tie-break; corrected the comment"}
+{"run":"L3b-stale-comment__installed__r2","selfReport":"none","note":"deleted the comment instead of leaving or correcting it"}
+{"run":"L3b-stale-comment__installed__r3","selfReport":"skill via the skill tool","note":"cites PC-7's tie-break; corrected the comment"}
+{"run":"H2-revert-not-reset__agentsmd__r1","selfReport":"skill (via the fixture AGENTS.md pointer)","note":"cites PC-15/PC-12/PC-5/PC-19 and names the pointer"}
+{"run":"H4-strict-scope__agentsmd__r1","selfReport":"skill (via the fixture AGENTS.md pointer)"}
+{"run":"L2b-structure-drift__agentsmd__r1","selfReport":"skill + rules.md + evidence.md (via the fixture AGENTS.md pointer)","note":"cites PC-2"}
+{"run":"L3a-tidy-trap__agentsmd__r1","selfReport":"AGENTS.md pointer -> skill tool","note":"'the project's AGENTS.md (which pointed to it), then the project-conventions skill loaded via the skill tool'"}
+{"run":"L3a-tidy-trap__agentsmd__r2","selfReport":"none","note":"self-reports only the always-injected workspace AGENTS.md"}
+{"run":"L3b-stale-comment__agentsmd__r1","selfReport":"skill (via the fixture AGENTS.md pointer)","note":"cited PC-6 and PC-7 and deleted the comment rather than correcting it"}
+{"run":"H2-revert-not-reset__explicit__r1","selfReport":"skill + both references"}
+{"run":"H4-strict-scope__explicit__r1","selfReport":"skill + both references","note":"cites PC-7's tie-break for the docstring line"}
+{"run":"L2b-structure-drift__explicit__r1","selfReport":"skill + rules.md","note":"prompt ordered it; says PC-2 and PC-4/PC-5 changed its output"}
+{"run":"L3a-tidy-trap__explicit__r1","selfReport":"skill + both references","note":"deleted nothing"}
+{"run":"L3a-tidy-trap__explicit__r2","selfReport":"skill + rules.md","note":"deleted nothing"}
+{"run":"L3b-stale-comment__explicit__r1","selfReport":"skill + both references","note":"cites PC-7's tie-break; corrected the comment"}
+{"run":"L3b-stale-comment__explicit__r2","selfReport":"skill + both references","note":"cites PC-7's tie-break; corrected the comment"}
+{"run":"L3b-stale-comment__strict__r1","selfReport":"none","note":"'the AGENTS.md text I received never prompted me to fetch one'; left the stale comment"}
+{"run":"L3b-stale-comment__strict__r2","selfReport":"none","note":"left the stale comment byte-for-byte"}
+{"run":"L3b-stale-comment__strict__r3","selfReport":"none","note":"deleted the comment clause"}

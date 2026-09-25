@@ -1,5 +1,81 @@
 # Changelog
 
+## Third round: adoption paths — evaluation only, no version change
+
+Round 3 asked the question rounds 1 and 2 left open: is the skill *found, loaded, executed*, and does it
+help? Four adoption paths plus one control, five tasks, **35 runs**, every verdict read from the
+repository the run left behind. Full record: `research/project-conventions/09-adoption-paths.md`.
+
+### Adoption is real, and two paths reach it
+
+Load status is self-reported by the same agent after the run and triangulated with artefact fingerprints;
+tool-call traces are **not available** in this host (a probe subagent that read `references/rules.md`
+produced no transcript anywhere under `~/.dsh`, checked by mtime scan), so the limitation is recorded
+rather than papered over.
+
+| adoption path | runs that read the skill |
+|---|---|
+| prompt names `SKILL.md` | **7 / 7** |
+| the fixture project carries a minimal `AGENTS.md` pointer | **5 / 6** |
+| installed, never mentioned | **5 / 9** |
+| installed, task text forbids reading outside the project | **0 / 3** |
+
+**A round-2 conclusion is corrected.** Round 2 reported "the skill does not fire on its own (0/3)". The
+0/3 reproduces exactly when the task text forbids reading outside the fixture, and disappears when it does
+not — so the earlier result is better explained by the model obeying the boundary it was given than by the
+skill's description failing to attract. Recorded as the leading hypothesis (3 runs against 9), not as a
+settled mechanism.
+
+### The first behaviour change tied to *verified* adoption
+
+`L3b` (raise a constant under "change nothing else", on a line whose comment was already false) is the
+only discriminating case. Of 11 runs, the 5 that read the skill **corrected** the comment 4 times and
+cited `PC-7`'s tie-break for it; the 6 that did not read it corrected it **0** times (five left it, one
+deleted it), Fisher p ≈ 0.015. Three of the four also applied the tie-break's other limb, leaving the
+untouched `README.md` line reported rather than fixed. `L2b`, `H2` and `H4` were solved completely by
+every condition — 15 runs, full marks, no signal.
+
+### Two findings that are about the *instrument*, not the skill
+
+- **`L3a` is scored by a rubric the skill contradicts.** Its `disposed:*` assertions require deletion of
+  two untracked artefacts; `PC-4` says "everything else you report and leave in place" and `PC-5` ignores
+  scratch. Under the strict reading the two runs that read the skill *and applied `PC-4` literally* score
+  lowest; under a reading where "disposed" also means ignored or reported, and preservation may be
+  relocation with the content intact, **all nine runs score 7/7**. Original strict scoring is unchanged and
+  reported first; the sensitivity analysis is in `09` §7.
+- **`L3b`'s "correct the comment" assertion collides with `PC-6`.** One loaded run cited `PC-6`'s removal
+  test ("would removing it leave the reader worse off?") and deleted the restating comment; three others
+  read `PC-7` as "correct it". The case's comment is a pure restatement, i.e. exactly where the two rules
+  cross, so the assertion scores one defensible reading as the only one.
+
+**No rule was changed this round.** Both "the skill made it worse" signals turned out to be cases whose
+rubric encodes one reading where the skill's own text licenses another; changing the rules to fit them
+would be fitting the product to the test. The rule set is unchanged at 19.
+
+### Method defects found and handled
+
+1. **The first baseline block was exposed.** The bundle was moved out of `.dsh/skills/` but left *inside*
+   the workspace; one of five runs read it "incidentally while surveying the fixture parent". A clean
+   baseline block was re-run with the bundle outside the workspace entirely, verified by probe
+   (`CATALOG_DOES_NOT_CONTAIN_PROJECT_CONVENTIONS`) and five `CONSULTED: none` self-reports. The exposed
+   block is kept as a second sample, flagged `exposed-baseline`, not deleted.
+2. **One run read the rubric** (`fixtures.mjs`, `analyse.mjs`) and scored the highest on `L3a`. Flagged
+   `rubric-aware`, excluded from counts, clean replicate run.
+3. **The task text is not a neutral control** — the boundary sentence was replaced identically in all
+   conditions to let the `AGENTS.md` and explicit conditions work at all, and that is what the `strict`
+   control exists to measure.
+
+### Artefacts and version
+
+- `evals/project-conventions/adoption/{build,add,analyse}.mjs` — fixtures, single-run addition, and the
+  analysis (fingerprints, cost proxies, the `L3a` sensitivity table). `npm run adoption:analyse`
+  reproduces `analysis-2026-09-25.txt` from the run trees.
+- `evals/project-conventions/adoption/{results,selfreports}-2026-09-25.jsonl` — every run, including the
+  discarded baseline block, with load status, self-report, changed paths and flags.
+- **No version bump.** `git diff v0.5.0 HEAD -- .dsh/skills` is empty: the shippable skill is byte-identical
+  to the tagged release, so this round adds evidence rather than product. Tags are unmoved, history is not
+  rewritten, nothing was pushed.
+
 ## Post-review corrections to the round-2 evaluation — v0.5.0
 
 Round 2 was attacked by a fresh adversarial reviewer after it was written. It found nine things wrong and

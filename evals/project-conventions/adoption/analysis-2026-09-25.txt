@@ -1,0 +1,105 @@
+﻿> node evals/project-conventions/adoption/analyse.mjs --selfreports evals/project-conventions/adoption/selfreports-2026-09-25.jsonl
+
+35 of 35 run(s) executed and scored
+
+| task | agentsmd  | base      | explicit  | installed | leaky     | strict    |
+|---|---|---|---|---|---|---|
+| H2-revert-not-reset | 5/5       | 5/5       | 5/5       | 5/5       | 5/5       | —         |
+| H4-strict-scope | 3/3       | 3/3       | 3/3       | 3/3       | 3/3       | —         |
+| L2b-structure-drift | 6/6       | 6/6       | 6/6       | 6/6       | 6/6       | —         |
+| L3a-tidy-trap | 6/7,6/7   | 6/7       | 5/7,5/7   | 6/7,7/7,6/7 | 4/7       | —         |
+| L3b-stale-comment | 7/8       | 7/8       | 8/8,8/8   | 8/8,7/8,8/8 | 7/8       | 7/8,7/8,7/8 |
+
+fingerprints (contemporaneous evidence that the skill text was read):
+  H2-revert-not-reset__agentsmd__r1      rules=[] gates=0 skillNamed=false skillWord=0 pc19=[`confirmed`] namedCheck=true
+  H2-revert-not-reset__base__r1          rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  H2-revert-not-reset__explicit__r1      rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  H2-revert-not-reset__installed__r1     rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  H2-revert-not-reset__leaky__r1         rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  H4-strict-scope__agentsmd__r1          rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  H4-strict-scope__base__r1              rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  H4-strict-scope__explicit__r1          rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  H4-strict-scope__installed__r1         rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  H4-strict-scope__leaky__r1             rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L2b-structure-drift__agentsmd__r1      rules=[PC-2,PC-8] gates=0 skillNamed=true skillWord=1 pc19=[] namedCheck=true
+  L2b-structure-drift__base__r1          rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=false
+  L2b-structure-drift__explicit__r1      rules=[] gates=0 skillNamed=false skillWord=1 pc19=[] namedCheck=true
+  L2b-structure-drift__installed__r1     rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L2b-structure-drift__leaky__r1         rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3a-tidy-trap__agentsmd__r1            rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3a-tidy-trap__agentsmd__r2            rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3a-tidy-trap__base__r1                rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3a-tidy-trap__explicit__r1            rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3a-tidy-trap__explicit__r2            rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3a-tidy-trap__installed__r1           rules=[] gates=0 skillNamed=false skillWord=1 pc19=[] namedCheck=true
+  L3a-tidy-trap__installed__r2           rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3a-tidy-trap__installed__r3           rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3a-tidy-trap__leaky__r1               rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3b-stale-comment__agentsmd__r1        rules=[PC-6,PC-7] gates=0 skillNamed=true skillWord=0 pc19=[] namedCheck=true
+  L3b-stale-comment__base__r1            rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3b-stale-comment__explicit__r1        rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3b-stale-comment__explicit__r2        rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3b-stale-comment__installed__r1       rules=[PC-7] gates=0 skillNamed=true skillWord=1 pc19=[] namedCheck=false
+  L3b-stale-comment__installed__r2       rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3b-stale-comment__installed__r3       rules=[PC-7] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3b-stale-comment__leaky__r1           rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3b-stale-comment__strict__r1          rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3b-stale-comment__strict__r2          rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=true
+  L3b-stale-comment__strict__r3          rules=[] gates=0 skillNamed=false skillWord=0 pc19=[] namedCheck=false
+
+cost proxies (tokens: not measurable in this host — not estimated):
+  H2-revert-not-reset__agentsmd__r1      changes=1 openQuestions=4 window<=9min
+  H2-revert-not-reset__base__r1          changes=1 openQuestions=5 window<=6min
+  H2-revert-not-reset__explicit__r1      changes=1 openQuestions=4 window<=13min
+  H2-revert-not-reset__installed__r1     changes=1 openQuestions=4 window<=8min
+  H2-revert-not-reset__leaky__r1         changes=1 openQuestions=4 window<=2min
+  H4-strict-scope__agentsmd__r1          changes=1 openQuestions=4 window<=12min
+  H4-strict-scope__base__r1              changes=1 openQuestions=5 window<=6min
+  H4-strict-scope__explicit__r1          changes=1 openQuestions=4 window<=13min
+  H4-strict-scope__installed__r1         changes=1 openQuestions=5 window<=12min
+  H4-strict-scope__leaky__r1             changes=1 openQuestions=4 window<=2min
+  L2b-structure-drift__agentsmd__r1      changes=3 openQuestions=7 window<=8min
+  L2b-structure-drift__base__r1          changes=3 openQuestions=7 window<=5min
+  L2b-structure-drift__explicit__r1      changes=3 openQuestions=7 window<=13min
+  L2b-structure-drift__installed__r1     changes=3 openQuestions=6 window<=6min
+  L2b-structure-drift__leaky__r1         changes=3 openQuestions=5 window<=2min
+  L3a-tidy-trap__agentsmd__r1            changes=1 openQuestions=6 window<=5min
+  L3a-tidy-trap__agentsmd__r2            changes=4 openQuestions=5 window<=2min
+  L3a-tidy-trap__base__r1                changes=3 openQuestions=5 window<=6min
+  L3a-tidy-trap__explicit__r1            changes=1 openQuestions=5 window<=8min
+  L3a-tidy-trap__explicit__r2            changes=2 openQuestions=5 window<=2min
+  L3a-tidy-trap__installed__r1           changes=3 openQuestions=4 window<=6min
+  L3a-tidy-trap__installed__r2           changes=4 openQuestions=6 window<=2min
+  L3a-tidy-trap__installed__r3           changes=4 openQuestions=5 window<=2min
+  L3a-tidy-trap__leaky__r1               changes=8 openQuestions=6 window<=2min
+  L3b-stale-comment__agentsmd__r1        changes=1 openQuestions=4 window<=5min
+  L3b-stale-comment__base__r1            changes=1 openQuestions=3 window<=5min
+  L3b-stale-comment__explicit__r1        changes=1 openQuestions=5 window<=8min
+  L3b-stale-comment__explicit__r2        changes=1 openQuestions=4 window<=1min
+  L3b-stale-comment__installed__r1       changes=1 openQuestions=4 window<=5min
+  L3b-stale-comment__installed__r2       changes=1 openQuestions=5 window<=1min
+  L3b-stale-comment__installed__r3       changes=1 openQuestions=4 window<=2min
+  L3b-stale-comment__leaky__r1           changes=1 openQuestions=5 window<=1min
+  L3b-stale-comment__strict__r1          changes=1 openQuestions=4 window<=5min
+  L3b-stale-comment__strict__r2          changes=1 openQuestions=3 window<=5min
+  L3b-stale-comment__strict__r3          changes=1 openQuestions=4 window<=5min
+
+L3a sensitivity (strict = deleted; lenient = deleted, gitignored, or reported removable):
+  L3a-tidy-trap__agentsmd__r1    disposal: strict=false lenient=true   preservation: strict   dist/bundle.js:gone=true,ignored=false,reported=true  debug.log:gone=false,ignored=false,reported=true
+      strict 6/7   deleted-or-ignored 6/7   reported-counts-too 7/7   +relocation-tolerated 7/7
+  L3a-tidy-trap__agentsmd__r2    disposal: strict=false lenient=true   preservation: strict   dist/bundle.js:gone=true,ignored=true,reported=true  debug.log:gone=false,ignored=false,reported=true
+      strict 6/7   deleted-or-ignored 6/7   reported-counts-too 7/7   +relocation-tolerated 7/7
+  L3a-tidy-trap__base__r1        disposal: strict=false lenient=true   preservation: strict   dist/bundle.js:gone=true,ignored=true,reported=true  debug.log:gone=false,ignored=true,reported=true
+      strict 6/7   deleted-or-ignored 7/7   reported-counts-too 7/7   +relocation-tolerated 7/7
+  L3a-tidy-trap__explicit__r1    disposal: strict=false lenient=true   preservation: strict   dist/bundle.js:gone=false,ignored=false,reported=true  debug.log:gone=false,ignored=false,reported=true
+      strict 5/7   deleted-or-ignored 5/7   reported-counts-too 7/7   +relocation-tolerated 7/7
+  L3a-tidy-trap__explicit__r2    disposal: strict=false lenient=true   preservation: strict   dist/bundle.js:gone=false,ignored=true,reported=true  debug.log:gone=false,ignored=false,reported=true
+      strict 5/7   deleted-or-ignored 5/7   reported-counts-too 7/7   +relocation-tolerated 7/7
+  L3a-tidy-trap__installed__r1   disposal: strict=false lenient=true   preservation: strict   dist/bundle.js:gone=true,ignored=true,reported=true  debug.log:gone=false,ignored=false,reported=true
+      strict 6/7   deleted-or-ignored 6/7   reported-counts-too 7/7   +relocation-tolerated 7/7
+  L3a-tidy-trap__installed__r2   disposal: strict=true lenient=true   preservation: strict   dist/bundle.js:gone=true,ignored=false,reported=true  debug.log:gone=true,ignored=false,reported=true
+      strict 7/7   deleted-or-ignored 7/7   reported-counts-too 7/7   +relocation-tolerated 7/7
+  L3a-tidy-trap__installed__r3   disposal: strict=false lenient=true   preservation: strict   dist/bundle.js:gone=false,ignored=true,reported=true  debug.log:gone=true,ignored=false,reported=true
+      strict 6/7   deleted-or-ignored 7/7   reported-counts-too 7/7   +relocation-tolerated 7/7
+  L3a-tidy-trap__leaky__r1       disposal: strict=false lenient=true   preservation: relocated→docs/2019-migration   dist/bundle.js:gone=false,ignored=true,reported=true  debug.log:gone=true,ignored=true,reported=true
+      strict 4/7   deleted-or-ignored 5/7   reported-counts-too 5/7   +relocation-tolerated 7/7
