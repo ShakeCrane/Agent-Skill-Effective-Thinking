@@ -712,7 +712,7 @@ Each is labelled with what actually backs it.
 | L6 | checkpoint/STATE.json | this repository | 2026-09-14 | first-hand observation | `AI-Runs/overnight-20260913/checkpoint/STATE.json` | ✔ read (16 lines) |
 | L7 | FARM_STATE.md | this repository | 2026-09-13 | first-hand observation | `AI-Runs/overnight-20260913/FARM_STATE.md` | ✔ read (33 lines) |
 | L8 | synthesis/cases.jsonl; synthesis/failures.jsonl | this repository | 2026-09-14 | first-hand observation | `AI-Runs/overnight-20260913/synthesis/` | ✔ measured only: cases **38 lines / 64,535 B**; failures **0 lines / 0 B** (not read) |
-| L9 | Direct read-only measurement of this repository | this session | 2026-09-24 | first-hand measurement | `D:\Project\Agent-Skill-Effective-Thinking` | ✔ measured |
+| L9 | Direct read-only measurement of this repository | this session | 2026-09-24 | first-hand measurement | `<repo root>` | ✔ measured |
 | L10 | `project-conventions` skill (`SKILL.md`, `references/rules.md`); `references/evidence.md` **missing** | this repository | 2026 | first-hand observation | `.dsh/skills/project-conventions/` | ✔ read/grepped |
 
 Retrieval failures with no claim drawn (listed so the gap is auditable):

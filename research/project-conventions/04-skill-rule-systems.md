@@ -243,7 +243,7 @@ Paper's own reading: "(1) the performance of all tested models **declines substa
 | S6 | AGENTS.md | agents.md (Agentic AI Foundation) | n.d. | standard/spec | https://agents.md/ | yes (captain, 200) |
 | S7 | Rules | Cursor Docs | n.d. | official docs | https://cursor.com/docs/context/rules | yes (captain, 200) |
 | S8 | Adding repository custom instructions for GitHub Copilot | GitHub Docs | n.d. | official docs | https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions | yes (captain, 200) |
-| S9 | `@deepseek-ai/dsh-skill-filesystem` README | DSH (local install) | n.d. | local-file / official docs | `C:\Users\Administrator\AppData\Roaming\npm\node_modules\@deepseek-ai\dsh\node_modules\@deepseek-ai\dsh-skill-filesystem\README.md` | local-file (read) |
+| S9 | `@deepseek-ai/dsh-skill-filesystem` README | DSH (local install) | n.d. | local-file / official docs | `<npm global root>\node_modules\@deepseek-ai\dsh\node_modules\@deepseek-ai\dsh-skill-filesystem\README.md` | local-file (read) |
 | S10 | Demystifying evals for AI agents | Anthropic Engineering | n.d. | official docs / industrial report | https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents | yes (captain, 200) |
 | S11 | How Claude remembers your project (memory) | Anthropic / Claude Code Docs | n.d. | official docs | https://code.claude.com/docs/en/memory | yes (captain, 200) |
 | S12 | Instruction-Following Evaluation for Large Language Models (IFEval) | Zhou, Lu, Mishra, Brahma, Basu, Luan, Zhou, Hou | 2023 | preprint (arXiv) | https://arxiv.org/abs/2311.07911 | yes (captain, 200; also HTML) |
@@ -281,7 +281,7 @@ Paper's own reading: "(1) the performance of all tested models **declines substa
 | S44 | Built-in evaluators reference (incl. Task Adherence, Rubric) | Microsoft Foundry / Azure AI | n.d. | official docs | https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/evaluation-metrics-built-in | yes (subagent, 200; redirects) |
 | S45 | Assertions / Model-graded evaluations | promptfoo Docs | n.d. | official docs (tool) | https://promptfoo.dev/docs/configuration/expected-outputs/ | yes (subagent, 200) |
 | S46 | Your AI Product Needs Evals | Hamel Husain | n.d. | practitioner opinion | https://hamel.dev/blog/posts/evals/ | yes (subagent, 200) |
-| S47 | `writing-for-agents` SKILL.md + SKILL-MECHANICS.md + the 25-file SKILL.md corpus | mattpocock-skills-dsh (local install) | n.d. | local-file / practitioner opinion | `C:\Users\Administrator\.dsh-web\profiles\web\node_modules\mattpocock-skills-dsh\skills\` | local-file (read + measured) |
+| S47 | `writing-for-agents` SKILL.md + SKILL-MECHANICS.md + the 25-file SKILL.md corpus | mattpocock-skills-dsh (local install) | n.d. | local-file / practitioner opinion | `<local dsh-web profile>\node_modules\mattpocock-skills-dsh\skills\` | local-file (read + measured) |
 | S48 | Custom Rules (rule `meta`: type / fixable / hasSuggestions / deprecated) | ESLint Docs | n.d. | official docs | https://eslint.org/docs/latest/extend/custom-rules | yes (subagent, 200) |
 | S49 | Rule Deprecation (metadata: `deprecatedSince`, `availableUntil`, `replacedBy`) | ESLint Docs | n.d. | official docs | https://eslint.org/docs/latest/extend/rule-deprecation | yes (subagent, 200; raw markdown also 200) |
 | S50 | Contribute to Core Rules (frozen rules, 80 % graduation threshold) | ESLint Docs | n.d. | official docs | https://eslint.org/docs/latest/contribute/core-rules | yes (subagent, 200; raw markdown also 200) |

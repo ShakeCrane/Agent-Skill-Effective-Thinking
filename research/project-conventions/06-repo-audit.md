@@ -1,6 +1,6 @@
 # Repository audit — target repo baseline and findings
 
-Scope: the repository that is also the target of the maintenance work — `D:\Project\Agent-Skill-Effective-Thinking`
+Scope: the repository that is also the target of the maintenance work — `<repo root>`
 (git root = working directory, branch `integration/dsh-plugin`, HEAD `c868111`).
 
 All findings below are backed by a command a reader can re-run. No finding is recorded from inference
@@ -16,7 +16,7 @@ so) · `inferred` · `unknown`.
 
 | Item | Value | How measured |
 |---|---|---|
-| Working directory | `D:\Project\Agent-Skill-Effective-Thinking` | `pwd` |
+| Working directory | `<repo root>` | `pwd` |
 | Git root | same directory | `git rev-parse --show-toplevel` |
 | Branch | `integration/dsh-plugin` | `git rev-parse --abbrev-ref HEAD` |
 | HEAD | `c868111a59ca640eadcc46603636f9caddc88298` (2026-09-13 16:54:49 +0800) | `git log -1` |
@@ -200,7 +200,7 @@ understates the package. **Fix applied.** Record the second verified host versio
 
 ### P3-1 — 0-byte Windows reserved-name artifact `nul`
 
-**Evidence (`measured`).** `[System.IO.File]::Exists('\\?\D:\Project\Agent-Skill-Effective-Thinking\nul')`
+**Evidence (`measured`).** `[System.IO.File]::Exists('\\?\<repo root>\nul')`
 → `True`, length `0`, created `2026-09-14 05:31:20`. `AI-Runs/.../MORNING_REPORT.md:147` independently
 documents it as an agent's `>nul` redirect typo in the repository cwd, and records that the prior run
 declined to delete it under its own "delete nothing" rule.
