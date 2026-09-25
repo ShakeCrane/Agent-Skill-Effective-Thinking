@@ -849,9 +849,10 @@ dsh plugin --profile <profile> remove cognitive-agent-skill
 
 ### Status
 
-Experimental. Verified against DeepSeek Harness `0.1.1-rc.2` and, on 2026-09-24,
-`0.1.5-rc.1` — `npm run test:dsh:host` passes all 21 host checks on the latter (registry mount,
-catalog entry, `get`, `unload`, `reload`). Other DSH versions remain unverified.
+Experimental. Verified against DeepSeek Harness `0.1.1-rc.2` and, on 2026-09-24 and again on
+2026-09-25, `0.1.5-rc.1` — `npm run test:dsh:host` passes all **35** checks on the latter
+(17 packaging + 18 provider, 0 skipped), exercising registry mount, catalog entry, `get`, `unload`
+and `reload`. Other DSH versions remain unverified.
 Availability and packaging are verified; **behavioural benefit is not**: both External Eval v1 and v2
 met a ceiling effect on the tested agent (every condition solved every task), so no general
 improvement of the full skill over a minimal scaffold has been demonstrated
@@ -865,10 +866,10 @@ improvement of the full skill over a minimal scaffold has been demonstrated
 
 本仓库采用 **(B) house scheme**，并在此明确声明——这不是 SemVer 兼容性承诺。
 
-`package.json` 的 `exports` 确实构成一个公开 API，但版本一直是 `0.y.z`。SemVer 2.0.0 对 `0.y.z` 的
-规定是 "Major version zero (0.y.z) is for initial development. Anything MAY change at any time. The
-public API SHOULD NOT be considered stable." —— 即此阶段不承诺任何兼容性。在此之前本仓库从未声明过
-自己属于哪种模式，因此每一个版本号含义都是任意的。
+`package.json` 的 `exports` 确实构成一个公开 API，但版本在 `1.0.0` 之前一直是 `0.y.z`。SemVer 2.0.0 对
+`0.y.z` 的规定是 "Major version zero (0.y.z) is for initial development. Anything MAY change at any
+time. The public API SHOULD NOT be considered stable."。本仓库此前从未声明过自己属于哪种模式，因此
+`v0.3.0`–`v0.6.0` 每一个数字的含义都是任意的。
 
 - 数字按**规模**语义递增（项目所有者约定）：重大功能与重大重构 → MAJOR；功能性或结构性调整 → MINOR；
   文档与小任务 → PATCH。
@@ -876,6 +877,22 @@ public API SHOULD NOT be considered stable." —— 即此阶段不承诺任何�
   commit 或 tarball，而不是版本区间。
 - 有两条底线不受上述约定影响：**破坏性变更不得以 MINOR/PATCH 发布**；已发布的版本与标签不可改写。
 - 若将来要真正声称 SemVer 兼容，必须先声明公开 API、改由兼容性（而非规模）决定数字，并同时改写本节。
+
+## `1.0.0` 意味着什么
+
+`1.0.0` 是本项目的**第一次正式发布**，按上面的规模语义属于 MAJOR。它表示：
+
+- 仓库**已收敛**：版本控制内的目录、文档、发布契约与实际仓库一致，`AGENTS.md` 不再复制结构图；
+- 发布链**可复现**：`npm test`、`dsh:check`、`test:dsh`、`release:verify` 在本发布候选树上全部通过，
+  打包产物可安装，Skill 可被发现、加载与卸载；
+- 两个 Skill（`effective-thinking`、`project-conventions`）各自拥有独立且可执行的验证命令。
+
+它**不**表示：
+
+- 不是 SemVer 兼容性承诺——本节「版本模式」那几条仍然全部有效；
+- 不是行为收益已经得到证明。外部行为评测的结论仍然是 **NOT VERIFIED**：External Eval v1/v2 在被评测的
+  Agent 上撞到天花板（每个条件都解出每个任务），`project-conventions` 的问答与任务级评测也几乎饱和。
+  `1.0.0` 记录的是**结构与发布就绪**，不是「已经更有效」。
 
 ## 恢复点
 
@@ -891,11 +908,18 @@ public API SHOULD NOT be considered stable." —— 即此阶段不承诺任何�
 `0.2.0` 自首次提交起从未变动，且此前**没有任何标签**——也就是说在本节写入之前，本仓库无法回答
 "`0.2.0` 对应的究竟是哪一棵树"。首个真实恢复点是 `v0.3.0`。详见 `changelog.md`。
 
+仓库的恢复点共 4 个：`v0.3.0`（仓库治理）、`v0.4.0`（任务级评测）、`v0.5.0`（对抗性复核修正）、
+`v0.6.0`（`AGENTS.md` 发现路由正式接入）。`1.0.0` **尚未打标签**：本次只把版本与文档准备为发布候选，
+打标签与推送是需要显式确认的动作。
+
 ---
 
 # Status
 
-项目处于早期实验阶段。
+**能力状态：实验性；发布状态：`1.0.0`（首次正式发布）。** 这两者不是一回事：`1.0.0` 只说明结构、文档与
+发布链已经收敛并可复现，**不代表**行为收益已被验证（见上一节）。
+
+项目整体处于早期实验阶段。
 
 当前机制和结构可能随着 Benchmark、失败案例和实际 Agent 工作持续调整。
 

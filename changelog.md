@@ -1,5 +1,71 @@
 # Changelog
 
+## First official release: repository convergence + release readiness — v1.0.0
+
+This round is convergence only: no new skill, no new mechanism, no new experiment, no measured claim.
+The exploration phase is over; the work was to make the existing repository clean, true, verifiable and
+releasable, and then to verify it rather than assert it.
+
+### What was actually verified (not asserted)
+
+Every gate in the repository's own release contract was re-run on this tree, on a machine with the real
+DSH host installed (`0.1.5-rc.1`):
+
+| gate | result |
+|---|---|
+| `npm test` (frozen Phase 1 chain, 26 files) | PASS |
+| `npm run dsh:check` (packaged asset vs `SKILL.md`) | PASS |
+| `npm run test:dsh` (packaging + provider contract) | PASS — 35 checks (17 packaging + 18 provider), 0 skipped: a real host was present |
+| `npm run test:dsh:host` (STRICT, real registry) | PASS — 35 checks, `get` / `unload` / `reload` exercised |
+| `npm run release:check` | PASS |
+| `npm run release:verify` (host gate + release gate) | PASS |
+| `npm run package-meta` (package + whitelist contract) | PASS |
+| `node evals/external-v2/scripts/verify-freeze.js` | PASS — 84 frozen artifacts unchanged |
+| `npm run test:project-conventions` | PASS — 20 cases, 19/19 rules exercised |
+| `npm run task-eval:validate` | PASS — 12 cases fail pristine, pass with the reference solution |
+
+The External Eval v2 freeze verification matters here specifically: the version bump does **not** touch
+any frozen artifact, and the check proves it rather than assuming it.
+
+### What changed
+
+- `package.json` `0.6.0` → `1.0.0`.
+- `README.md`: the version section no longer claims "the version has always been `0.y.z`" (untrue after
+  this release), and a new subsection states what `1.0.0` does and does not mean. The status section now
+  separates *capability status* (experimental) from *release status* (`1.0.0`).
+- `dsh/README.md`: a hard-coded `cognitive-agent-skill-0.2.0.tgz` install command was stale — the
+  tarball name is now version-parameterised, matching the root README.
+- `README.md` + `docs/dsh-integration.md`: the DSH host-gate figure said "21 host checks". That number
+  was true when it was written but is no longer reproducible — the test file has grown since. Both
+  places now quote the re-run result (**35** checks: 17 packaging + 18 provider, 0 skipped) and say
+  which run it came from, so the figure can be checked rather than trusted.
+
+### What did not change, and why
+
+- **No frozen or dated record was rewritten.** `evals/external-v2/freeze-manifest.json`
+  (`phase1PackageVersion: 0.2.0`), the External Eval corpora, the round reports and every earlier
+  changelog entry keep the values they had at their date. A dated report describes its date, not today.
+- **No evidence was deleted.** `AI-Runs/` (14.8 MB of another run's raw artifacts) stays in place:
+  `.gitignore` and the README record a deliberate decision to keep it as primary evidence.
+- **No file was moved for tidiness.** The structure audit found no duplicate implementation, no
+  obsolete implementation and no misfiled release-facing file. `evals/consumer-test.js` and
+  `evals/cross-author-check.js` are outside the `npm test` chain *on purpose* and are referenced by
+  `bin/consume-pack.js` and `research/cross-author-labels.md` respectively.
+
+### What is still not claimed
+
+**Behavioural benefit remains NOT VERIFIED.** Nothing in this release changes that. External Eval v1 and
+v2 hit a ceiling on the tested agent; the `project-conventions` suites are near-saturated. `1.0.0`
+records structural and release readiness only. The honest reading of this repository's evidence is:
+mechanisms are implemented and tested, the packaging and discovery paths are verified, and improved
+task outcomes have not been demonstrated.
+
+### Version
+
+`0.6.0` → `1.0.0`. Mode B (house scheme): a first official release is a MAJOR. No compatibility promise
+is made and none is implied. `v0.3.0`–`v0.6.0` stay where they are. **No tag was created and nothing was
+pushed** — tagging and pushing need explicit confirmation.
+
 ## Formal adoption: discovery routing in AGENTS.md + v2 regression cases — v0.6.0
 
 The three previous rounds ended on the same open item: the skill works when it is loaded, loading is

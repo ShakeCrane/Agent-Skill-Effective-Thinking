@@ -103,7 +103,7 @@ re-verification on a newer host:
 | Component | Version | Host gate |
 |---|---|---|
 | DeepSeek Harness | `0.1.1-rc.2` | integration (original) |
-| DeepSeek Harness | `0.1.5-rc.1` | re-verified 2026-09-24 — `npm run test:dsh:host` passes all 21 host checks |
+| DeepSeek Harness | `0.1.5-rc.1` | re-verified 2026-09-24, re-run 2026-09-25 on the `1.0.0` candidate — `npm run test:dsh:host` passes all 35 checks (17 packaging + 18 provider, 0 skipped) |
 | Node.js | `v24.19.0` | both runs |
 | npm | `11.17.0` | both runs |
 | pnpm (used by `dsh plugin`) | `11.25.0` | original only |
@@ -112,7 +112,8 @@ re-verification on a newer host:
 The `0.1.5-rc.1` row is a real re-verification, not a version-string edit: the strict host gate
 (`test:dsh:host`) was re-run against the installed host and exercised registry mount, catalog entry,
 `get`, `unload` and `reload`. It does not re-verify install/remove via `dsh plugin`, which was checked
-only on `0.1.1-rc.2`.
+only on `0.1.1-rc.2`. The check count is quoted from the 2026-09-25 run, because the test file has
+grown since the original re-verification and the older figure is no longer reproducible.
 
 DSH is a developer preview and its plugin contract may change. **Other DSH versions are unverified.**
 No version range is asserted in `package.json` because the adapter depends on no DSH package at all —

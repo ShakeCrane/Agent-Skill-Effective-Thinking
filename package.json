@@ -1,6 +1,6 @@
 {
   "name": "cognitive-agent-skill",
-  "version": "0.6.0",
+  "version": "1.0.0",
   "private": false,
   "description": "Cognitive Agent Skill — task-judgment & adaptive-execution router with capability-based model switching, verification, and deliberation controls.",
   "main": "index.js",

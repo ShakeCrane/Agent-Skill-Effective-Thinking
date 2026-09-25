@@ -38,7 +38,7 @@ dsh plugin --profile <profile> add /absolute/path/to/Agent-Skill-Effective-Think
 
 # or from a packed tarball
 npm pack
-dsh plugin --profile <profile> add /absolute/path/to/cognitive-agent-skill-0.2.0.tgz
+dsh plugin --profile <profile> add /absolute/path/to/cognitive-agent-skill-<version>.tgz
 ```
 
 Then verify and use:
