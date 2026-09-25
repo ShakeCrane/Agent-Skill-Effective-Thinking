@@ -708,7 +708,7 @@ git ls-tree -r --name-only v0.3.0 | cut -d/ -f1 | sort -u | wc -l      # 23 个�
   修正了注释并引用它，没读到的 6 次**一次都没有**（Fisher p≈0.015）。其余三个用例（`L2b`/`H2`/`H4`）
   在全部条件下满分，**零区分度**；`L3a` 的分数差来自评分标准与 `PC-4` 的冲突（宽松读法下九次运行全 7/7），
   不是能力差。第三轮全文见 [`research/project-conventions/09-adoption-paths.md`](research/project-conventions/09-adoption-paths.md)，
-  复算脚本 `npm run adoption:analyse`。
+  中文交付报告见 [`reports/project-conventions-round3.md`](reports/project-conventions-round3.md)，复算脚本 `npm run adoption:analyse`。
   轮末对抗性复核又发现 9 处问题（含一处引用了并不存在的运行记录），其中一处修改了评分标准并迫使
   `H3` 用例在两条臂上重跑；全部处置与负面结果见
   [`research/project-conventions/08-task-level-evaluation.md`](research/project-conventions/08-task-level-evaluation.md)，
