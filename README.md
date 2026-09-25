@@ -692,9 +692,17 @@ git ls-tree -r --name-only v0.3.0 | cut -d/ -f1 | sort -u | wc -l      # 23 个�
 
   这几条**不在** `npm test` 链内：`npm test` 是 `effective-thinking` 的冻结发布契约，把第二个
   Skill 的检查塞进去会改变它的含义。两个 Skill 各自拥有独立的验证命令。
-- **状态**：`experimental`。契约（结构、规则集一致性、引用可核验性）已机器验证；**整体行为收益仍未验证**。
-  前两轮都撞上天花板：问答式套件 20 题几乎全对；任务级评测 baseline 与 skill 均为 **59/61 断言**
-  （修掉一处评分标准缺陷后为 **60/62**），十个用例里八个无差异，保留集 4/4 双方全解。
+- **状态**：`experimental`。**已正式接入**：根 `AGENTS.md` 有一节「开发规范 Skill（发现路由）」，
+  在涉及项目结构/代码维护/版本管理/仓库治理/开发交接的任务里指路到
+  `.dsh/skills/project-conventions/SKILL.md`；该节只负责发现与加载，**不改变任何既有优先级**
+  （Skill 让位于用户实时指令、本文件、项目自身规则）。四项隔离验证（2026-09-25）全过：适用任务
+  6/6 且运行自述「按 workspace AGENTS.md 的发现规则加载」；用户显式覆盖 5/5（Skill 已加载，仍按用户
+  要求打 PATCH、不写 changelog）；项目规则优先 4/4（CalVer `2026.09.1`，`CONTRIBUTING` 优先于 Skill）；
+  无关任务 4/4（不加载、不复述规则、只新增一个交付文件）。可复算：
+  `node evals/project-conventions/adoption/verify.mjs build|check`。
+- **行为收益**：**NOT VERIFIED**（接入不等于有效）。前两轮都撞上天花板：问答式套件 20 题几乎全对；
+  任务级评测 baseline 与 skill 均为 **59/61 断言**（修掉一处评分标准缺陷后为 **60/62**），十个用例里
+  八个无差异，保留集 4/4 双方全解。
   第三轮改为测「采用路径」，首次把**行为差异与「确实读取了 Skill」绑定**（35 次运行，载荷由自述 + 产物指纹确认）：
 
   | 采用路径 | 读到 Skill | 说明 |
@@ -709,6 +717,9 @@ git ls-tree -r --name-only v0.3.0 | cut -d/ -f1 | sort -u | wc -l      # 23 个�
   在全部条件下满分，**零区分度**；`L3a` 的分数差来自评分标准与 `PC-4` 的冲突（宽松读法下九次运行全 7/7），
   不是能力差。第三轮全文见 [`research/project-conventions/09-adoption-paths.md`](research/project-conventions/09-adoption-paths.md)，
   中文交付报告见 [`reports/project-conventions-round3.md`](reports/project-conventions-round3.md)，复算脚本 `npm run adoption:analyse`。
+  第四轮完成正式接入与 v2 回归用例：全文
+  [`research/project-conventions/10-formal-adoption.md`](research/project-conventions/10-formal-adoption.md)，
+  中文交付报告 [`reports/project-conventions-round4.md`](reports/project-conventions-round4.md)。
   轮末对抗性复核又发现 9 处问题（含一处引用了并不存在的运行记录），其中一处修改了评分标准并迫使
   `H3` 用例在两条臂上重跑；全部处置与负面结果见
   [`research/project-conventions/08-task-level-evaluation.md`](research/project-conventions/08-task-level-evaluation.md)，

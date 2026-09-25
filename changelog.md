@@ -1,5 +1,75 @@
 # Changelog
 
+## Formal adoption: discovery routing in AGENTS.md + v2 regression cases — v0.6.0
+
+The three previous rounds ended on the same open item: the skill works when it is loaded, loading is
+reliable when something names it, and nothing in this repository named it. This round closes that with a
+route, checks that the route cannot invert the instruction order, and adds corrected regression cases.
+Record: `research/project-conventions/10-formal-adoption.md`; Chinese report:
+`reports/project-conventions-round4.md`.
+
+### The route, and the sentence that makes it safe
+
+`AGENTS.md` gains one 12-line section: project-work tasks (structure, code maintenance, version
+management, repository governance, handoff) should read `.dsh/skills/project-conventions/SKILL.md` as a
+**supplementary** working convention; tasks outside those areas need not load it.
+
+The section states explicitly that it only **discovers and loads** and changes no existing priority: the
+skill yields to the user's live instruction, to this document, and to project rules. That sentence is not
+decoration. The skill's precedence order places "the target project's own documented rules (`AGENTS.md`,
+`CONTRIBUTING`, release policy, CI)" at **tier 2** and "an explicit instruction from the user" at
+**tier 3**, so an unqualified "follow the skill" line in `AGENTS.md` would have promoted the skill above
+the user for every non-safety rule. No language that raises the skill's tier is used, and no skill rule is
+copied into `AGENTS.md`.
+
+### Verified, not asserted — four conditions, 19 assertions, all passing
+
+Isolated fixtures, scored from the repository each run left behind (`evals/project-conventions/adoption/verify.mjs`,
+records in `verify-results-2026-09-25.jsonl`):
+
+| condition | result |
+|---|---|
+| **A** applicable task | **6/6** — and the run reports loading `SKILL.md` "per the workspace AGENTS.md discovery rule", naming `PC-2` as why it updated the structure map |
+| **B** user override | **5/5** — skill loaded, then the user's instruction won: `1.2.3 → 1.2.4` (PATCH) despite a removed export, and no changelog entry |
+| **C** project rule outranks | **4/4** — skill loaded, `CONTRIBUTING.md` read first and took precedence: CalVer `2026.09.1`, dated changelog heading, annotated tag |
+| **D** unrelated task | **4/4** — one new file with the right numbers, no rule ids, no conventions recitation, no extra edits, `CONSULTED: none` |
+
+Two conditions had to be rebuilt before they meant anything: their fixtures ended with the canonical
+"do not read from or write to any other directory on this machine" sentence, and under it the runs
+declined to load the skill at all (A scored 5/6 and said so; B reported `CONSULTED: none`, which would
+have made the override test vacuous). Both were re-run with the neutral boundary sentence, and the
+superseded runs are kept. This is the fourth observation of the same effect — **a task that forbids
+leaving its own directory also forbids the load**, which is a practical caveat for the new route.
+
+### Corrected v2 cases, added rather than substituted
+
+`fixtures.mjs` +314 lines, `reference.mjs` +64, **no deletions** (`git diff -U0` shows none in either
+file); the round-2 and round-3 result files are untouched. The two old cases each encoded one reading of a
+rule whose text admits two, and the round-3 runs showed loaded agents taking the other reading:
+
+- **`L3a2-disposal-contract`** — the task now names the action per artefact (delete / delete / **ignore but
+  keep** / leave in place), and each action has its own assertion id, so no single word carries several
+  meanings. `nothing-else-created-or-moved` diffs the finished tree against the fixture's declared file
+  set, so a relocation is caught as a relocation. Pristine 2/7 → reference 7/7.
+- **`L3b2-informed-comment`** — the comment now carries design intent the code does not (the attempt
+  budget, the arithmetic, the cap), so `PC-6`'s removal test no longer licenses deleting it while `PC-7`
+  requires correcting it. Pristine 4/9 → reference 9/9.
+
+`task-eval:validate` reports **12 cases fail pristine and pass with a reference solution**. **No rule was
+changed**: both were instrument defects, and the fix belongs in the cases.
+
+### What is still not claimed
+
+**Overall behavioural benefit remains NOT VERIFIED.** Round 3 stands: one discriminating case of five
+(`L3b`, 4/5 loaded vs 0/6 not loaded), everything else saturated. The version bump records a structural
+change — a first-class adoption path — not a measured improvement.
+
+### Version
+
+`0.5.0` → `0.6.0`. Mode B: the first project-level automatic discovery/adoption path is a
+functional/structural change. `v0.3.0`, `v0.4.0` and `v0.5.0` stay where they are; history is not
+rewritten and nothing is pushed. New recovery point: `v0.6.0`.
+
 ## Third round: adoption paths — evaluation only, no version change
 
 Round 3 asked the question rounds 1 and 2 left open: is the skill *found, loaded, executed*, and does it
