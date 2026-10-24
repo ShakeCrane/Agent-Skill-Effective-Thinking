@@ -13,6 +13,11 @@ module.exports = {
   // routing
   route: require('./router/task-router.js').route,
   extract: require('./router/extract.js').extract,
+  // subagent model assignment by task intensity (dispatch feature)
+  assignModels: require('./router/model-assign.js').assignModels,
+  // dynamic upstream payload curation (token-saving attention feature)
+  curate: require('./context/curate.js').curate,
+  curateConversation: require('./context/curate.js').curateConversation,
   // LLM-filled profile adapter (objective's agent-self signal-extraction reliability path)
   fillProfile: require('./router/llm-profile.js').fillProfile,
   fillProfileSync: require('./router/llm-profile.js').fillProfileSync,
