@@ -581,6 +581,7 @@ git ls-tree -r --name-only v0.3.0 | cut -d/ -f1 | sort -u | wc -l      # 23 个�
 .
 ├── AGENTS.md                  agent 工作规则、方法准入流程、上下文管理
 ├── SKILL.md                   effective-thinking 的规范正文（唯一真源）
+├── SKILL-DISPATCH.md          task-dispatch 的规范正文（第二个打包 skill）
 ├── README.md                  项目说明；本结构图所在处（项目理解文件）
 ├── changelog.md               按轮次记录的变更历史
 ├── package.json               npm 清单：测试链、发布契约、DSH 打包声明
@@ -594,21 +595,24 @@ git ls-tree -r --name-only v0.3.0 | cut -d/ -f1 | sort -u | wc -l      # 23 个�
 │
 ├── .github/workflows/         CI：无宿主契约门禁 + 打包校验
 ├── bin/                       CLI：router / self-audit / consume-pack
-├── dsh/                       effective-thinking 的 DSH 插件适配层（provider + 打包资产）
+├── context/                   上游载荷调节：curate / curateConversation（约束不丢、最新计划保全）
+├── dsh/                       DSH 插件适配层：双 skill provider（effective-thinking + task-dispatch）
 ├── docs/                      子系统文档（dsh-integration）
 ├── evals/                     验证与回归
-│   ├── *.js                   26 个测试链脚本 + 3 个链外脚本
+│   ├── *.js                   28 个测试链脚本 + 链外脚本
 │   ├── external/              External Eval v1 冻结语料
 │   ├── external-v2/           External Eval v2 冻结语料（84 个哈希冻结产物）
+│   ├── external-v3/           第五/六轮实验：四/五臂 harness、重评分、盲法聚合、瘦技能资产
+│   ├── dispatch-validation/   dispatch/curation 的行为验证脚本
 │   └── project-conventions/   契约测试、引用核验、问答用例、task-eval/ 任务级评测与保留结果
-├── failures/                  失败日志（F1–F17）
+├── failures/                  失败日志（F1–F21）
 ├── methods/                   方法状态卡：core/ 与 experimental/
 ├── multi-agent/               编排：fan-out / 独立评审 / 收敛
 ├── reports/                   阶段性报告（session-01 为当前状态报告）
 ├── research/                  研究记录
 │   └── project-conventions/   01–08：五个证据簇、仓库审计、两轮行为评测
-├── router/                    路由核心：extract / task-router / capabilities / calibrate / adaptive-loop
-├── scripts/                   DSH 资产同步与漂移检查
+├── router/                    路由核心：extract / task-router / model-assign / capabilities / calibrate / adaptive-loop
+├── scripts/                   DSH 资产同步与漂移检查（双 skill 表驱动）
 └── strategies/                执行策略：protocol / stopping / cost / certainty / verify
 ```
 

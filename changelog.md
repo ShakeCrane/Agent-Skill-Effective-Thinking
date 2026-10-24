@@ -1,5 +1,26 @@
 # Changelog
 
+## v1.1.0 — first usable plugin: dual-skill DSH bundle with dispatch + curation — 2026-10-25
+
+The DSH plugin bundle now carries TWO skills behind the same pure-provider adapter, turning the
+round-5 lessons into shippable machinery:
+
+- **`task-dispatch`** (new; canonical `SKILL-DISPATCH.md`, 3181 chars — deliberately slim after
+  the measured 9KB penalty): when to assign which model tier by task intensity, and how to
+  curate the upstream payload under a token budget. Honest framing kept: engineering controls
+  with mechanical tests and measured cost effects, no unverified behavioural-benefit claims.
+- **`assignModels(units, catalog)`** (`router/model-assign.js`): router decision → concrete
+  tier+model assignment with reasons and cost-share audit (19 tests).
+- **`curate` / `curateConversation`** (`context/curate.js`): deterministic payload curation —
+  constraints inviolable (over-budget is reported, never silently truncated), latest plan kept
+  full, old plans one-lined, verbose outputs head+tail, narration drops first, every action
+  audited (26 tests).
+- Packaging generalized table-driven (2 skills verified byte-for-byte by `dsh:check`);
+  plugin contract test upgraded for the two-skill catalog; both new tests wired into the
+  frozen `npm test` chain (28 files, exit 0); `npm pack` builds the tarball (prepack runs
+  release:check). Behavioural validation with subagent models (curate arms full/curated/tail
+  and cross-model assignment runs) in flight; results land in the morning report.
+
 ## Round 5: weak-model discrimination experiment (External Eval v3) — 2026-10-24
 
 One-day autonomous run (~1,100 settled runs incl. two same-day corrections), deterministic
