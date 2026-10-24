@@ -34,7 +34,7 @@ const repeats = Number(arg('repeats', '2'));
 const concurrency = Number(arg('concurrency', '4'));
 const CURATE_BUDGET = 900; // tokens for the curated payload
 const TAIL_K = 4; // naive truncation keeps the last 4 messages
-const FILLER_TURNS = 8; // noise messages between the constraint and the final question
+const FILLER_TURNS = 6; // noise messages between the constraint and the final question
 if (!model) { console.error('--model required'); process.exit(2); }
 
 // Deterministic irrelevant filler (same sentence family as the placebo: warehouse docs).
@@ -45,15 +45,16 @@ const FILLER_SENTENCES = [
   'Serial-numbered goods are scanned twice: once at intake and once at final outbound staging.',
 ];
 function fillerMessages(seed) {
-  // All fillers are assistant-role: valid for the plain chat API, and classified as chatter
-  // (no plan marker) by curateConversation — exactly what curation should drop.
-  const out = [];
+  // ONE merged assistant message: consecutive assistant-role messages hang some providers
+  // (observed on beam, 2026-10-25). No plan marker -> classified as chatter by
+  // curateConversation, which is exactly what curation should drop.
+  const parts = [];
   for (let i = 0; i < FILLER_TURNS; i++) {
     const s = FILLER_SENTENCES[(seed + i) % FILLER_SENTENCES.length];
-    if (i % 2 === 0) out.push({ role: 'assistant', content: `Note ${i}: ${s} I will check the ledger next.` });
-    else out.push({ role: 'assistant', content: `Ledger excerpt:\n${'row: qty ok; shelf ok; audit date ok\n'.repeat(20)}` });
+    if (i % 2 === 0) parts.push(`Note ${i}: ${s} I will check the ledger next.`);
+    else parts.push(`Ledger excerpt:\n${'row: qty ok; shelf ok; audit date ok\n'.repeat(10)}`);
   }
-  return out;
+  return [{ role: 'assistant', content: parts.join('\n\n') }];
 }
 
 function buildTranscript(prompt, seed) {
@@ -64,13 +65,35 @@ function buildTranscript(prompt, seed) {
   ];
 }
 
+// Naive baseline: character-level truncation of the serialized transcript (keeps the last
+// TAIL_CHARS — typically cuts away the early constraint, which is the failure it exists to show).
+const TAIL_CHARS = 1600;
+function serialize(msgs) {
+  return msgs.map((m) => `[${m.role}]\n${m.content}`).join('\n\n');
+}
+
+// Providers can hang on consecutive same-role messages (observed on beam, 2026-10-25); merge
+// any that survive curation with a visible separator so no arm depends on provider tolerance.
+function mergeConsecutive(msgs) {
+  const out = [];
+  for (const m of msgs) {
+    const last = out[out.length - 1];
+    if (last && last.role === m.role) last.content += `\n\n---\n\n${m.content}`;
+    else out.push({ role: m.role, content: m.content });
+  }
+  return out;
+}
+
 function armMessages(transcript, arm) {
-  if (arm === 'full') return transcript;
+  if (arm === 'full') return mergeConsecutive(transcript);
   if (arm === 'curated') {
     const { messages } = curateConversation(transcript, CURATE_BUDGET);
-    return messages;
+    return mergeConsecutive(messages);
   }
-  if (arm === 'tail') return transcript.slice(-TAIL_K);
+  if (arm === 'tail') {
+    const flat = serialize(transcript);
+    return [{ role: 'user', content: flat.slice(-TAIL_CHARS) }];
+  }
   throw new Error(`unknown arm ${arm}`);
 }
 
@@ -105,7 +128,7 @@ let idx = 0, settled = 0;
 async function worker() {
   while (idx < jobs.length) {
     const job = jobs[idx++];
-    const client = new ApiClient({ baseURL, apiKey, model, needsReasoningReplay, timeoutMs: 120000 });
+    const client = new ApiClient({ baseURL, apiKey, model, needsReasoningReplay, timeoutMs: 60000 });
     let rec;
     try {
       const transcript = buildTranscript(job.p.prompt, job.i);

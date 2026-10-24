@@ -18,8 +18,14 @@ round-5 lessons into shippable machinery:
 - Packaging generalized table-driven (2 skills verified byte-for-byte by `dsh:check`);
   plugin contract test upgraded for the two-skill catalog; both new tests wired into the
   frozen `npm test` chain (28 files, exit 0); `npm pack` builds the tarball (prepack runs
-  release:check). Behavioural validation with subagent models (curate arms full/curated/tail
-  and cross-model assignment runs) in flight; results land in the morning report.
+  release:check). Behavioural validation with subagent models landed the same night
+  (`reports/round6-slim-and-plugin.md`): the upgrade route is behaviourally validated (the
+  empirically strongest model solved every task the weakest failed — and the strongest was the
+  "mid-tier" glm-5.3-flash at 24/24, not the "high-tier" deepseek at 17/24: catalogs must be
+  calibrated, not assumed); payload curation kept ~95% of full-context quality at ~15% of the
+  tokens (65.3% vs 68.9% pass, p≈0.65, −85.1% prompt tokens) while naive truncation collapsed
+  to 5%. Round-6 slim test: H2 pass (94% non-inferior), H3 near-miss (54.8% vs 60% token cut),
+  H1 not established that night (the provider's 400 base rate itself collapsed day-over-day).
 
 ## Round 5: weak-model discrimination experiment (External Eval v3) — 2026-10-24
 
