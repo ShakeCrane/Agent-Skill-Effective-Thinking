@@ -45,3 +45,35 @@ export const SKILL_SOURCE = 'custom';
 
 /** Cordis plugin name for this adapter. */
 export const PLUGIN_NAME = 'effective-thinking-dsh';
+
+// ---------------------------------------------------------------------------
+// Second packaged skill: task-dispatch (model assignment + payload curation).
+// Canonical body lives in the repository root `SKILL-DISPATCH.md`; same sync machinery.
+
+/** Stable kebab-case skill name (invocable by model and user). */
+export const DISPATCH_SKILL_NAME = 'task-dispatch';
+
+/**
+ * Routing description shown before the body loads. States when to load and makes no
+ * behavioural-benefit claim beyond the measured cost effects (round-5).
+ */
+export const DISPATCH_SKILL_DESCRIPTION =
+  'Use when fanning work out to subagents or other models, choosing which model executes a unit, ' +
+  'or deciding what context/material to send upstream. Provides deterministic model-assignment ' +
+  'by task intensity and auditable payload curation under a token budget. ' +
+  'Avoid for single trivial calls needing no routing or trimming.';
+
+/** Optional extra routing guidance for discovery consumers. */
+export const DISPATCH_SKILL_WHEN_TO_USE =
+  'Multi-unit or multi-model dispatch, batched subagent work, long conversations approaching ' +
+  'context limits, expensive upstream calls where the payload should earn its tokens, and any ' +
+  'workflow where mis-assigning a weak/strong model or shipping verbose history is the main risk.';
+
+/** Invocation policy: reachable by the model and explicit user invocation. */
+export const DISPATCH_SKILL_INVOCATION = { modelInvocable: true, userInvocable: true };
+
+/** Catalog precedence rank — same convention as the first skill (unique names, rank decides only conflicts). */
+export const DISPATCH_PACKAGED_SKILL_RANK = 550;
+
+/** Origin bucket advertised in prompt-visible metadata. */
+export const DISPATCH_SKILL_SOURCE = 'custom';

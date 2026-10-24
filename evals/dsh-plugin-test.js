@@ -78,17 +78,21 @@ async function main() {
   check('exports keeps a catch-all for deep paths', pkg.exports?.['./*'] === './*');
   check('exports exposes the patch path', pkg.exports?.['./dsh/cordis.patch.yml'] === './dsh/cordis.patch.yml');
 
-  // ---------- 3. sync: packaged asset vs canonical skill ----------
-  const { generateAsset, bodyAfterFrontmatter } = require('../scripts/sync-dsh-skill.js');
-  const { content: expected, body: canonicalBody } = await generateAsset();
-  const assetExists = fs.existsSync(ASSET);
-  check('packaged skill asset exists', assetExists, path.relative(ROOT, ASSET));
-  if (assetExists) {
-    const actual = fs.readFileSync(ASSET, 'utf8');
-    check('asset equals the regenerated form (no hand edits)', actual === expected, `${actual.length} chars`);
-    check('asset body === canonical SKILL.md, byte-for-byte', bodyAfterFrontmatter(actual) === canonicalBody, `${canonicalBody.length} chars`);
-    check('asset carries generated frontmatter', actual.startsWith('---\n') && actual.includes('\nname: '), 'frontmatter block present');
+  // ---------- 3. sync: packaged assets vs canonical bodies (every packaged skill) ----------
+  const { generateAll, bodyAfterFrontmatter, SKILL_ENTRIES } = require('../scripts/sync-dsh-skill.js');
+  const canonicalBodies = {};
+  for (const { content: expected, body: canonicalBody, entry } of await generateAll()) {
+    const assetExists = fs.existsSync(entry.asset);
+    check(`[${entry.id}] packaged skill asset exists`, assetExists, path.relative(ROOT, entry.asset));
+    canonicalBodies[entry.id] = canonicalBody;
+    if (assetExists) {
+      const actual = fs.readFileSync(entry.asset, 'utf8');
+      check(`[${entry.id}] asset equals the regenerated form (no hand edits)`, actual === expected, `${actual.length} chars`);
+      check(`[${entry.id}] asset body === canonical, byte-for-byte`, bodyAfterFrontmatter(actual) === canonicalBody, `${canonicalBody.length} chars`);
+      check(`[${entry.id}] asset carries generated frontmatter`, actual.startsWith('---\n') && actual.includes('\nname: '), 'frontmatter block present');
+    }
   }
+  check('exactly two packaged skills are declared', SKILL_ENTRIES.length === 2, SKILL_ENTRIES.map((e) => e.id).join(','));
 
   // ---------- 4. patch row ----------
   const patchText = fs.existsSync(PATCH) ? fs.readFileSync(PATCH, 'utf8') : '';
@@ -126,18 +130,24 @@ async function main() {
     await ctx.plugin(skillMod.SkillRegistry);
     const fiber = await ctx.plugin(plugin.default ?? plugin);
     const list = await ctx.skills.list();
-    check('catalog exposes exactly one skill', list.length === 1, `count=${list.length}`);
+    check('catalog exposes exactly two skills', list.length === 2, `count=${list.length}`);
     check('catalog entry is named effective-thinking', list[0]?.name === 'effective-thinking');
+    check('catalog entry is named task-dispatch', list[1]?.name === 'task-dispatch', list[1]?.name);
     check('catalog entry advertises a description', typeof list[0]?.description === 'string' && list[0].description.length > 20);
     check('catalog entry is model- and user-invocable', list[0]?.invocation?.modelInvocable === true && list[0]?.invocation?.userInvocable === true, JSON.stringify(list[0]?.invocation));
     check('catalog entry lists a resource base', list[0]?.resourceBase?.path !== undefined, JSON.stringify(list[0]?.resourceBase));
 
     const def = await ctx.skills.get('effective-thinking');
     check('get() returns the definition', !!def && typeof def.content === 'string');
-    check('loaded content === canonical SKILL.md body', def?.content === canonicalBody, `${def?.content?.length} vs ${canonicalBody.length} chars`);
+    check('loaded content === canonical SKILL.md body', def?.content === canonicalBodies['effective-thinking'], `${def?.content?.length} vs ${canonicalBodies['effective-thinking'].length} chars`);
     check('loaded content has no frontmatter leak', !String(def?.content).startsWith('---'), String(def?.content).slice(0, 24));
-    check('loaded content is not truncated', def?.content === canonicalBody && def.content.length === canonicalBody.length);
+    check('loaded content is not truncated', def?.content === canonicalBodies['effective-thinking'] && def.content.length === canonicalBodies['effective-thinking'].length);
     check('registry renderer accepts the definition', typeof skillMod.renderSkillContent(def) === 'string' && skillMod.renderSkillContent(def).includes('effective-thinking'));
+
+    // second skill: get() must return ITS body, not the first skill's
+    const dispatchDef = await ctx.skills.get('task-dispatch');
+    check('get(task-dispatch) returns its own body', dispatchDef?.content === canonicalBodies['task-dispatch'], `${dispatchDef?.content?.length} vs ${canonicalBodies['task-dispatch'].length} chars`);
+    check('get(task-dispatch) has no frontmatter leak', !String(dispatchDef?.content).startsWith('---'), String(dispatchDef?.content).slice(0, 24));
 
     // b. duplicate identity must fail loud, not silently produce a second skill
     let dupError = null;
@@ -154,10 +164,10 @@ async function main() {
     try { getAfterUnload = await ctx.skills.get('effective-thinking'); } catch (e) { getAfterUnload = null; }
     check('after unload the skill is no longer loadable', !getAfterUnload, String(getAfterUnload?.name ?? getAfterUnload));
 
-    // d. reinstall sanity: loading again restores exactly one entry
+    // d. reinstall sanity: loading again restores both entries
     await ctx.plugin(plugin.default ?? plugin);
     const list3 = await ctx.skills.list();
-    check('plugin reloads cleanly after unload', list3.length === 1 && list3[0].name === 'effective-thinking', `count=${list3.length}`);
+    check('plugin reloads cleanly after unload', list3.length === 2 && list3[0].name === 'effective-thinking' && list3[1].name === 'task-dispatch', `count=${list3.length}`);
     await ctx.fiber.dispose();
   }
 
