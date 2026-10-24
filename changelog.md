@@ -1,5 +1,37 @@
 # Changelog
 
+## Round 5: weak-model discrimination experiment (External Eval v3) — 2026-10-24
+
+One-day autonomous run (~1,100 settled runs incl. two same-day corrections), deterministic
+scoring. Subjects: `reflection/beam:free` (primary, 233-run final set), `z-ai/glm-5.3-flash`
+(owner-authorized smoke + calibration arm), `stealth/glyph-cluster:free` (smoke only, 100-req/day
+quota). Final verdict after two corrections (below): **behaviorally the v2 corpus is at ceiling
+for every arm (91–100% excluding infra failures; treatment 43/43 with zero behavioral failures);
+the round's only strong, significant effect is infrastructural — a 9KB injection (skill OR
+placebo identically) gets ~24% of episodes killed by the free provider's prompt-render limit vs
+7.6% for short prompts (Fisher p=0.0009).** The skill's 9KB size is its only proven-harmful
+property; slimming it is round 6's top evidence-backed change.
+
+- Two same-day corrections, both failure-logged: **F20** (relative `--out` path made require-based
+  checkers throw, recording solved tasks as failures — 108/144 contaminated, fixed + rescored) and
+  **F21** (provider HTTP-400 render failures had masqueraded as a significant cognitive contrast,
+  p=0.025; cause-stratified analysis dissolved it). Shared lesson: classify failures by CAUSE
+  before claiming behavioral differences.
+- **F16 quantified under control**: 144/144 episodes open with a narrate-without-action turn, one
+  uniform nudge recovers 100% (beam); severity is subject-dependent (glyph 2/12 degenerate).
+- **Signal miscalibration generalizes across model tiers**: self-reported constraint_count MAE
+  2.15 (beam) / 2.30 (glm-flash) vs keyword extractor 0.57; direction signals (AUC 0.70–0.75)
+  beat the extractor (0.60). Hybrid principle → new method card
+  [`methods/experimental/signal-hybrid.md`](methods/experimental/signal-hybrid.md) (candidate).
+- IFEval corpus (only in-band corpus, 67.5%): all four arms identical — no injection shows any
+  behavioral benefit. GSM8K: 97.5–100%, ceiling.
+
+New: `evals/external-v3/` (4-arm harness, telemetry, resume, rescore, cause-stratified blind
+aggregation with integrity gates), [`research/round5-benchmark-protocol.md`](research/round5-benchmark-protocol.md)
+(pre-registration + amendments 10.1–10.4), [`reports/round5-external-eval-v3.md`](reports/round5-external-eval-v3.md)
+(final, with full correction history), failure-log F18–F21. Nothing entered `npm test`;
+`evals/external-v2/` untouched; run artifacts under git-ignored `.scratch/r5/`.
+
 ## First official release: repository convergence + release readiness — v1.0.0
 
 This round is convergence only: no new skill, no new mechanism, no new experiment, no measured claim.

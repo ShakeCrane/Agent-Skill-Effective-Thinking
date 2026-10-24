@@ -321,8 +321,81 @@ to stop the host) is not subject to the first-order stopping policy.
 **Implication for future skill design:** a cognitive skill for agents needs an explicit self-application
 boundary: the same convergence criteria the skill imposes on target tasks should be applied to the
 agent's own meta-work (declared complete = stop until external direction). Non-trivial and currently
-unaddressed by the skill's `stopping.js`/convergence machinery.
+unaddressed by the skill's `stopping.js`/`convergence` machinery.
 
 **Current status:** **unresolved; treated as real external failure evidence.** No feature was added
 to address it (out of scope for the release-blocker fix); it is recorded so the limitation is not
 overclaimed.
+
+---
+
+## F18 — 无等长对照的行为评测会把「注入效应」读成「内容效应」（Round 5, 2026-10-24）
+
+**When:** Round 5（External Eval v3，弱被试 beam，144+320+320 runs）。
+**Observed:** v2–v4 轮的四臂/三臂设计里，treatment 与 control 的差异始终为注入「更长的结构化文本」
+与「认知技能内容」的混合效应。Round 5 首次加入等长安慰剂臂（controlC）：在唯一有能力余量的任务
+（v2-09）上裸跑 1/3 而三种注入全部 3/3；输出 token 上安慰剂（980/614）与技能（970/624）在两个
+语料上几乎相同且都与裸跑差异显著。**全部可观测差异来自注入动作本身，与内容无关。**
+**Why it matters:** 若无 controlC，本轮会得出「技能把 v2-09 从 1/3 提到 3/3、并把输出压缩 30%」
+这样的阳性结论——它实际是长度/结构效应。
+**Prevention rule (general):** *prompt 注入类 treatment 的行为评测必须含等长安慰剂臂；
+任何「treatment 有效」的结论都要先问：安慰剂臂是不是同样有效。*
+**Generality:** likely general（对弱被试已三次复现；对强被试 v2 轮的天花板使该混淆未被检验）。
+
+---
+
+## F19 — 预注册的判定标准必须把计量口径写到操作级（Round 5, 2026-10-24）
+
+**When:** Round 5 成本红线判定。
+**Observed:** 预注册写「token 总量不超过 controlB 的 120%」但未定义是否包含被注入的技能文本。
+实测两个口径结论相反：输出口径 -30.2%/+2.5%（过线），总口径 +56%/+299%（破线）。v2 的
+`inputSizePolicy` 早有「注入不计入产出」的先例，但预注册时没有把它带进红线上——与 README
+结构图计数口径教训（引用标签而非工作树）同构：**口径不写明，数字无法复核。**
+**Fix:** 本轮两口径全部报告，不事后择优；预注册模板补「每个计量指标注明口径（含/不含注入、
+中位数/均值、按 run 还是按题聚合）」。
+**Prevention rule (general):** *预注册里每个阈值的每个名词都要能被直接翻译成一行聚合代码；
+写不出代码的阈值就是没定义清楚。*
+
+---
+
+## F20 — 评分器静默失效：相对路径使 require 型 checker 全部抛异常（Round 5, 2026-10-24 当日发现并修正）
+
+**When:** Round 5 批次 0 评分（144 runs，同日在 glmflash 冒烟诊断中发现）。
+**Observed:** runner 接受相对 `--out` 路径；v2 checker 用 `require()` 加载工作区内的 agent 产物
+文件，而 Node 把不以 `./` 开头的相对说明符当**模块名**（按 checker 所在目录向上找 node_modules），
+与 cwd 无关。结果 12 个 checker 中 9 个全量抛 `Cannot find module`，被我方的 catch 记成
+`taskPass=false`、criteria 为空——**已解出的任务被记为失败**（108/144 受污染）。初版报告据此
+错误宣布"v2 语料对免费被试是地板（6.9%）"；重评分后为 75.7%，且四臂差异完全改观。
+**Root cause 两层：(a) 路径未规范化为绝对路径；(b) 聚合器没有完整性门禁**——0/0 criteria 的
+run 与真实失败在聚合输出里不可区分，108 个这样的 run 溜过了所有检查。
+**Fix:** runner 强制 `path.resolve`；`rescore.mjs` 对现存工作区全量重评分（episode 未重跑，
+工作区在磁盘上完好——这也是"评分与执行分离"的价值）；`aggregate.mjs` 增加完整性警告
+（checkerError/空 criteria 计数，永不静默）。
+**Prevention rule (general):** *任何"失败"结论之前先证明评分器真的运行过：失败 run 必须
+携带评分器执行证据（非空 criteria 或显式 checkerError 分类）；聚合器把"评分器未执行"当作
+一级告警而不是失败的一种。*（与 F13 同族：基准必须先证明它能测，再谈测出了什么。）
+**Generality:** likely general——所有"外部 checker + 中间层目录传参"的评测 harness 都可能踩；
+本轮损失约 2 小时与一次报告重写，幸因评分与执行分离而无须重跑 144 episodes。
+
+---
+
+## F21 — 基础设施失败混入行为失败：免费 provider 的渲染上限伪装成"认知差异"（Round 5, 2026-10-24 当日发现并修正）
+
+**When:** Round 5 批次 0 二次分析（F20 修复、重评分之后）。
+**Observed:** 重评分后四臂出现"显著差异"——三行引导 88.9% > 等长安慰剂 63.9%（Fisher
+p=0.025），初判为"长无关注入有害"。逐任务 transcript 检查破案：长注入臂（安慰剂与技能，
+400 率相同）的失败几乎全部是 provider 中途抛
+`HTTP 400 "The request could not be rendered into a prompt for this model"`——9KB 注入 +
+内容大的任务超出免费 provider 的提示渲染能力，episode 在第 6-7 轮死亡。按失败原因分层后：
+行为层面四臂全在天花板（91–100%，treatment 甚至 0 行为失败），原"显著差异"整体消失；
+真正的显著效应是注入长度与 400 率（长臂 23.7% vs 短臂 7.6%，p=0.0009）。
+**Why a failure:** 预注册的 pass-rate 把"模型做不出"与"请求根本没被服务"混为同一格；
+在容量受限的 provider 上，这个混合度量测的是 provider，不是模型。若止步于 p=0.025 的
+臂间对比，本轮会第二次得出错误的行为学结论（第一次是 F20）。
+**Fix:** 失败按原因分层（pass / infra-error / behavioral-fail）为分析的一级口径；
+`status` 字段携带 `api_error` 前缀使分层可机判。
+**Prevention rule (general):** *任何臂间行为比较之前，先把失败按原因分类；基础设施失败率
+本身要作为独立结果报告（它可能是注入长度等设计属性的真实成本）。与 F13/F20 同族：基准先
+证明它在测你想测的东西。*
+**Generality:** likely general——一切跑在免费/限额 provider 上的 agent 评测；注入类 treatment
+的"长度成本"从此多了一种计量方式：被杀死的 episode 比例。
